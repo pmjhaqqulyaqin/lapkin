@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
+import { NavLink } from 'react-router-dom';
 
 const HARI_LIST = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as const;
 type Hari = typeof HARI_LIST[number];
@@ -242,9 +243,9 @@ export default function JadwalMengajar() {
                 </div>
               </div>
             </div>
-            <button className="w-full mt-6 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-400 font-semibold text-sm rounded-xl transition-colors">
+            <NavLink to="/kalender" className="w-full mt-6 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-400 font-semibold text-sm rounded-xl transition-colors block text-center">
               Lihat Kalender Akademik
-            </button>
+            </NavLink>
           </div>
         </aside>
 
