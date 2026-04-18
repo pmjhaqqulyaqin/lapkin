@@ -24,6 +24,7 @@ export default function LaporanBulanan() {
   // State for Pengesahan
   const [tempat, setTempat] = useState('Lombok Timur');
   const [tglPengesahan, setTglPengesahan] = useState('');
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
 
   // Sync default date when month/year changes
   useEffect(() => {
@@ -58,6 +59,39 @@ export default function LaporanBulanan() {
 
     const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
     const filename = `LKH_${profil?.nama || 'Pegawai'}_${namaBulanThn.replace(' ', '_')}.doc`;
+    
+    const downloadLink = document.createElement("a");
+    document.body.appendChild(downloadLink);
+    downloadLink.href = url;
+    downloadLink.download = filename;
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
+  const exportToExcel = () => {
+    const printContent = document.getElementById('print-area')?.innerHTML;
+    if (!printContent) return;
+
+    const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head><meta charset='utf-8'><title>Laporan Kinerja</title>
+    <style>
+      table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+      table, th, td { border: 1px solid black; }
+      th, td { padding: 6px; text-align: left; word-wrap: break-word; }
+      th { background-color: transparent; font-weight: bold; }
+      .text-center { text-align: center; }
+      .font-bold { font-weight: bold; }
+    </style>
+    <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+    <x:Name>Laporan Kinerja</x:Name>
+    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+    </head><body>`;
+    const postHtml = "</body></html>";
+    const html = preHtml + printContent + postHtml;
+
+    const url = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(html);
+    const filename = `LKH_${profil?.nama || 'Pegawai'}_${namaBulanThn.replace(' ', '_')}.xls`;
     
     const downloadLink = document.createElement("a");
     document.body.appendChild(downloadLink);
@@ -145,20 +179,56 @@ export default function LaporanBulanan() {
 
           <div className="flex items-center gap-2 w-full md:w-auto">
             <NavLink to="/lkh/riwayat" className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-label text-sm font-bold text-primary hover:bg-surface-variant transition-colors border border-outline-variant/30">
-            <span className="material-symbols-outlined text-[18px]">edit_document</span>
-            <span className="hidden md:inline">Edit</span>
-          </NavLink>
-          <button onClick={exportToWord} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-label text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 hover:bg-teal-100 transition-colors">
-            <span className="material-symbols-outlined text-[18px]">description</span>
-            <span className="hidden md:inline">Word</span>
-          </button>
-          <button 
-            onClick={() => window.print()}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-xl font-label text-sm font-bold text-on-primary bg-primary hover:opacity-90 transition-opacity shadow-sm"
-          >
-            <span className="material-symbols-outlined text-[18px]">print</span>
-            Cetak PDF
-          </button>
+              <span className="material-symbols-outlined text-[18px]">edit_document</span>
+              <span className="hidden md:inline">Edit</span>
+            </NavLink>
+            
+            <div className="relative flex-1 md:flex-none">
+              <button 
+                onClick={() => setIsExportMenuOpen(!isExportMenuOpen)} 
+                className="w-full md:w-auto flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-label text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 hover:bg-teal-100 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[18px]">download</span>
+                <span className="hidden md:inline">Export</span>
+                <span className={`material-symbols-outlined text-[18px] transition-transform ${isExportMenuOpen ? 'rotate-180' : ''}`}>expand_more</span>
+              </button>
+              
+              {isExportMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-[120]" onClick={() => setIsExportMenuOpen(false)}></div>
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-xl shadow-teal-900/10 z-[130] overflow-hidden animate-in fade-in slide-in-from-top-2">
+                    <button 
+                      onClick={() => { exportToWord(); setIsExportMenuOpen(false); }}
+                      className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-b border-slate-100 dark:border-slate-800"
+                    >
+                      <span className="material-symbols-outlined text-blue-600">description</span>
+                      <div>
+                        <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Microsoft Word</div>
+                        <div className="text-[10px] font-semibold text-slate-500">Format .doc</div>
+                      </div>
+                    </button>
+                    <button 
+                      onClick={() => { exportToExcel(); setIsExportMenuOpen(false); }}
+                      className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-green-600">table</span>
+                      <div>
+                        <div className="font-bold text-sm text-slate-800 dark:text-slate-200">Microsoft Excel</div>
+                        <div className="text-[10px] font-semibold text-slate-500">Format .xls</div>
+                      </div>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <button 
+              onClick={() => window.print()}
+              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-xl font-label text-sm font-bold text-on-primary bg-primary hover:opacity-90 transition-opacity shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[18px]">print</span>
+              Cetak PDF
+            </button>
           </div>
         </div>
       </header>
