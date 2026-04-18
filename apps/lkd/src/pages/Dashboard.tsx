@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -33,8 +34,32 @@ export default function Dashboard() {
   const hariTerisi = uniqueDates.size;
   const progressPercent = targetHari > 0 ? Math.min(100, Math.round((hariTerisi / targetHari) * 100)) : 0;
 
-  // Ambil 3 aktivitas terbaru
   const aktivitasTerakhir = lkhBulanIni?.slice(0, 3) || [];
+
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [editKegiatan, setEditKegiatan] = useState('');
+  const [editUraian, setEditUraian] = useState('');
+
+  const handleEditOpen = (item: any) => {
+    setEditId(item.id);
+    setEditKegiatan(item.kegiatan);
+    setEditUraian(item.uraian);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      await db.lkh.update(editId, {
+        kegiatan: editKegiatan,
+        uraian: editUraian,
+      });
+      useAppStore.getState().showToast("Aktivitas berhasil diperbarui!", "success");
+      setIsEditModalOpen(false);
+    }
+  };
 
   const handlePrevMonth = () => {
     if (activeMonthIndex === 0) {
@@ -61,7 +86,7 @@ export default function Dashboard() {
       <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-sm shadow-teal-900/5">
         <div className="flex justify-between items-center w-full px-6 py-4">
           <div className="flex items-center gap-4">
-            <button className="text-teal-950 dark:text-teal-50 scale-95 active:opacity-80 transition-all">
+            <button onClick={() => useAppStore.getState().setSidebarOpen(true)} className="text-teal-950 dark:text-teal-50 scale-95 active:opacity-80 transition-all">
               <span className="material-symbols-outlined">menu</span>
             </button>
             <div>
@@ -154,19 +179,19 @@ export default function Dashboard() {
           <div className="space-y-3">
             {aktivitasTerakhir.length > 0 ? (
               aktivitasTerakhir.map((item) => (
-                <div key={item.id} className="bg-surface-container-lowest border border-outline-variant/20 p-4 rounded-xl flex items-center gap-4 hover:bg-surface-container-low transition-colors cursor-pointer">
+                <div key={item.id} onClick={() => handleEditOpen(item)} className="bg-surface-container-lowest border border-outline-variant/20 p-4 rounded-xl flex items-center gap-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${item.tipeSumber === 'jadwal' ? 'bg-primary/10 text-primary' : 'bg-tertiary/10 text-tertiary'}`}>
                     <span className="material-symbols-outlined">{item.tipeSumber === 'jadwal' ? 'school' : 'task_alt'}</span>
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-bold text-sm text-on-surface line-clamp-1">{item.kegiatan}</h4>
+                    <h4 className="font-bold text-sm text-on-surface line-clamp-1 group-hover:text-primary transition-colors">{item.kegiatan}</h4>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-outline">{item.tipeSumber}</span>
                       <span className="w-1 h-1 rounded-full bg-outline-variant"></span>
                       <span className="text-xs font-medium text-on-surface-variant">{new Date(item.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}</span>
                     </div>
                   </div>
-                  <button className="text-outline hover:text-primary">
+                  <button className="text-outline group-hover:text-primary group-hover:translate-x-1 transition-all">
                     <span className="material-symbols-outlined">chevron_right</span>
                   </button>
                 </div>
@@ -188,6 +213,50 @@ export default function Dashboard() {
           </NavLink>
         </section>
       </main>
+
+      {/* Edit Modal (Quick Action) */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-scale-up border border-slate-200 dark:border-slate-800">
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
+              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <span className="material-symbols-outlined text-teal-600">edit_note</span>
+                Koreksi Aktivitas
+              </h2>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleSaveEdit} className="p-6 space-y-4 bg-white dark:bg-slate-900">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Kegiatan</label>
+                <input 
+                  type="text" 
+                  value={editKegiatan} 
+                  onChange={e => setEditKegiatan(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Uraian / Deskripsi</label>
+                <textarea 
+                  value={editUraian} 
+                  onChange={e => setEditUraian(e.target.value)}
+                  rows={4}
+                  className="w-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500/50 outline-none resize-none"
+                  required
+                ></textarea>
+              </div>
+              <div className="pt-4">
+                <button type="submit" className="w-full bg-teal-700 text-white font-bold py-3.5 rounded-xl hover:bg-teal-800 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }

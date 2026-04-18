@@ -4,6 +4,8 @@ import Toast from '../components/Toast';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useAppStore } from '../store/useAppStore';
 
+import Sidebar from '../components/Sidebar';
+
 export default function MainLayout() {
   const location = useLocation();
   const isLoggedIn = useAppStore(state => state.isLoggedIn);
@@ -17,6 +19,7 @@ export default function MainLayout() {
 
   return (
     <ErrorBoundary>
+      <Sidebar />
       <Outlet />
       {!isPrintPage && <BottomNav isEditorPage={isEditorPage} />}
       <Toast />

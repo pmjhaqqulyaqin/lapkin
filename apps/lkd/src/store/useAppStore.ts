@@ -11,6 +11,7 @@ interface AppState {
   isDarkMode: boolean;
   activeMonthIndex: number; // 0-11
   activeYear: number;
+  isSidebarOpen: boolean;
   toast: Toast;
   
   // Actions
@@ -20,6 +21,7 @@ interface AppState {
   setActiveMonthYear: (month: number, year: number) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
+  setSidebarOpen: (isOpen: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -28,6 +30,7 @@ export const useAppStore = create<AppState>((set) => ({
   isDarkMode: localStorage.getItem('lkd_dark_mode') === 'true',
   activeMonthIndex: new Date().getMonth(),
   activeYear: new Date().getFullYear(),
+  isSidebarOpen: false,
   toast: { message: '', type: 'info', visible: false },
 
   login: () => {
@@ -61,4 +64,5 @@ export const useAppStore = create<AppState>((set) => ({
   },
 
   hideToast: () => set((state) => ({ toast: { ...state.toast, visible: false } })),
+  setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
 }));
