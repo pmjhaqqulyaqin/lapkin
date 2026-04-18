@@ -12,6 +12,7 @@ interface AppState {
   activeMonthIndex: number; // 0-11
   activeYear: number;
   isSidebarOpen: boolean;
+  isBantuanOpen: boolean;
   toast: Toast;
   
   // Custom Lists
@@ -26,6 +27,7 @@ interface AppState {
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
   setSidebarOpen: (isOpen: boolean) => void;
+  setBantuanOpen: (isOpen: boolean) => void;
   setKegiatanManual: (list: string[]) => void;
   setKategoriTugas: (list: string[]) => void;
 }
@@ -37,6 +39,7 @@ export const useAppStore = create<AppState>((set) => ({
   activeMonthIndex: new Date().getMonth(),
   activeYear: new Date().getFullYear(),
   isSidebarOpen: false,
+  isBantuanOpen: false,
   toast: { message: '', type: 'info', visible: false },
 
   kegiatanManual: JSON.parse(localStorage.getItem('lkd_kegiatan_manual') || '["Rapat Sekolah", "Upacara Bendera", "Kegiatan IMTAQ", "Penyusunan Bahan Ajar", "Kegiatan Khusus", "Tugas Tambahan Lainnya..."]'),
@@ -74,6 +77,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   hideToast: () => set((state) => ({ toast: { ...state.toast, visible: false } })),
   setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+  setBantuanOpen: (isOpen) => set({ isBantuanOpen: isOpen }),
   setKegiatanManual: (list) => {
     localStorage.setItem('lkd_kegiatan_manual', JSON.stringify(list));
     set({ kegiatanManual: list });

@@ -73,6 +73,18 @@ export default function Sidebar() {
                 Riwayat LKH
               </NavLink>
             </li>
+            <li>
+              <button 
+                onClick={() => {
+                  useAppStore.getState().setBantuanOpen(true);
+                  setSidebarOpen(false);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors"
+              >
+                <span className="material-symbols-outlined text-slate-400">help</span>
+                Bantuan & Panduan
+              </button>
+            </li>
             <li className="my-2 border-t border-slate-100 dark:border-slate-800"></li>
             <li>
               <button 

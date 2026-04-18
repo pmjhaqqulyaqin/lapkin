@@ -5,6 +5,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import { useAppStore } from '../store/useAppStore';
 
 import Sidebar from '../components/Sidebar';
+import BantuanModal from '../components/BantuanModal';
 
 export default function MainLayout() {
   const location = useLocation();
@@ -20,6 +21,7 @@ export default function MainLayout() {
   return (
     <ErrorBoundary>
       <Sidebar />
+      <BantuanModal />
       <Outlet />
       {!isPrintPage && <BottomNav isEditorPage={isEditorPage} />}
       <Toast />

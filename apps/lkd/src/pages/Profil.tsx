@@ -351,7 +351,7 @@ export default function Profil() {
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+              <button onClick={() => useAppStore.getState().setBantuanOpen(true)} className="w-full text-left flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
                     <span className="material-symbols-outlined text-[18px]">help</span>
@@ -359,7 +359,7 @@ export default function Profil() {
                   <span className="font-semibold text-slate-700 dark:text-slate-200">Bantuan & Panduan LKD</span>
                 </div>
                 <span className="material-symbols-outlined text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
-              </a>
+              </button>
             </li>
           </ul>
         </section>
