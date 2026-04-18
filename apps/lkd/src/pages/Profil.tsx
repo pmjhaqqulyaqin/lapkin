@@ -164,12 +164,8 @@ export default function Profil() {
     <>
       {/* TopAppBar */}
       <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md text-cyan-950 dark:text-cyan-50 font-manrope text-xl font-bold tracking-tight docked full-width top-0 sticky z-50 no-border shadow-sm shadow-cyan-900/5">
-        <div className="flex justify-between items-center w-full px-6 py-4 mx-auto max-w-3xl">
-          <button className="text-cyan-950 dark:text-cyan-50 scale-95 active:opacity-80 transition-all">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
+        <div className="flex justify-start items-center w-full px-6 py-4 mx-auto max-w-3xl">
           <h1>Profil & Pengaturan</h1>
-          <div className="w-8"></div> {/* Spacer for centering */}
         </div>
       </header>
 

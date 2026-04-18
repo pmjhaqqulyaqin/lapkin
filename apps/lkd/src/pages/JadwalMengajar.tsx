@@ -96,9 +96,6 @@ export default function JadwalMengajar() {
       <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shadow-teal-950/5">
         <div className="flex justify-between items-center w-full px-4 py-3 max-w-5xl mx-auto">
           <div className="flex items-center gap-3">
-            <button className="text-slate-600 dark:text-slate-300 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-              <span className="material-symbols-outlined">menu</span>
-            </button>
             <h1 className="font-manrope font-extrabold text-xl tracking-tight text-teal-950 dark:text-teal-50">
               Jadwal Mengajar
             </h1>
