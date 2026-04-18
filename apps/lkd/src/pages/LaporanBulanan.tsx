@@ -21,7 +21,6 @@ export default function LaporanBulanan() {
   const formatterBulan = new Intl.DateTimeFormat('id-ID', { month: 'long' });
   const namaBulanThn = `${formatterBulan.format(new Date(activeYear, activeMonthIndex))} ${activeYear}`;
   const formatterTanggalLengkap = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-  const formatterTanggalSingkat = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 
   const exportToWord = () => {
     const printContent = document.getElementById('print-area')?.innerHTML;
