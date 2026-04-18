@@ -1,0 +1,189 @@
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../db/database';
+import { useAppStore } from '../store/useAppStore';
+
+export default function RiwayatLkh() {
+  const { activeMonthIndex, activeYear, setActiveMonthYear, showToast } = useAppStore();
+
+  // Modal Edit State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [editKegiatan, setEditKegiatan] = useState('');
+  const [editUraian, setEditUraian] = useState('');
+
+  const handleEditOpen = (item: any) => {
+    setEditId(item.id);
+    setEditKegiatan(item.kegiatan);
+    setEditUraian(item.uraian);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      await db.lkh.update(editId, {
+        kegiatan: editKegiatan,
+        uraian: editUraian,
+      });
+      showToast("Aktivitas berhasil diperbarui!", "success");
+      setIsEditModalOpen(false);
+    }
+  };
+
+  // Delete Handler
+  const handleDelete = async (id?: number) => {
+    if (id) {
+      if (window.confirm("Apakah Anda yakin ingin menghapus aktivitas ini?")) {
+        await db.lkh.delete(id);
+        showToast("Aktivitas berhasil dihapus", "success");
+      }
+    }
+  };
+
+  // Ambil semua LKH
+  const semuaLkh = useLiveQuery(() => db.lkh.orderBy('tanggal').reverse().toArray());
+
+  // Filter LKH berdasarkan bulan dan tahun terpilih
+  const lkhFiltered = semuaLkh?.filter((l) => {
+    const d = new Date(l.tanggal);
+    return d.getMonth() === activeMonthIndex && d.getFullYear() === activeYear;
+  });
+
+  const formatterBulan = new Intl.DateTimeFormat('id-ID', { month: 'long' });
+  const namaBulanTahunIni = `${formatterBulan.format(new Date(activeYear, activeMonthIndex))} ${activeYear}`;
+
+  return (
+    <>
+      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md flex justify-between items-center w-full px-6 py-4 mx-auto sticky top-0 z-50 shadow-sm shadow-teal-900/5">
+        <div className="flex items-center gap-3">
+          <NavLink to="/dashboard" className="text-teal-950 dark:text-teal-50 bg-teal-900/5 p-2 rounded-full active:scale-95 transition-all">
+            <span className="material-symbols-outlined">arrow_back</span>
+          </NavLink>
+          <div>
+            <h1 className="font-manrope font-bold text-lg tracking-tight text-teal-950 dark:text-teal-50">
+              Riwayat LHK
+            </h1>
+            <p className="text-xs font-semibold text-slate-500">Kelola dan Filter Laporan</p>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-6 py-6 pb-32">
+        {/* Month & Year Filter */}
+        <section className="mb-8">
+          <div className="flex gap-4 items-center">
+            <select 
+              value={activeMonthIndex}
+              onChange={(e) => setActiveMonthYear(Number(e.target.value), activeYear)}
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none flex-1"
+            >
+              {Array.from({ length: 12 }).map((_, i) => (
+                <option key={i} value={i}>{formatterBulan.format(new Date(2026, i))}</option>
+              ))}
+            </select>
+            <select 
+              value={activeYear}
+              onChange={(e) => setActiveMonthYear(activeMonthIndex, Number(e.target.value))}
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none w-32"
+            >
+              <option value={2025}>2025</option>
+              <option value={2026}>2026</option>
+              <option value={2027}>2027</option>
+            </select>
+          </div>
+        </section>
+
+        {/* List of LKH */}
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100">Daftar Laporan</h2>
+            <span className="text-xs font-bold bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300 px-3 py-1 rounded-full">
+              {lkhFiltered?.length || 0} Aktivitas
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {lkhFiltered && lkhFiltered.length > 0 ? (
+              lkhFiltered.map((item) => (
+                <div key={item.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                        {new Date(item.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'short' })}
+                      </span>
+                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider ${item.tipeSumber === 'jadwal' ? 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'}`}>
+                        {item.tipeSumber}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEditOpen(item)} className="text-slate-400 hover:text-teal-600 transition-colors">
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
+                      <button onClick={() => handleDelete(item.id)} className="text-slate-400 hover:text-red-600 transition-colors">
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1.5">{item.kegiatan}</h3>
+                  <p className="text-sm text-slate-500 mb-4">{item.uraian}</p>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
+                    <span className="material-symbols-outlined text-[14px]">file_copy</span>
+                    {item.keteranganOutput}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400">
+                <span className="material-symbols-outlined text-4xl mb-3 opacity-50">inbox</span>
+                <p>Tidak ada laporan ditemukan pada {namaBulanTahunIni}.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
+
+      {/* Edit Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
+              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100">Edit Aktivitas</h2>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleSaveEdit} className="p-6 space-y-4 bg-white dark:bg-slate-900">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Kegiatan</label>
+                <input 
+                  type="text" 
+                  value={editKegiatan} 
+                  onChange={e => setEditKegiatan(e.target.value)}
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Uraian / Deskripsi</label>
+                <textarea 
+                  value={editUraian} 
+                  onChange={e => setEditUraian(e.target.value)}
+                  rows={4}
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500/50 outline-none resize-none"
+                  required
+                ></textarea>
+              </div>
+              <div className="pt-4">
+                <button type="submit" className="w-full bg-teal-800 text-white font-bold py-3.5 rounded-xl hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
