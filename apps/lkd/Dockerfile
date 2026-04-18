@@ -11,8 +11,8 @@ COPY . .
 # Hapus lockfile agar npm install benar-benar bersih dan menginstal semua module tanpa conflict
 RUN rm -f package-lock.json
 
-# Install dependencies untuk seluruh workspaces
-RUN npm install
+# Install dependencies untuk seluruh workspaces (Abaikan conflict antar versi PWA dan Vite)
+RUN npm install --legacy-peer-deps
 
 # Lakukan build menggunakan Vite
 RUN npm run build -w apps/lkd
