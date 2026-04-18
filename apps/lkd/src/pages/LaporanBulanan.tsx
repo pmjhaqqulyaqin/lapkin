@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -50,6 +51,29 @@ export default function LaporanBulanan() {
     downloadLink.click();
     document.body.removeChild(downloadLink);
   };
+
+  const groupedLkh = useMemo(() => {
+    if (!lkhData) return [];
+    const groups: Record<string, typeof lkhData> = {};
+    lkhData.forEach(item => {
+      if (!groups[item.tanggal]) {
+        groups[item.tanggal] = [];
+      }
+      groups[item.tanggal].push(item);
+    });
+    
+    return Object.keys(groups).sort().map(tanggal => {
+      const dateObj = new Date(tanggal);
+      const day = dateObj.getDate().toString().padStart(2, '0');
+      const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+      const year = dateObj.getFullYear();
+      return {
+        tanggal,
+        formattedDate: `${day}-${month}-${year}`,
+        items: groups[tanggal]
+      };
+    });
+  }, [lkhData]);
 
   return (
     <>
@@ -156,28 +180,27 @@ export default function LaporanBulanan() {
             </tr>
           </thead>
           <tbody>
-            {lkhData && lkhData.length > 0 ? (
-              lkhData.map((item, index) => {
-                const dateObj = new Date(item.tanggal);
-                const day = dateObj.getDate().toString().padStart(2, '0');
-                const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-                const year = dateObj.getFullYear();
-                const formattedDate = `${day}-${month}-${year}`;
-                return (
+            {groupedLkh && groupedLkh.length > 0 ? (
+              groupedLkh.map((group, groupIndex) => (
+                group.items.map((item, itemIndex) => (
                   <tr key={item.id}>
-                    <td className="border border-black px-2 py-3 text-center align-top">{index + 1}</td>
+                    {itemIndex === 0 && (
+                      <td rowSpan={group.items.length} className="border border-black px-2 py-3 text-center align-top">{groupIndex + 1}</td>
+                    )}
                     <td className="border border-black px-2 py-3 align-top break-words">
                       {item.kegiatan}
                     </td>
                     <td className="border border-black px-2 py-3 align-top break-words">
                       {item.uraian}
                     </td>
-                    <td className="border border-black px-2 py-3 text-center align-top break-words">
-                      {formattedDate}
-                    </td>
+                    {itemIndex === 0 && (
+                      <td rowSpan={group.items.length} className="border border-black px-2 py-3 text-center align-top break-words">
+                        {group.formattedDate}
+                      </td>
+                    )}
                   </tr>
-                );
-              })
+                ))
+              ))
             ) : (
               <tr>
                 <td colSpan={4} className="border border-black px-4 py-12 text-center text-gray-500 italic">
