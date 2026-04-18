@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
 import { db } from '../db/database';
 
@@ -11,6 +11,11 @@ export default function Login() {
   const [isRegister, setIsRegister] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [formData, setFormData] = React.useState({ nip: '', password: '', nama: '' });
+
+  const isLoggedIn = useAppStore(state => state.isLoggedIn);
+  if (isLoggedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -12,6 +12,7 @@ export default function Profil() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
   const [editMode, setEditMode] = useState<'profil' | 'atasan'>('profil');
   const [formData, setFormData] = useState({
     nama: '', nip: '', jabatan: '', pangkat: '', golongan: '',
@@ -40,7 +41,7 @@ export default function Profil() {
         setDeferredPrompt(null);
       }
     } else {
-      alert('Aplikasi sudah diinstal atau browser tidak mendukung fitur ini. Gunakan menu "Tambahkan ke Layar Utama" di browser Anda.');
+      setIsInstallModalOpen(true);
     }
   };
   
@@ -494,6 +495,59 @@ export default function Profil() {
                 </button>
                 <button onClick={saveSignature} type="button" className="flex-[2] bg-emerald-600 text-white font-bold py-3.5 rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-900/20">
                   Simpan Tanda Tangan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PWA Install Fallback Modal */}
+      {isInstallModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up border border-slate-200 dark:border-slate-800">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-manrope font-bold text-xl text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-teal-500">install_mobile</span>
+                  Cara Install LKD
+                </h3>
+                <button onClick={() => setIsInstallModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-full">
+                  <span className="material-symbols-outlined text-[20px]">close</span>
+                </button>
+              </div>
+              
+              <div className="space-y-4 text-slate-600 dark:text-slate-300 text-sm">
+                <p>Browser Anda tidak mendukung instalasi otomatis. Ikuti panduan manual ini:</p>
+                
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Chrome_icon_%28September_2014%29.svg" className="w-4 h-4" alt="Chrome"/>
+                    Chrome (Android)
+                  </h4>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    <li>Ketuk ikon tiga titik <span className="font-bold">⋮</span> di pojok kanan atas browser.</li>
+                    <li>Pilih menu <span className="font-bold text-teal-600">"Tambahkan ke Layar Utama"</span> (Add to Home Screen).</li>
+                    <li>Ketuk "Tambah".</li>
+                  </ol>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Safari_browser_logo.svg" className="w-4 h-4" alt="Safari"/>
+                    Safari (iPhone / iOS)
+                  </h4>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    <li>Ketuk ikon Bagikan (Share) <span className="inline-block border border-slate-400 px-1 rounded mx-1 pb-0.5">↑</span> di bagian bawah layar.</li>
+                    <li>Gulir ke bawah dan pilih <span className="font-bold text-teal-600">"Tambah ke Layar Utama"</span> (Add to Home Screen).</li>
+                    <li>Ketuk "Tambah" di pojok kanan atas.</li>
+                  </ol>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button onClick={() => setIsInstallModalOpen(false)} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 px-6 py-2.5 rounded-xl font-bold transition-colors">
+                  Tutup
                 </button>
               </div>
             </div>
