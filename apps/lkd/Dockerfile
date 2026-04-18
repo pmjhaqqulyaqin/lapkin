@@ -5,15 +5,11 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Karena project ini berbentuk Monorepo (lapkin), 
-# kita perlu meng-copy file package.json dari root dan folder apps
-COPY package*.json ./
-COPY apps/lkd/package*.json ./apps/lkd/
+# kita perlu meng-copy seluruh konfigurasi dan source code agar workspaces terbaca dengan benar
+COPY . .
 
-# Install dependencies (akan membaca konfigurasi workspaces npm)
+# Install dependencies untuk seluruh workspaces
 RUN npm install
-
-# Copy seluruh source code dari LKD
-COPY apps/lkd/ ./apps/lkd/
 
 # Lakukan build menggunakan Vite
 RUN npm run build -w apps/lkd
