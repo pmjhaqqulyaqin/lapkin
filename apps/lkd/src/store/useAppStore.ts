@@ -14,6 +14,10 @@ interface AppState {
   isSidebarOpen: boolean;
   toast: Toast;
   
+  // Custom Lists
+  kegiatanManual: string[];
+  kategoriTugas: string[];
+  
   // Actions
   login: () => void;
   logout: () => void;
@@ -22,6 +26,8 @@ interface AppState {
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
   setSidebarOpen: (isOpen: boolean) => void;
+  setKegiatanManual: (list: string[]) => void;
+  setKategoriTugas: (list: string[]) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -32,6 +38,9 @@ export const useAppStore = create<AppState>((set) => ({
   activeYear: new Date().getFullYear(),
   isSidebarOpen: false,
   toast: { message: '', type: 'info', visible: false },
+
+  kegiatanManual: JSON.parse(localStorage.getItem('lkd_kegiatan_manual') || '["Rapat Sekolah", "Upacara Bendera", "Kegiatan IMTAQ", "Penyusunan Bahan Ajar", "Kegiatan Khusus", "Tugas Tambahan Lainnya..."]'),
+  kategoriTugas: JSON.parse(localStorage.getItem('lkd_kategori_tugas') || '["Administrasi Kurikulum", "Wali Kelas", "Pembina Ekstrakurikuler", "Pengelola Perpustakaan", "Lainnya"]'),
 
   login: () => {
     localStorage.setItem('lkd_logged_in', 'true');
@@ -65,4 +74,12 @@ export const useAppStore = create<AppState>((set) => ({
 
   hideToast: () => set((state) => ({ toast: { ...state.toast, visible: false } })),
   setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+  setKegiatanManual: (list) => {
+    localStorage.setItem('lkd_kegiatan_manual', JSON.stringify(list));
+    set({ kegiatanManual: list });
+  },
+  setKategoriTugas: (list) => {
+    localStorage.setItem('lkd_kategori_tugas', JSON.stringify(list));
+    set({ kategoriTugas: list });
+  },
 }));

@@ -3,17 +3,20 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
+import CategoryManagerModal from '../components/CategoryManagerModal';
 
 const HARI_LIST = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as const;
 
 export default function InputLkh() {
   const navigate = useNavigate();
-  const showToast = useAppStore(state => state.showToast);
+  const { showToast, kegiatanManual, setKegiatanManual } = useAppStore();
   // Gunakan tanggal hari ini sebagai default
   const todayStr = new Date().toISOString().split('T')[0];
   const [tanggal, setTanggal] = useState(todayStr);
   
-  const [manualKegiatan, setManualKegiatan] = useState('Rapat Sekolah');
+  const [isManageKegiatanOpen, setIsManageKegiatanOpen] = useState(false);
+  
+  const [manualKegiatan, setManualKegiatan] = useState(kegiatanManual[0] || '');
   const [manualUraian, setManualUraian] = useState('');
 
   // Menentukan nama hari dari tanggal yang dipilih
@@ -34,9 +37,9 @@ export default function InputLkh() {
       // Set uraian hanya jika masih kosong, supaya tidak menimpa ketikan user secara tidak sengaja
       setManualUraian(prev => prev ? prev : kalenderHariIni.keterangan);
     } else if (!manualUraian) {
-      setManualKegiatan('Rapat Sekolah');
+      setManualKegiatan(kegiatanManual[0] || '');
     }
-  }, [kalenderHariIni, tanggal]);
+  }, [kalenderHariIni, tanggal, kegiatanManual]);
 
   // Fetch jadwal berdasarkan hari
   const jadwalHariIni = useLiveQuery(
@@ -163,7 +166,7 @@ export default function InputLkh() {
       }
       setTanggal(nextDate.toISOString().split('T')[0]);
       setManualUraian('');
-      setManualKegiatan('Rapat Sekolah');
+      setManualKegiatan(kegiatanManual[0] || '');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       navigate('/dashboard');
@@ -291,19 +294,25 @@ export default function InputLkh() {
 
           <div className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Pilih Kegiatan</label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Pilih Kegiatan</label>
+                <button 
+                  type="button" 
+                  onClick={() => setIsManageKegiatanOpen(true)}
+                  className="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded uppercase tracking-wider transition-colors flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[14px]">edit</span> Kelola Opsi
+                </button>
+              </div>
               <div className="relative">
                 <select 
                   value={manualKegiatan}
                   onChange={(e) => setManualKegiatan(e.target.value)}
                   className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3.5 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm appearance-none"
                 >
-                  <option>Rapat Sekolah</option>
-                  <option>Upacara Bendera</option>
-                  <option>Kegiatan IMTAQ</option>
-                  <option>Penyusunan Bahan Ajar</option>
-                  <option>Kegiatan Khusus</option>
-                  <option>Tugas Tambahan Lainnya...</option>
+                  {kegiatanManual.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
                   <span className="material-symbols-outlined">expand_more</span>
@@ -344,6 +353,20 @@ export default function InputLkh() {
           </button>
         </div>
       </main>
+
+      {isManageKegiatanOpen && (
+        <CategoryManagerModal 
+          title="Kelola Judul Kegiatan"
+          items={kegiatanManual}
+          onSave={(newItems) => {
+            setKegiatanManual(newItems);
+            if (!newItems.includes(manualKegiatan) && newItems.length > 0) {
+              setManualKegiatan(newItems[0]);
+            }
+          }}
+          onClose={() => setIsManageKegiatanOpen(false)}
+        />
+      )}
     </>
   );
 }

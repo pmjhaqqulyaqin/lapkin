@@ -3,15 +3,17 @@ import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
+import CategoryManagerModal from '../components/CategoryManagerModal';
 
 export default function EditorAktivitas() {
-  const showToast = useAppStore(state => state.showToast);
+  const { showToast, kategoriTugas, setKategoriTugas } = useAppStore();
   const tugasData = useLiveQuery(() => db.tugasTambahan.toArray());
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManageKategoriOpen, setIsManageKategoriOpen] = useState(false);
   const [namaTugas, setNamaTugas] = useState('');
-  const [kategori, setKategori] = useState('Administrasi Kurikulum');
+  const [kategori, setKategori] = useState(kategoriTugas[0] || '');
   const [templates, setTemplates] = useState<{hari: string, uraian: string[]}[]>([
     { hari: 'Senin', uraian: [''] }
   ]);
@@ -83,7 +85,7 @@ export default function EditorAktivitas() {
 
   const resetForm = () => {
     setNamaTugas('');
-    setKategori('Administrasi Kurikulum');
+    setKategori(kategoriTugas[0] || '');
     setTemplates([{ hari: 'Senin', uraian: [''] }]);
   };
 
@@ -176,18 +178,25 @@ export default function EditorAktivitas() {
             <form onSubmit={handleSimpanTugas} className="p-6 space-y-5 bg-white dark:bg-slate-900">
               {/* Kategori */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Kategori</label>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Kategori</label>
+                  <button 
+                    type="button" 
+                    onClick={() => setIsManageKategoriOpen(true)}
+                    className="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded uppercase tracking-wider transition-colors flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">edit</span> Kelola Kategori
+                  </button>
+                </div>
                 <div className="relative">
                   <select 
                     value={kategori}
                     onChange={e => setKategori(e.target.value)}
                     className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none appearance-none"
                   >
-                    <option>Administrasi Kurikulum</option>
-                    <option>Wali Kelas</option>
-                    <option>Pembina Ekstrakurikuler</option>
-                    <option>Pengelola Perpustakaan</option>
-                    <option>Lainnya</option>
+                    {kategoriTugas.map(kat => (
+                      <option key={kat} value={kat}>{kat}</option>
+                    ))}
                   </select>
                   <span className="material-symbols-outlined absolute right-4 top-3 text-slate-400 pointer-events-none">expand_more</span>
                 </div>
@@ -273,6 +282,20 @@ export default function EditorAktivitas() {
             </form>
           </div>
         </div>
+      )}
+
+      {isManageKategoriOpen && (
+        <CategoryManagerModal 
+          title="Kelola Kategori Tugas"
+          items={kategoriTugas}
+          onSave={(newItems) => {
+            setKategoriTugas(newItems);
+            if (!newItems.includes(kategori) && newItems.length > 0) {
+              setKategori(newItems[0]);
+            }
+          }}
+          onClose={() => setIsManageKategoriOpen(false)}
+        />
       )}
     </>
   );
