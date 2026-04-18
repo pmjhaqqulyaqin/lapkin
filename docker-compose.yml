@@ -9,5 +9,5 @@ services:
     restart: unless-stopped
     ports:
       # Format: "PORT_LUAR_VPS:PORT_DALAM_CONTAINER"
-      # Secara default diset ke 8080 (Bisa disesuaikan, misalnya "80:80" jika ingin tanpa port tambahan)
-      - "8080:80"
+      # Kita gunakan port 18080 agar unik dan tidak bertabrakan dengan mandaapp
+      - "18080:80"
