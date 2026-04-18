@@ -73,7 +73,7 @@ export default function LaporanBulanan() {
     const excelHtml = `
       <table>
         <tr>
-          <th colspan="4" class="text-center bold" style="font-size: 14pt;">Bulan ${namaBulanThn}</th>
+          <th colspan="4" class="text-center bold" style="font-size: 14pt; ${tdBorder}">Bulan ${namaBulanThn}</th>
         </tr>
         <tr><td colspan="4"></td></tr>
         <tr>
@@ -99,18 +99,18 @@ export default function LaporanBulanan() {
         <tr><td colspan="4"></td></tr>
         
         <tr>
-          <th style="${tdBorder}" class="text-center bold">No.</th>
-          <th style="${tdBorder}" class="text-left bold">Kegiatan</th>
-          <th style="${tdBorder}" class="text-left bold">Pekerjaan</th>
+          <th style="${tdBorder}" class="text-center bold">No</th>
+          <th style="${tdBorder}" class="text-center bold">Kegiatan</th>
+          <th style="${tdBorder}" class="text-center bold">Pekerjaan</th>
           <th style="${tdBorder}" class="text-center bold">Tanggal</th>
         </tr>
         ${groupedLkh && groupedLkh.length > 0 ? groupedLkh.map((group, groupIndex) => 
           group.items.map((item, itemIndex) => `
             <tr>
-              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" style="${tdBorder}" class="text-center valign-top">${groupIndex + 1}</td>` : ''}
+              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" style="${tdBorder}" class="text-center valign-middle">${groupIndex + 1}</td>` : ''}
               <td style="${tdBorder}" class="valign-top">${item.kegiatan}</td>
               <td style="${tdBorder}" class="valign-top">${item.uraian}</td>
-              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" style="${tdBorder}" class="text-center valign-top">${group.formattedDate}</td>` : ''}
+              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" style="${tdBorder}" class="text-center valign-middle">${group.formattedDate}</td>` : ''}
             </tr>
           `).join('')
         ).join('') : `
@@ -125,7 +125,7 @@ export default function LaporanBulanan() {
         </tr>
         <tr>
           <td colspan="3">Kepala Sekolah / Madrasah</td>
-          <td>Pegawai yang dinilai</td>
+          <td>Pegawai yang</td>
         </tr>
         <tr><td colspan="4"></td></tr>
         <tr><td colspan="4"></td></tr>
@@ -150,6 +150,7 @@ export default function LaporanBulanan() {
       .text-left { text-align: left; }
       .bold { font-weight: bold; }
       .valign-top { vertical-align: top; }
+      .valign-middle { vertical-align: middle; }
     </style>
     <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
     <x:Name>Laporan Kinerja</x:Name>
