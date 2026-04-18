@@ -162,7 +162,7 @@ export default function LaporanBulanan() {
                 const day = dateObj.getDate().toString().padStart(2, '0');
                 const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
                 const year = dateObj.getFullYear();
-                const formattedDate = `${day}- ${month}- ${year}`;
+                const formattedDate = `${day}-${month}-${year}`;
                 return (
                   <tr key={item.id}>
                     <td className="border border-black px-2 py-3 text-center align-top">{index + 1}</td>
@@ -172,7 +172,7 @@ export default function LaporanBulanan() {
                     <td className="border border-black px-2 py-3 align-top break-words">
                       {item.uraian}
                     </td>
-                    <td className="border border-black px-2 py-3 text-center align-top whitespace-nowrap">
+                    <td className="border border-black px-2 py-3 text-center align-top break-words">
                       {formattedDate}
                     </td>
                   </tr>
