@@ -69,6 +69,7 @@ export default function LaporanBulanan() {
   };
 
   const exportToExcel = () => {
+    const tdBorder = 'border: .5pt solid windowtext;';
     const excelHtml = `
       <table>
         <tr>
@@ -76,44 +77,44 @@ export default function LaporanBulanan() {
         </tr>
         <tr><td colspan="4"></td></tr>
         <tr>
-          <td colspan="2" class="bordered">Nama</td>
-          <td colspan="2" class="bordered">${profil?.nama || '-'}</td>
+          <td style="${tdBorder}">Nama</td>
+          <td colspan="3" style="${tdBorder}">${profil?.nama || '-'}</td>
         </tr>
         <tr>
-          <td colspan="2" class="bordered">NIP</td>
-          <td colspan="2" class="bordered" style='mso-number-format:"\\@"'>${profil?.nip || '-'}</td>
+          <td style="${tdBorder}">NIP</td>
+          <td colspan="3" style="${tdBorder} mso-number-format:'\\@'">${profil?.nip || '-'}</td>
         </tr>
         <tr>
-          <td colspan="2" class="bordered">Pangkat / Gol</td>
-          <td colspan="2" class="bordered">${profil?.pangkat || '-'} / ${profil?.golongan || '-'}</td>
+          <td style="${tdBorder}">Pangkat / Gol</td>
+          <td colspan="3" style="${tdBorder}">${profil?.pangkat || '-'} / ${profil?.golongan || '-'}</td>
         </tr>
         <tr>
-          <td colspan="2" class="bordered">Jabatan</td>
-          <td colspan="2" class="bordered">${profil?.jabatan || '-'}</td>
+          <td style="${tdBorder}">Jabatan</td>
+          <td colspan="3" style="${tdBorder}">${profil?.jabatan || '-'}</td>
         </tr>
         <tr>
-          <td colspan="2" class="bordered">Unit Kerja</td>
-          <td colspan="2" class="bordered">MAN 2 Lombok Timur</td>
+          <td style="${tdBorder}">Unit Kerja</td>
+          <td colspan="3" style="${tdBorder}">MAN 2 Lombok Timur</td>
         </tr>
         <tr><td colspan="4"></td></tr>
         
         <tr>
-          <th class="bordered text-center bold">No.</th>
-          <th class="bordered text-left bold">Kegiatan</th>
-          <th class="bordered text-left bold">Pekerjaan</th>
-          <th class="bordered text-center bold">Tanggal</th>
+          <th style="${tdBorder}" class="text-center bold">No.</th>
+          <th style="${tdBorder}" class="text-left bold">Kegiatan</th>
+          <th style="${tdBorder}" class="text-left bold">Pekerjaan</th>
+          <th style="${tdBorder}" class="text-center bold">Tanggal</th>
         </tr>
         ${groupedLkh && groupedLkh.length > 0 ? groupedLkh.map((group, groupIndex) => 
           group.items.map((item, itemIndex) => `
             <tr>
-              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" class="bordered text-center valign-top">${groupIndex + 1}</td>` : ''}
-              <td class="bordered valign-top">${item.kegiatan}</td>
-              <td class="bordered valign-top">${item.uraian}</td>
-              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" class="bordered text-center valign-top">${group.formattedDate}</td>` : ''}
+              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" style="${tdBorder}" class="text-center valign-top">${groupIndex + 1}</td>` : ''}
+              <td style="${tdBorder}" class="valign-top">${item.kegiatan}</td>
+              <td style="${tdBorder}" class="valign-top">${item.uraian}</td>
+              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" style="${tdBorder}" class="text-center valign-top">${group.formattedDate}</td>` : ''}
             </tr>
           `).join('')
         ).join('') : `
-          <tr><td colspan="4" class="bordered text-center">Belum ada data kegiatan untuk bulan ini.</td></tr>
+          <tr><td colspan="4" style="${tdBorder}" class="text-center">Belum ada data kegiatan untuk bulan ini.</td></tr>
         `}
         
         <tr><td colspan="4"></td></tr>
@@ -145,7 +146,6 @@ export default function LaporanBulanan() {
     <style>
       table { border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11pt; }
       td, th { padding: 5px; }
-      .bordered { border: 1pt solid black; }
       .text-center { text-align: center; }
       .text-left { text-align: left; }
       .bold { font-weight: bold; }
