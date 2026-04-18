@@ -189,8 +189,8 @@ export default function LaporanBulanan() {
           <div className="text-center flex flex-col items-center">
             <p className="mb-2">Mengetahui,</p>
             <p className="font-bold mb-16">Kepala Sekolah / Madrasah</p>
-            <p className="font-bold border-b border-black pb-1 inline-block uppercase">{profil?.kepsekNama || '-'}</p>
-            <p className="mt-1">NIP. {profil?.kepsekNip || '-'}</p>
+            <p className="font-bold border-b border-black pb-1 inline-block uppercase">{profil?.namaKepsek || '-'}</p>
+            <p className="mt-1">NIP. {profil?.nipKepsek || '-'}</p>
           </div>
           
           <div className="text-center flex flex-col items-center justify-between">

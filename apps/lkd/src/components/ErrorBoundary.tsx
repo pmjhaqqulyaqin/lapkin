@@ -1,4 +1,5 @@
-import React, { Component, ErrorInfo } from 'react';
+import React, { Component } from 'react';
+import type { ErrorInfo } from 'react';
 
 export default class ErrorBoundary extends Component<{children: React.ReactNode}, {hasError: boolean, error: Error | null}> {
   constructor(props: {children: React.ReactNode}) {

@@ -12,6 +12,7 @@ export interface Profil {
   namaKepsek: string;
   nipKepsek: string;
   ttdUrl?: string; // Data URL for offline image
+  avatarUrl?: string; // Foto profil avatar
 }
 
 export interface Jadwal {
