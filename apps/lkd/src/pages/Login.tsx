@@ -9,6 +9,7 @@ export default function Login() {
   const showToast = useAppStore((state) => state.showToast);
 
   const [isRegister, setIsRegister] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
   const [formData, setFormData] = React.useState({ nip: '', password: '', nama: '' });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -145,7 +146,7 @@ export default function Login() {
               <div className="relative flex items-center">
                 <span className="absolute left-4 material-symbols-outlined text-slate-400 text-[20px]">lock</span>
                 <input 
-                  type="password" 
+                  type={showPassword ? "text" : "password"} 
                   id="password" 
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -153,8 +154,14 @@ export default function Login() {
                   placeholder="••••••••"
                   required
                 />
-                <button type="button" className="absolute right-4 text-slate-400 hover:text-cyan-600 transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">visibility</span>
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 text-slate-400 hover:text-cyan-600 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
                 </button>
               </div>
             </div>
