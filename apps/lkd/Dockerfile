@@ -8,6 +8,9 @@ WORKDIR /app
 # kita perlu meng-copy seluruh konfigurasi dan source code agar workspaces terbaca dengan benar
 COPY . .
 
+# Hapus lockfile agar npm install benar-benar bersih dan menginstal semua module tanpa conflict
+RUN rm -f package-lock.json
+
 # Install dependencies untuk seluruh workspaces
 RUN npm install
 
