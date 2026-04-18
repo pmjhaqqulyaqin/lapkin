@@ -30,10 +30,10 @@ export default function LaporanBulanan() {
     const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head><meta charset='utf-8'><title>Laporan Kinerja</title>
     <style>
-      table { border-collapse: collapse; width: 100%; }
+      table { border-collapse: collapse; width: 100%; table-layout: fixed; }
       table, th, td { border: 1px solid black; }
-      th, td { padding: 8px; text-align: left; }
-      th { background-color: #f2f2f2; }
+      th, td { padding: 6px; text-align: left; word-wrap: break-word; }
+      th { background-color: transparent; font-weight: bold; }
       .text-center { text-align: center; }
       .font-bold { font-weight: bold; }
     </style>
@@ -106,7 +106,7 @@ export default function LaporanBulanan() {
       </header>
 
       {/* A4 Paper Container for Printing */}
-      <main id="print-area" className="max-w-[210mm] mx-auto bg-white my-8 md:my-12 shadow-2xl p-8 md:p-12 min-h-[297mm] text-black print-area">
+      <main id="print-area" className="max-w-[210mm] mx-auto bg-white my-8 md:my-12 shadow-2xl p-4 sm:p-8 md:p-12 min-h-[297mm] text-black print-area print:max-w-none print:w-full print:m-0 print:p-0 print:shadow-none">
         
         {/* Report Header / Kop Identitas */}
         <div className="text-center mb-8 border-b-2 border-black pb-6">
@@ -147,33 +147,38 @@ export default function LaporanBulanan() {
           </table>
         </div>
 
-        {/* LKH Table */}
-        <table className="w-full border-collapse border border-black text-sm mb-12">
+        <table className="w-full border-collapse border border-black text-sm mb-12 table-fixed print:w-full">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-black px-4 py-3 w-12 text-center font-bold">No</th>
-              <th className="border border-black px-4 py-3 w-32 font-bold text-center">Tanggal</th>
-              <th className="border border-black px-4 py-3 font-bold text-left">Kegiatan / Uraian Pekerjaan</th>
-              <th className="border border-black px-4 py-3 w-48 font-bold text-center">Keterangan Output</th>
+            <tr className="bg-gray-100 print:bg-transparent">
+              <th className="border border-black px-2 py-3 w-[8%] text-center font-bold">No.</th>
+              <th className="border border-black px-2 py-3 w-[25%] font-bold text-left">Kegiatan</th>
+              <th className="border border-black px-2 py-3 w-[47%] font-bold text-left">Pekerjaan</th>
+              <th className="border border-black px-2 py-3 w-[20%] font-bold text-center">Tanggal</th>
             </tr>
           </thead>
           <tbody>
             {lkhData && lkhData.length > 0 ? (
-              lkhData.map((item, index) => (
-                <tr key={item.id}>
-                  <td className="border border-black px-4 py-3 text-center align-top">{index + 1}</td>
-                  <td className="border border-black px-4 py-3 text-center align-top whitespace-nowrap">
-                    {formatterTanggalSingkat.format(new Date(item.tanggal))}
-                  </td>
-                  <td className="border border-black px-4 py-3 align-top">
-                    <div className="font-bold mb-1">{item.kegiatan}</div>
-                    <div className="text-gray-700">{item.uraian}</div>
-                  </td>
-                  <td className="border border-black px-4 py-3 text-center align-top text-gray-700">
-                    {item.keteranganOutput}
-                  </td>
-                </tr>
-              ))
+              lkhData.map((item, index) => {
+                const dateObj = new Date(item.tanggal);
+                const day = dateObj.getDate().toString().padStart(2, '0');
+                const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                const year = dateObj.getFullYear();
+                const formattedDate = `${day}- ${month}- ${year}`;
+                return (
+                  <tr key={item.id}>
+                    <td className="border border-black px-2 py-3 text-center align-top">{index + 1}</td>
+                    <td className="border border-black px-2 py-3 align-top break-words">
+                      {item.kegiatan}
+                    </td>
+                    <td className="border border-black px-2 py-3 align-top break-words">
+                      {item.uraian}
+                    </td>
+                    <td className="border border-black px-2 py-3 text-center align-top whitespace-nowrap">
+                      {formattedDate}
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td colSpan={4} className="border border-black px-4 py-12 text-center text-gray-500 italic">
