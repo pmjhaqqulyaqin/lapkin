@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -16,12 +16,27 @@ export default function LaporanBulanan() {
       })
     ), [activeMonthIndex, activeYear]
   );
-
-  const lastDayOfMonth = new Date(activeYear, activeMonthIndex + 1, 0);
   
   const formatterBulan = new Intl.DateTimeFormat('id-ID', { month: 'long' });
   const namaBulanThn = `${formatterBulan.format(new Date(activeYear, activeMonthIndex))} ${activeYear}`;
   const formatterTanggalLengkap = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  // State for Pengesahan
+  const [tempat, setTempat] = useState('Lombok Timur');
+  const [tglPengesahan, setTglPengesahan] = useState('');
+
+  // Sync default date when month/year changes
+  useEffect(() => {
+    const lastDay = new Date(activeYear, activeMonthIndex + 1, 0);
+    const y = lastDay.getFullYear();
+    const m = (lastDay.getMonth() + 1).toString().padStart(2, '0');
+    const d = lastDay.getDate().toString().padStart(2, '0');
+    setTglPengesahan(`${y}-${m}-${d}`);
+  }, [activeMonthIndex, activeYear]);
+
+  const formattedTglPengesahan = tglPengesahan 
+    ? formatterTanggalLengkap.format(new Date(tglPengesahan))
+    : formatterTanggalLengkap.format(new Date(activeYear, activeMonthIndex + 1, 0));
 
   const exportToWord = () => {
     const printContent = document.getElementById('print-area')?.innerHTML;
@@ -108,23 +123,43 @@ export default function LaporanBulanan() {
           </div>
         </div>
         
-        {/* Print & Action Buttons */}
-        <div className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 w-full md:w-auto">
-          <NavLink to="/lkh/riwayat" className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl font-label text-sm font-bold text-primary hover:bg-surface-variant transition-colors border border-outline-variant/30">
+        {/* Settings & Print Action Buttons */}
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full md:w-auto">
+          {/* Custom Date Pengesahan */}
+          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1.5 w-full md:w-auto">
+            <span className="material-symbols-outlined text-slate-400 text-[18px]">edit_calendar</span>
+            <input 
+              type="text" 
+              value={tempat} 
+              onChange={e => setTempat(e.target.value)} 
+              className="w-24 text-xs font-bold bg-transparent outline-none text-slate-700 dark:text-slate-200 border-r border-slate-200 dark:border-slate-800 pr-2"
+              placeholder="Tempat"
+            />
+            <input 
+              type="date" 
+              value={tglPengesahan} 
+              onChange={e => setTglPengesahan(e.target.value)} 
+              className="text-xs font-bold bg-transparent outline-none text-slate-700 dark:text-slate-200 pl-1 uppercase"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <NavLink to="/lkh/riwayat" className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-label text-sm font-bold text-primary hover:bg-surface-variant transition-colors border border-outline-variant/30">
             <span className="material-symbols-outlined text-[18px]">edit_document</span>
-            <span className="hidden md:inline">Edit Laporan</span>
+            <span className="hidden md:inline">Edit</span>
           </NavLink>
-          <button onClick={exportToWord} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl font-label text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 hover:bg-teal-100 transition-colors">
+          <button onClick={exportToWord} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-label text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 hover:bg-teal-100 transition-colors">
             <span className="material-symbols-outlined text-[18px]">description</span>
-            <span className="hidden md:inline">Export Word</span>
+            <span className="hidden md:inline">Word</span>
           </button>
           <button 
             onClick={() => window.print()}
-            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-6 py-3 rounded-xl font-label text-sm font-bold text-on-primary bg-primary hover:opacity-90 transition-opacity shadow-sm"
+            className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-xl font-label text-sm font-bold text-on-primary bg-primary hover:opacity-90 transition-opacity shadow-sm"
           >
             <span className="material-symbols-outlined text-[18px]">print</span>
             Cetak PDF
           </button>
+          </div>
         </div>
       </header>
 
@@ -213,22 +248,35 @@ export default function LaporanBulanan() {
 
         {/* Signature Area */}
         <div className="flex justify-between mt-12 page-break-inside-avoid">
-          <div className="text-center flex flex-col items-center">
-            <p className="mb-2">Mengetahui,</p>
-            <p className="font-bold mb-16">Kepala Sekolah / Madrasah</p>
-            <p className="font-bold border-b border-black pb-1 inline-block uppercase">{profil?.namaKepsek || '-'}</p>
-            <p className="mt-1">NIP. {profil?.nipKepsek || '-'}</p>
+          {/* Left Signature: Kepala Sekolah */}
+          <div className="text-center flex flex-col items-center justify-between w-64">
+            <div>
+              <p className="mb-2 text-transparent select-none">Spacer</p> {/* Invisible spacer to align vertically with date on the right */}
+              <p className="mb-2">Mengetahui,</p>
+              <p className="font-bold mb-4">Kepala Sekolah / Madrasah</p>
+            </div>
+            <div className="h-20 w-full flex items-center justify-center">
+              {/* Empty area for manual signature / future kepsek signature */}
+            </div>
+            <div className="w-full">
+              <p className="font-bold border-b border-black pb-1 inline-block uppercase">{profil?.namaKepsek || '-'}</p>
+              <p className="mt-1">NIP. {profil?.nipKepsek || '-'}</p>
+            </div>
           </div>
           
-          <div className="text-center flex flex-col items-center justify-between">
-            <p className="mb-2">Lombok Timur, {formatterTanggalLengkap.format(lastDayOfMonth)}</p>
-            <p className="font-bold mb-4">Pegawai yang dinilai</p>
-            {profil?.ttdUrl && profil.ttdUrl.startsWith('data:image') ? (
-              <img src={profil.ttdUrl} alt="Tanda Tangan" className="h-16 object-contain mix-blend-multiply mb-2" />
-            ) : (
-              <div className="h-20"></div> // Spacer if no signature
-            )}
+          {/* Right Signature: Pegawai */}
+          <div className="text-center flex flex-col items-center justify-between w-64">
             <div>
+              <p className="mb-2">{tempat}, {formattedTglPengesahan}</p>
+              <p className="mb-2 text-transparent select-none">Spacer</p> {/* Vertical balancer */}
+              <p className="font-bold mb-4">Pegawai yang dinilai</p>
+            </div>
+            <div className="h-20 w-full flex items-center justify-center">
+              {profil?.ttdUrl && profil.ttdUrl.startsWith('data:image') && (
+                <img src={profil.ttdUrl} alt="Tanda Tangan" className="h-16 object-contain mix-blend-multiply" />
+              )}
+            </div>
+            <div className="w-full">
               <p className="font-bold border-b border-black pb-1 inline-block uppercase">{profil?.nama || '-'}</p>
               <p className="mt-1">NIP. {profil?.nip || '-'}</p>
             </div>
