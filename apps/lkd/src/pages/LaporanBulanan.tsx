@@ -69,26 +69,96 @@ export default function LaporanBulanan() {
   };
 
   const exportToExcel = () => {
-    const printContent = document.getElementById('print-area')?.innerHTML;
-    if (!printContent) return;
+    const excelHtml = `
+      <table>
+        <tr>
+          <th colspan="4" class="text-center bold" style="font-size: 14pt;">Bulan ${namaBulanThn}</th>
+        </tr>
+        <tr><td colspan="4"></td></tr>
+        <tr>
+          <td colspan="2" class="bordered">Nama</td>
+          <td colspan="2" class="bordered">${profil?.nama || '-'}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="bordered">NIP</td>
+          <td colspan="2" class="bordered" style='mso-number-format:"\\@"'>${profil?.nip || '-'}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="bordered">Pangkat / Gol</td>
+          <td colspan="2" class="bordered">${profil?.pangkat || '-'} / ${profil?.golongan || '-'}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="bordered">Jabatan</td>
+          <td colspan="2" class="bordered">${profil?.jabatan || '-'}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="bordered">Unit Kerja</td>
+          <td colspan="2" class="bordered">MAN 2 Lombok Timur</td>
+        </tr>
+        <tr><td colspan="4"></td></tr>
+        
+        <tr>
+          <th class="bordered text-center bold">No.</th>
+          <th class="bordered text-left bold">Kegiatan</th>
+          <th class="bordered text-left bold">Pekerjaan</th>
+          <th class="bordered text-center bold">Tanggal</th>
+        </tr>
+        ${groupedLkh && groupedLkh.length > 0 ? groupedLkh.map((group, groupIndex) => 
+          group.items.map((item, itemIndex) => `
+            <tr>
+              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" class="bordered text-center valign-top">${groupIndex + 1}</td>` : ''}
+              <td class="bordered valign-top">${item.kegiatan}</td>
+              <td class="bordered valign-top">${item.uraian}</td>
+              ${itemIndex === 0 ? `<td rowspan="${group.items.length}" class="bordered text-center valign-top">${group.formattedDate}</td>` : ''}
+            </tr>
+          `).join('')
+        ).join('') : `
+          <tr><td colspan="4" class="bordered text-center">Belum ada data kegiatan untuk bulan ini.</td></tr>
+        `}
+        
+        <tr><td colspan="4"></td></tr>
+        <tr><td colspan="4"></td></tr>
+        <tr>
+          <td colspan="3">Mengetahui,</td>
+          <td>${tempat}, ${formattedTglPengesahan}</td>
+        </tr>
+        <tr>
+          <td colspan="3">Kepala Sekolah / Madrasah</td>
+          <td>Pegawai yang dinilai</td>
+        </tr>
+        <tr><td colspan="4"></td></tr>
+        <tr><td colspan="4"></td></tr>
+        <tr><td colspan="4"></td></tr>
+        <tr>
+          <td colspan="3">${profil?.namaKepsek || '-'}</td>
+          <td>${profil?.nama || '-'}</td>
+        </tr>
+        <tr>
+          <td colspan="3" style='mso-number-format:"\\@"'>NIP. ${profil?.nipKepsek || '-'}</td>
+          <td style='mso-number-format:"\\@"'>NIP. ${profil?.nip || '-'}</td>
+        </tr>
+      </table>
+    `;
 
     const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>
     <head><meta charset='utf-8'><title>Laporan Kinerja</title>
     <style>
-      table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-      table, th, td { border: 1px solid black; }
-      th, td { padding: 6px; text-align: left; word-wrap: break-word; }
-      th { background-color: transparent; font-weight: bold; }
+      table { border-collapse: collapse; font-family: Arial, sans-serif; font-size: 11pt; }
+      td, th { padding: 5px; }
+      .bordered { border: 1pt solid black; }
       .text-center { text-align: center; }
-      .font-bold { font-weight: bold; }
+      .text-left { text-align: left; }
+      .bold { font-weight: bold; }
+      .valign-top { vertical-align: top; }
     </style>
     <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
     <x:Name>Laporan Kinerja</x:Name>
     <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
     </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
     </head><body>`;
+    
     const postHtml = "</body></html>";
-    const html = preHtml + printContent + postHtml;
+    const html = preHtml + excelHtml + postHtml;
 
     const url = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(html);
     const filename = `LKH_${profil?.nama || 'Pegawai'}_${namaBulanThn.replace(' ', '_')}.xls`;
