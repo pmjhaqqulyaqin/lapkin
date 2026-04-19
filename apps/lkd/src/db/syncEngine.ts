@@ -190,7 +190,7 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
   let totalMerged = 0;
 
   // Merge into Dexie using a transaction
-  await db.transaction('rw', db.profil, db.jadwal, db.lkh, db.tugasTambahan, db.kalender, async () => {
+  await db.transaction('rw', [db.profil, db.jadwal, db.lkh, db.tugasTambahan, db.kalender], async () => {
 
     // 1. Merge Profil
     if (serverData.profil) {
