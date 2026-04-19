@@ -104,8 +104,10 @@ export async function getUsers(_req: Request, res: Response): Promise<void> {
 export async function getUserDetail(req: Request, res: Response): Promise<void> {
   try {
     const userId = parseInt(req.params.id);
-    const month = parseInt(req.query.month as string ?? new Date().getMonth().toString());
-    const year = parseInt(req.query.year as string ?? new Date().getFullYear().toString());
+    const monthStr = String(req.query.month ?? new Date().getMonth());
+    const yearStr = String(req.query.year ?? new Date().getFullYear());
+    const month = parseInt(monthStr);
+    const year = parseInt(yearStr);
 
     // Ambil profil guru
     const profilResult = await query(`
