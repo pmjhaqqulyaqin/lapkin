@@ -232,16 +232,13 @@ export default function JadwalMengajar() {
 
           {/* Mini Calendar / Agenda */}
           <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6">
-            <h3 className="font-manrope font-bold text-slate-800 dark:text-slate-100 mb-4">Agenda Mendatang</h3>
-            <div className="space-y-4">
-              <div className="flex gap-3">
-                <div className="w-12 text-center">
-                  <span className="block font-bold text-slate-800 dark:text-slate-200">12</span>
-                  <span className="text-[10px] uppercase font-bold text-slate-400">Feb</span>
-                </div>
-                <div className="flex-1 border-l-2 border-red-500 pl-3">
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Ujian Tengah Semester</h4>
-                  <p className="text-xs text-slate-500 mt-1">Mulai 12 - 18 Feb 2026</p>
+            <h3 className="font-manrope font-bold text-slate-800 dark:text-slate-100 mb-4">Informasi Kalender</h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
+                <span className="material-symbols-outlined text-teal-600 dark:text-teal-400">calendar_month</span>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Kalender Akademik</h4>
+                  <p className="text-xs text-slate-500 mt-0.5">Atur hari libur & kegiatan khusus di menu Kalender.</p>
                 </div>
               </div>
             </div>

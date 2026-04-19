@@ -28,12 +28,15 @@ export default class ErrorBoundary extends Component<{children: React.ReactNode}
           >
             Muat Ulang Aplikasi
           </button>
-          <div className="mt-8 text-left max-w-2xl w-full hidden md:block">
-             <pre className="text-xs text-red-400 bg-red-50 dark:bg-red-950/20 p-4 rounded-xl overflow-auto border border-red-100 dark:border-red-900/50">
-               {this.state.error?.toString()}
-               {'\n'}
-               {this.state.error?.stack}
-             </pre>
+          <div className="mt-8 text-left max-w-2xl w-full">
+             <details className="text-xs">
+               <summary className="text-red-400 cursor-pointer font-semibold hover:underline">Detail teknis (untuk developer)</summary>
+               <pre className="text-red-400 bg-red-50 dark:bg-red-950/20 p-4 rounded-xl overflow-auto border border-red-100 dark:border-red-900/50 mt-2">
+                {this.state.error?.toString()}
+                {'\n'}
+                {this.state.error?.stack}
+              </pre>
+            </details>
           </div>
         </div>
       );

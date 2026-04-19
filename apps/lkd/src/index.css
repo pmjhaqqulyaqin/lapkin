@@ -28,36 +28,29 @@
   .headline-font {
     font-family: 'Manrope', sans-serif;
   }
-  .no-scrollbar::-webkit-scrollbar {
+
+  /* Unified scrollbar hiding utility (satu saja, tidak perlu 3 versi) */
+  .no-scrollbar::-webkit-scrollbar,
+  .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  .no-scrollbar {
+  .no-scrollbar,
+  .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }
   .tap-highlight-none {
     -webkit-tap-highlight-color: transparent;
   }
-  .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-  }
-  .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-  }
-  .hide-scrollbar::-webkit-scrollbar {
-      display: none;
-  }
-  .hide-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-  }
   .editorial-shadow {
-      box-shadow: 0 20px 40px -15px rgba(0, 34, 44, 0.08);
+    box-shadow: 0 20px 40px -15px rgba(0, 34, 44, 0.08);
   }
+
+  /* Print utilities */
   @media print {
     .no-print { display: none !important; }
     .print-area { padding: 0 !important; margin: 0 !important; box-shadow: none !important; width: 100% !important; }
@@ -65,11 +58,20 @@
   }
   .page-break-inside-avoid { page-break-inside: avoid; }
   
+  /* Animations */
   @keyframes slideInLeft {
     from { transform: translateX(-100%); }
     to { transform: translateX(0); }
   }
   .animate-slide-in-left {
     animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes scaleUp {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .animate-scale-up {
+    animation: scaleUp 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }

@@ -28,12 +28,17 @@ export default function Sidebar() {
               src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'Guru'}&background=0D9488&color=fff`}
             />
           </div>
-          <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100 line-clamp-1">
-            {profil?.nama || 'Memuat...'}
-          </h2>
-          <p className="text-xs font-semibold text-slate-500 mt-0.5">
-            {profil?.jabatan || 'Guru'}
-          </p>
+          {profil ? (
+            <>
+              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100 line-clamp-1">{profil.nama}</h2>
+              <p className="text-xs font-semibold text-slate-500 mt-0.5">{profil.jabatan || 'Guru'}</p>
+            </>
+          ) : (
+            <>
+              <div className="h-5 w-36 bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
+              <div className="h-3 w-20 bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse mt-1.5"></div>
+            </>
+          )}
           <div className="mt-4 flex items-center gap-1.5 text-xs font-bold text-teal-600 dark:text-teal-400 bg-teal-100 dark:bg-teal-900/40 w-max px-2.5 py-1 rounded-md">
             <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></div>
             Tersinkronisasi Lokal

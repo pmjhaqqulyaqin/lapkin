@@ -114,10 +114,23 @@ export default function InputLkh() {
   const handleSimpan = async (e: React.FormEvent, andLanjut: boolean = false) => {
     e.preventDefault();
     if (isLibur) return;
+
+    // Ambil LKH yang sudah ada untuk tanggal ini (untuk cegah duplikasi)
+    const existingLkh = await db.lkh.where('tanggal').equals(tanggal).toArray();
+
+    let savedCount = 0;
+    let skippedCount = 0;
+
     // 1. Simpan Jadwal Otomatis yang dicentang
     if (jadwalHariIni) {
       const jadwalToSave = jadwalHariIni.filter(j => j.id && checkedItems[`jadwal-${j.id}`]);
       for (const j of jadwalToSave) {
+        // Cek duplikasi: apakah sudah ada LKH dengan sumberId & tipeSumber yang sama
+        const isDuplicate = existingLkh.some(
+          lkh => lkh.tipeSumber === 'jadwal' && lkh.sumberId === j.id && !lkh.isDeleted
+        );
+        if (isDuplicate) { skippedCount++; continue; }
+
         await db.lkh.add({
           tanggal: tanggal,
           kegiatan: `KBM - ${j.mataPelajaran}`,
@@ -128,12 +141,19 @@ export default function InputLkh() {
           createdAt: Date.now(),
           updatedAt: Date.now()
         });
+        savedCount++;
       }
     }
 
     // 2. Simpan Tugas Tambahan Otomatis yang dicentang
     const tugasToSave = tugasTemplates.filter(t => checkedItems[t.uniqueId]);
     for (const t of tugasToSave) {
+      // Cek duplikasi berdasarkan sumberId + tipeSumber + uraian yang sama
+      const isDuplicate = existingLkh.some(
+        lkh => lkh.tipeSumber === 'tugas_tambahan' && lkh.sumberId === t.id && lkh.uraian === t.deskripsiCurrent && !lkh.isDeleted
+      );
+      if (isDuplicate) { skippedCount++; continue; }
+
       await db.lkh.add({
         tanggal: tanggal,
         kegiatan: t.namaTugas,
@@ -144,6 +164,7 @@ export default function InputLkh() {
         createdAt: Date.now(),
         updatedAt: Date.now()
       });
+      savedCount++;
     }
 
     // 3. Simpan Manual (Jika ada isinya)
@@ -157,9 +178,19 @@ export default function InputLkh() {
         createdAt: Date.now(),
         updatedAt: Date.now()
       });
+      savedCount++;
     }
 
-    showToast("Aktivitas berhasil disimpan!", "success");
+    if (skippedCount > 0 && savedCount === 0) {
+      showToast(`Data untuk tanggal ini sudah pernah disimpan sebelumnya.`, "info");
+    } else if (skippedCount > 0) {
+      showToast(`${savedCount} aktivitas disimpan, ${skippedCount} dilewati (sudah ada).`, "success");
+    } else if (savedCount > 0) {
+      showToast("Aktivitas berhasil disimpan!", "success");
+    } else {
+      showToast("Tidak ada aktivitas yang dipilih untuk disimpan.", "info");
+      return; // Jangan navigasi jika tidak ada yang disimpan
+    }
 
     if (andLanjut) {
       // Pindah ke tanggal berikutnya, lewati hari minggu

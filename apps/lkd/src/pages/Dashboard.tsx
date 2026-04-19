@@ -92,12 +92,17 @@ export default function Dashboard() {
               <span className="material-symbols-outlined">menu</span>
             </button>
             <div>
-              <h1 className="font-headline font-bold text-lg tracking-tight text-teal-950 dark:text-teal-50 leading-tight">
-                {profil?.nama || 'Memuat...'}
-              </h1>
-              <span className="text-xs text-on-surface-variant font-medium">
-                {profil?.jabatan || 'Guru'}
-              </span>
+              {profil ? (
+                <>
+                  <h1 className="font-headline font-bold text-lg tracking-tight text-teal-950 dark:text-teal-50 leading-tight">{profil.nama}</h1>
+                  <span className="text-xs text-on-surface-variant font-medium">{profil.jabatan || 'Guru'}</span>
+                </>
+              ) : (
+                <>
+                  <div className="h-5 w-32 bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
+                  <div className="h-3 w-16 bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse mt-1.5"></div>
+                </>
+              )}
             </div>
           </div>
           <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed">
