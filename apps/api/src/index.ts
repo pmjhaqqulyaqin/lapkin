@@ -3,6 +3,7 @@ import cors from 'cors';
 import { initializeDatabase } from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
 import syncRoutes from './routes/sync.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
@@ -40,6 +41,9 @@ app.use('/api/auth', authRoutes);
 
 // Sync routes: /api/sync/push, /api/sync/pull
 app.use('/api/sync', syncRoutes);
+
+// Admin routes: /api/admin/stats, /api/admin/users, etc.
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((_req, res) => {

@@ -1,11 +1,12 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-// Extend Express Request to include userId
+// Extend Express Request to include userId and userRole
 declare global {
   namespace Express {
     interface Request {
       userId?: number;
+      userRole?: string;
     }
   }
 }
@@ -15,9 +16,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'lkd-default-secret-change-in-produ
 /**
  * Generate a JWT token for a user.
  */
-export function generateToken(userId: number, nip: string): string {
+export function generateToken(userId: number, nip: string, role: string = 'guru'): string {
   return jwt.sign(
-    { userId, nip },
+    { userId, nip, role },
     JWT_SECRET,
     { expiresIn: '90d' } // Token berlaku 90 hari (long-lived for mobile app)
   );
@@ -26,7 +27,7 @@ export function generateToken(userId: number, nip: string): string {
 /**
  * Middleware: Verifikasi JWT token dari header Authorization.
  * Menolak request jika token tidak valid atau tidak ada.
- * Menyimpan userId di req.userId untuk dipakai controller.
+ * Menyimpan userId dan userRole di req untuk dipakai controller.
  */
 export function authenticate(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
@@ -42,8 +43,9 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; nip: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; nip: string; role?: string };
     req.userId = decoded.userId;
+    req.userRole = decoded.role || 'guru';
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
@@ -58,4 +60,19 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
       error: 'Token tidak valid.',
     });
   }
+}
+
+/**
+ * Middleware: Hanya izinkan user dengan role 'admin'.
+ * Harus digunakan SETELAH authenticate().
+ */
+export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
+  if (req.userRole !== 'admin') {
+    res.status(403).json({
+      success: false,
+      error: 'Akses ditolak. Anda bukan administrator.',
+    });
+    return;
+  }
+  next();
 }

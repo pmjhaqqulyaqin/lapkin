@@ -61,7 +61,8 @@ export async function initializeDatabase() {
       console.log('🏗️  Tabel belum ada. Menjalankan migrasi...');
       await runMigrations();
     } else {
-      console.log('✅ Database sudah siap.');
+      console.log('✅ Database sudah siap. Menjalankan migrasi tambahan...');
+      await runAdditionalMigrations();
     }
   } catch (error) {
     console.error('❌ Gagal inisialisasi database:', error);
@@ -84,7 +85,29 @@ async function runMigrations() {
   const sql = readFileSync(migrationPath, 'utf-8');
   
   await query(sql);
-  console.log('✅ Migrasi database berhasil dijalankan!');
+  console.log('✅ Migrasi 001_init berhasil!');
+
+  // Jalankan migrasi tambahan
+  await runAdditionalMigrations();
+}
+
+/**
+ * Run additional migration scripts (safe to re-run).
+ */
+async function runAdditionalMigrations() {
+  const { readFileSync, existsSync } = await import('fs');
+  const { fileURLToPath } = await import('url');
+  const { dirname, join } = await import('path');
+  
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+
+  const migration002 = join(__dirname, '..', 'migrations', '002_admin_role.sql');
+  if (existsSync(migration002)) {
+    const sql = readFileSync(migration002, 'utf-8');
+    await query(sql);
+    console.log('✅ Migrasi 002_admin_role berhasil!');
+  }
 }
 
 export default pool;

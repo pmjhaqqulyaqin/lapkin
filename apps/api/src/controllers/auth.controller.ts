@@ -51,7 +51,7 @@ export async function register(req: Request, res: Response): Promise<void> {
     );
 
     const user = result.rows[0];
-    const token = generateToken(user.id, user.nip);
+    const token = generateToken(user.id, user.nip, 'guru');
 
     console.log(`✅ User terdaftar: ${user.nama} (NIP: ${user.nip})`);
 
@@ -62,6 +62,7 @@ export async function register(req: Request, res: Response): Promise<void> {
         userId: user.id,
         nip: user.nip,
         nama: user.nama,
+        role: 'guru',
         token,
       },
     });
@@ -94,7 +95,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 
     // Cari user berdasarkan NIP
     const result = await query(
-      'SELECT id, nip, nama, password_hash FROM users WHERE nip = $1',
+      'SELECT id, nip, nama, password_hash, role FROM users WHERE nip = $1',
       [nip]
     );
 
@@ -118,9 +119,9 @@ export async function login(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const token = generateToken(user.id, user.nip);
+    const token = generateToken(user.id, user.nip, user.role || 'guru');
 
-    console.log(`🔑 User login: ${user.nama} (NIP: ${user.nip})`);
+    console.log(`🔑 User login: ${user.nama} (NIP: ${user.nip}) — role: ${user.role || 'guru'}`);
 
     res.json({
       success: true,
@@ -129,6 +130,7 @@ export async function login(req: Request, res: Response): Promise<void> {
         userId: user.id,
         nip: user.nip,
         nama: user.nama,
+        role: user.role || 'guru',
         token,
       },
     });
@@ -149,7 +151,7 @@ export async function login(req: Request, res: Response): Promise<void> {
 export async function me(req: Request, res: Response): Promise<void> {
   try {
     const result = await query(
-      'SELECT id, nip, nama, created_at FROM users WHERE id = $1',
+      'SELECT id, nip, nama, role, created_at FROM users WHERE id = $1',
       [req.userId]
     );
 
