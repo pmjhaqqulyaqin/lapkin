@@ -93,11 +93,20 @@ export async function login(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    // Cari user berdasarkan NIP
-    const result = await query(
-      'SELECT id, nip, nama, password_hash, role FROM users WHERE nip = $1',
-      [nip]
-    );
+    // Cari user berdasarkan NIP — tolerant jika kolom 'role' belum ada
+    let result;
+    try {
+      result = await query(
+        'SELECT id, nip, nama, password_hash, role FROM users WHERE nip = $1',
+        [nip]
+      );
+    } catch {
+      // Fallback: kolom role belum ada (migrasi 002 belum jalan)
+      result = await query(
+        'SELECT id, nip, nama, password_hash FROM users WHERE nip = $1',
+        [nip]
+      );
+    }
 
     if (result.rows.length === 0) {
       res.status(401).json({
@@ -150,10 +159,18 @@ export async function login(req: Request, res: Response): Promise<void> {
  */
 export async function me(req: Request, res: Response): Promise<void> {
   try {
-    const result = await query(
-      'SELECT id, nip, nama, role, created_at FROM users WHERE id = $1',
-      [req.userId]
-    );
+    let result;
+    try {
+      result = await query(
+        'SELECT id, nip, nama, role, created_at FROM users WHERE id = $1',
+        [req.userId]
+      );
+    } catch {
+      result = await query(
+        'SELECT id, nip, nama, created_at FROM users WHERE id = $1',
+        [req.userId]
+      );
+    }
 
     if (result.rows.length === 0) {
       res.status(404).json({

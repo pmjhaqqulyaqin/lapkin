@@ -106,11 +106,33 @@ async function runAdditionalMigrations() {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
 
-  const migration002 = join(__dirname, '..', 'migrations', '002_admin_role.sql');
-  if (existsSync(migration002)) {
-    const sql = readFileSync(migration002, 'utf-8');
-    await query(sql);
-    console.log('✅ Migrasi 002_admin_role berhasil!');
+  // Coba beberapa path — karena struktur folder bisa beda antara dev dan Docker
+  const possiblePaths = [
+    join(__dirname, '..', 'migrations', '002_admin_role.sql'),       // dev: src/config -> src/migrations
+    join(__dirname, '..', '..', 'migrations', '002_admin_role.sql'), // docker: dist/config -> migrations
+    join(process.cwd(), 'migrations', '002_admin_role.sql'),         // docker: /app/migrations
+  ];
+
+  for (const migrationPath of possiblePaths) {
+    if (existsSync(migrationPath)) {
+      console.log(`📂 Ditemukan migrasi 002 di: ${migrationPath}`);
+      const sql = readFileSync(migrationPath, 'utf-8');
+      await query(sql);
+      console.log('✅ Migrasi 002_admin_role berhasil!');
+      return;
+    }
+  }
+
+  console.log('⚠️  File migrasi 002_admin_role.sql tidak ditemukan di path manapun.');
+  console.log('   Mencoba ALTER TABLE langsung...');
+  
+  // Fallback: jalankan SQL langsung tanpa file
+  try {
+    await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'guru'");
+    await query('CREATE INDEX IF NOT EXISTS idx_users_role ON users (role)');
+    console.log('✅ Kolom role berhasil ditambahkan via fallback!');
+  } catch (err) {
+    console.error('⚠️  Gagal menambah kolom role:', err);
   }
 }
 
