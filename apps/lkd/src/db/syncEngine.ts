@@ -9,6 +9,29 @@ import { db } from './database.js';
 // API Base URL — configurable via environment variable
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
+/**
+ * Safely parse a fetch Response as JSON.
+ * If the server returns HTML instead of JSON (e.g. Nginx fallback page),
+ * throw a clear, user-friendly error instead of the cryptic
+ * "Unexpected token '<'" message.
+ */
+async function safeJsonParse(res: Response): Promise<any> {
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    // Detect HTML response (Nginx fallback / 404 page)
+    if (text.trimStart().startsWith('<')) {
+      throw new Error(
+        'Server mengembalikan halaman HTML, bukan JSON. '
+        + 'Kemungkinan API server belum berjalan atau URL API salah. '
+        + 'Pastikan backend sudah aktif dan konfigurasi proxy sudah benar.'
+      );
+    }
+    throw new Error(`Respons server tidak valid: ${text.substring(0, 120)}`);
+  }
+}
+
 // =============================================
 // Types
 // =============================================
@@ -43,7 +66,7 @@ export async function syncRegister(nip: string, nama: string, password: string):
     body: JSON.stringify({ nip, nama, password }),
   });
 
-  const data = await res.json();
+  const data = await safeJsonParse(res);
   if (!res.ok) throw new Error(data.error || 'Gagal mendaftar.');
 
   const authData: SyncAuthData = data.data;
@@ -61,7 +84,7 @@ export async function syncLogin(nip: string, password: string): Promise<SyncAuth
     body: JSON.stringify({ nip, password }),
   });
 
-  const data = await res.json();
+  const data = await safeJsonParse(res);
   if (!res.ok) throw new Error(data.error || 'Gagal login.');
 
   const authData: SyncAuthData = data.data;
@@ -162,7 +185,7 @@ async function pushToServer(token: string): Promise<{ serverTimestamp: number; c
     }),
   });
 
-  const data = await res.json();
+  const data = await safeJsonParse(res);
   if (!res.ok) throw new Error(data.error || 'Gagal mengirim data ke server.');
 
   return { serverTimestamp: data.serverTimestamp, count: totalItems };
@@ -183,7 +206,7 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
     body: JSON.stringify({ since: String(lastSync) }),
   });
 
-  const data = await res.json();
+  const data = await safeJsonParse(res);
   if (!res.ok) throw new Error(data.error || 'Gagal mengambil data dari server.');
 
   const serverData = data.data;
