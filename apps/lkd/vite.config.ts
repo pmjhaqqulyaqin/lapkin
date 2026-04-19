@@ -9,28 +9,28 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['logo-man2.svg', 'favicon.svg'],
       manifest: {
         name: 'Laporan Kinerja Digital',
         short_name: 'LKD',
-        description: 'Aplikasi Laporan Kinerja Digital untuk Tenaga Pendidik',
+        description: 'Aplikasi Laporan Kinerja Digital untuk Tenaga Pendidik — MAN 2 Lombok Timur',
         theme_color: '#0f766e',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
           {
-            src: 'icon.svg',
+            src: 'logo-man2.svg',
             sizes: '192x192',
             type: 'image/svg+xml'
           },
           {
-            src: 'icon.svg',
+            src: 'logo-man2.svg',
             sizes: '512x512',
             type: 'image/svg+xml'
           },
           {
-            src: 'icon.svg',
+            src: 'logo-man2.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'any maskable'
@@ -40,3 +40,4 @@ export default defineConfig({
     })
   ],
 })
+
