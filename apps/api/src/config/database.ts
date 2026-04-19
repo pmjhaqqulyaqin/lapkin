@@ -1,4 +1,5 @@
 import pg from 'pg';
+import bcrypt from 'bcrypt';
 
 const { Pool } = pg;
 
@@ -64,6 +65,9 @@ export async function initializeDatabase() {
       console.log('✅ Database sudah siap. Menjalankan migrasi tambahan...');
       await runAdditionalMigrations();
     }
+
+    // Seed akun admin default
+    await seedAdminUser();
   } catch (error) {
     console.error('❌ Gagal inisialisasi database:', error);
     throw error;
@@ -110,4 +114,36 @@ async function runAdditionalMigrations() {
   }
 }
 
+/**
+ * Seed akun Super Admin default.
+ * Hanya dibuat jika belum ada — aman dipanggil berulang kali.
+ */
+async function seedAdminUser() {
+  const ADMIN_NIP = 'admin@mandalotim.id';
+  const ADMIN_NAMA = 'Super Admin';
+  const ADMIN_PASSWORD = 'PasswordAdmin123!';
+
+  try {
+    const existing = await query('SELECT id FROM users WHERE nip = $1', [ADMIN_NIP]);
+    if (existing.rows.length > 0) {
+      // Pastikan role-nya admin (jaga-jaga jika sebelumnya terdaftar sebagai guru)
+      await query('UPDATE users SET role = $1 WHERE nip = $2', ['admin', ADMIN_NIP]);
+      console.log('✅ Akun admin sudah ada — role dipastikan admin.');
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+    await query(
+      'INSERT INTO users (nip, nama, password_hash, role) VALUES ($1, $2, $3, $4)',
+      [ADMIN_NIP, ADMIN_NAMA, passwordHash, 'admin']
+    );
+    console.log('🔐 Akun Super Admin berhasil dibuat!');
+    console.log(`   User : ${ADMIN_NIP}`);
+    console.log(`   Pass : ${ADMIN_PASSWORD}`);
+  } catch (error) {
+    console.error('⚠️  Gagal seed admin (non-fatal):', error);
+  }
+}
+
 export default pool;
+
