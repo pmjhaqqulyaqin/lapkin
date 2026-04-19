@@ -1,21 +1,22 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../store/useAppStore';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const { showToast } = useAppStore();
   const [nip, setNip] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nip || !password) return;
 
     setLoading(true);
+    setError('');
+
     try {
       const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: 'POST',
@@ -23,11 +24,24 @@ export default function AdminLogin() {
         body: JSON.stringify({ nip, password }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Gagal login.');
+      const text = await res.text();
+      let data: any;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        setError(`Server mengembalikan respons tidak valid. Pastikan API sudah berjalan. (${res.status})`);
+        setLoading(false);
+        return;
+      }
+
+      if (!res.ok) {
+        setError(data.error || `Login gagal (HTTP ${res.status})`);
+        setLoading(false);
+        return;
+      }
 
       if (data.data.role !== 'admin') {
-        showToast('Akun ini bukan akun administrator.', 'error');
+        setError('Akun ini bukan akun administrator. Hanya akun dengan role "admin" yang bisa masuk.');
         setLoading(false);
         return;
       }
@@ -37,10 +51,9 @@ export default function AdminLogin() {
       localStorage.setItem('lkd_admin_nama', data.data.nama);
       localStorage.setItem('lkd_admin_role', data.data.role);
 
-      showToast('Login admin berhasil!', 'success');
       navigate('/admin/dashboard');
     } catch (err: any) {
-      showToast(err.message || 'Gagal login ke server.', 'error');
+      setError(`Gagal terhubung ke server: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -61,13 +74,21 @@ export default function AdminLogin() {
         {/* Login Card */}
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Error Banner */}
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/30 rounded-xl px-4 py-3 text-red-200 text-sm font-medium flex items-start gap-2">
+                <span className="material-symbols-outlined text-[18px] mt-0.5 shrink-0">error</span>
+                <span>{error}</span>
+              </div>
+            )}
+
             <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">NIP Administrator</label>
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-2">NIP / Username</label>
               <input
                 type="text"
                 value={nip}
-                onChange={e => setNip(e.target.value)}
-                placeholder="Masukkan NIP"
+                onChange={e => { setNip(e.target.value); setError(''); }}
+                placeholder="admin@mandalotim.id"
                 required
                 className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 font-semibold focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 outline-none transition-all"
               />
@@ -77,7 +98,7 @@ export default function AdminLogin() {
               <input
                 type="password"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
+                onChange={e => { setPassword(e.target.value); setError(''); }}
                 placeholder="••••••••"
                 required
                 className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 font-semibold focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500/50 outline-none transition-all"
