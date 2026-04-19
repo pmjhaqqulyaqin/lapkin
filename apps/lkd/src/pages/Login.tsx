@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
 import { db } from '../db/database';
-import { syncLogin, syncRegister, fullSync } from '../db/syncEngine';
+import { syncLogin, fullSync } from '../db/syncEngine';
 
 export default function Login() {
   const navigate = useNavigate();
