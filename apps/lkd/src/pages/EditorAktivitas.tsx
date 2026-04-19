@@ -7,7 +7,7 @@ import CategoryManagerModal from '../components/CategoryManagerModal';
 
 export default function EditorAktivitas() {
   const { showToast, kategoriTugas, setKategoriTugas } = useAppStore();
-  const tugasData = useLiveQuery(() => db.tugasTambahan.toArray());
+  const tugasData = useLiveQuery(() => db.tugasTambahan.toArray().then(arr => arr.filter(t => !t.isDeleted)));
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,7 +68,8 @@ export default function EditorAktivitas() {
       namaTugas,
       kategori,
       templates: cleanedTemplates,
-      isDraft: false
+      isDraft: false,
+      updatedAt: Date.now(),
     });
     
     showToast("Tugas tambahan berhasil disimpan!", "success");
@@ -78,7 +79,7 @@ export default function EditorAktivitas() {
 
   const handleDelete = async (id?: number) => {
     if (id && window.confirm("Hapus tugas tambahan ini?")) {
-      await db.tugasTambahan.delete(id);
+      await db.tugasTambahan.update(id, { isDeleted: true, updatedAt: Date.now() });
       showToast("Tugas tambahan dihapus", "success");
     }
   };

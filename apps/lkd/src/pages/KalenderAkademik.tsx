@@ -6,7 +6,7 @@ import { useAppStore } from '../store/useAppStore';
 
 export default function KalenderAkademik() {
   const showToast = useAppStore(state => state.showToast);
-  const kalender = useLiveQuery(() => db.kalender.orderBy('tanggal').toArray());
+  const kalender = useLiveQuery(() => db.kalender.orderBy('tanggal').toArray().then(arr => arr.filter(k => !k.isDeleted)));
 
   const [tanggal, setTanggal] = useState(new Date().toISOString().split('T')[0]);
   const [status, setStatus] = useState<'masuk' | 'libur' | 'kegiatan'>('libur');
@@ -19,10 +19,10 @@ export default function KalenderAkademik() {
     // Cek apakah tanggal sudah ada
     const existing = await db.kalender.where('tanggal').equals(tanggal).first();
     if (existing && existing.id) {
-      await db.kalender.update(existing.id, { status, keterangan });
+      await db.kalender.update(existing.id, { status, keterangan, updatedAt: Date.now() });
       showToast("Kalender diperbarui", "success");
     } else {
-      await db.kalender.add({ tanggal, status, keterangan });
+      await db.kalender.add({ tanggal, status, keterangan, updatedAt: Date.now() });
       showToast("Ditambahkan ke kalender", "success");
     }
     setKeterangan('');
@@ -30,7 +30,7 @@ export default function KalenderAkademik() {
 
   const handleDelete = async (id?: number) => {
     if (id) {
-      await db.kalender.delete(id);
+      await db.kalender.update(id, { isDeleted: true, updatedAt: Date.now() });
       showToast("Dihapus dari kalender", "success");
     }
   };

@@ -24,7 +24,7 @@ export default function JadwalMengajar() {
   // Fetch jadwal dari Dexie berdasarkan hari yang aktif, urutkan berdasarkan jamMulai
   const jadwalHariIni = useLiveQuery(
     () => db.jadwal.where('hari').equals(activeHari).toArray().then(arr => 
-      arr.sort((a, b) => a.jamMulai.localeCompare(b.jamMulai))
+      arr.filter(j => !j.isDeleted).sort((a, b) => a.jamMulai.localeCompare(b.jamMulai))
     ),
     [activeHari]
   );
@@ -63,6 +63,7 @@ export default function JadwalMengajar() {
         mataPelajaran: mapel,
         kelas,
         ruangan,
+        updatedAt: Date.now(),
       });
       showToast("Jadwal berhasil diperbarui!", "success");
     } else {
@@ -73,7 +74,8 @@ export default function JadwalMengajar() {
         mataPelajaran: mapel,
         kelas,
         ruangan,
-        warna: 'teal' // Default warna
+        warna: 'teal', // Default warna
+        updatedAt: Date.now(),
       });
       showToast("Jadwal berhasil ditambahkan!", "success");
     }
@@ -86,7 +88,7 @@ export default function JadwalMengajar() {
 
   const handleDelete = async (id?: number) => {
     if (id && window.confirm("Hapus jadwal ini?")) {
-      await db.jadwal.delete(id);
+      await db.jadwal.update(id, { isDeleted: true, updatedAt: Date.now() });
       showToast("Jadwal dihapus", "success");
     }
   };

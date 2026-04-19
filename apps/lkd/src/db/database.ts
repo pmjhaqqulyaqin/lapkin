@@ -13,6 +13,7 @@ export interface Profil {
   nipKepsek: string;
   ttdUrl?: string; // Data URL for offline image
   avatarUrl?: string; // Foto profil avatar
+  updatedAt?: number; // Epoch ms — for sync tracking
 }
 
 export interface Jadwal {
@@ -24,6 +25,8 @@ export interface Jadwal {
   kelas: string;
   ruangan?: string;
   warna?: string;
+  updatedAt?: number; // Epoch ms — for sync tracking
+  isDeleted?: boolean; // Soft delete for sync
 }
 
 export interface TemplateTugas {
@@ -39,6 +42,8 @@ export interface TugasTambahan {
   deskripsiLkh?: string | string[]; // Legacy
   templates?: TemplateTugas[]; // New structure: mapping of day to array of descriptions
   isDraft: boolean;
+  updatedAt?: number; // Epoch ms — for sync tracking
+  isDeleted?: boolean; // Soft delete for sync
 }
 
 export interface LaporanHarian {
@@ -50,6 +55,8 @@ export interface LaporanHarian {
   sumberId?: number; // ID Jadwal or TugasTambahan (if auto-populated)
   tipeSumber: 'manual' | 'jadwal' | 'tugas_tambahan';
   createdAt: number;
+  updatedAt?: number; // Epoch ms — for sync tracking
+  isDeleted?: boolean; // Soft delete for sync
 }
 
 export interface KalenderAkademik {
@@ -57,6 +64,8 @@ export interface KalenderAkademik {
   tanggal: string; // YYYY-MM-DD
   status: 'masuk' | 'libur' | 'kegiatan';
   keterangan: string;
+  updatedAt?: number; // Epoch ms — for sync tracking
+  isDeleted?: boolean; // Soft delete for sync
 }
 
 // --- Database Setup ---
@@ -78,6 +87,35 @@ db.version(1).stores({
 
 db.version(2).stores({
   kalender: '++id, tanggal',
+});
+
+// Version 3: Add updatedAt index for sync filtering
+db.version(3).stores({
+  profil: 'id',
+  jadwal: '++id, hari, updatedAt',
+  tugasTambahan: '++id, kategori, isDraft, updatedAt',
+  lkh: '++id, tanggal, tipeSumber, updatedAt',
+  kalender: '++id, tanggal, updatedAt',
+}).upgrade(tx => {
+  // Migrasi data lama: set updatedAt = 0 untuk semua record yang belum punya
+  const now = 0; // Data lama dianggap timestamp 0 agar bisa di-push saat sync pertama
+  return Promise.all([
+    tx.table('profil').toCollection().modify(item => {
+      if (!item.updatedAt) item.updatedAt = now;
+    }),
+    tx.table('jadwal').toCollection().modify(item => {
+      if (!item.updatedAt) item.updatedAt = now;
+    }),
+    tx.table('tugasTambahan').toCollection().modify(item => {
+      if (!item.updatedAt) item.updatedAt = now;
+    }),
+    tx.table('lkh').toCollection().modify(item => {
+      if (!item.updatedAt) item.updatedAt = now;
+    }),
+    tx.table('kalender').toCollection().modify(item => {
+      if (!item.updatedAt) item.updatedAt = now;
+    }),
+  ]);
 });
 
 export { db };

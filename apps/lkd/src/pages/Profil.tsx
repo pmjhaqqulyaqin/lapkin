@@ -3,6 +3,11 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
 import { useNavigate, NavLink } from 'react-router-dom';
+import {
+  fullSync, syncLogin, syncRegister,
+  isSyncConfigured, getSyncUser, getLastSyncDate, clearSyncAuth,
+  type SyncStatus
+} from '../db/syncEngine';
 
 export default function Profil() {
   const navigate = useNavigate();
@@ -18,6 +23,15 @@ export default function Profil() {
     nama: '', nip: '', jabatan: '', pangkat: '', golongan: '',
     namaKepsek: '', nipKepsek: ''
   });
+
+  // Sync State
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  const [syncMessage, setSyncMessage] = useState('');
+  const [syncForm, setSyncForm] = useState({ nip: '', nama: '', password: '' });
+  const [syncIsRegister, setSyncIsRegister] = useState(false);
+  const syncUser = getSyncUser();
+  const lastSyncDate = getLastSyncDate();
 
   // Canvas Refs
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -48,6 +62,66 @@ export default function Profil() {
   // Ambil data profil dari Dexie (id = 1)
   const profil = useLiveQuery(() => db.profil.get(1));
 
+  // --- Sync Logic ---
+  const handleSyncClick = async () => {
+    if (!isSyncConfigured()) {
+      // Pertama kali — tampilkan modal login/register
+      if (profil) {
+        setSyncForm({ nip: profil.nip || '', nama: profil.nama || '', password: '' });
+      }
+      setIsSyncModalOpen(true);
+      return;
+    }
+
+    // Sudah punya token — langsung sync
+    await executeSync();
+  };
+
+  const executeSync = async () => {
+    setSyncStatus('syncing');
+    setSyncMessage('Menghubungkan ke server...');
+    try {
+      const result = await fullSync();
+      setSyncStatus('success');
+      setSyncMessage(`${result.message} (↑${result.pushed} ↓${result.pulled})`);
+      showToast(`Sinkronisasi berhasil! ↑${result.pushed} dikirim, ↓${result.pulled} diterima.`, 'success');
+    } catch (error: any) {
+      setSyncStatus('error');
+      const msg = error.message || 'Gagal sinkronisasi.';
+      setSyncMessage(msg);
+      showToast(msg, 'error');
+    }
+  };
+
+  const handleSyncAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSyncStatus('syncing');
+    setSyncMessage('Menghubungkan...');
+    try {
+      if (syncIsRegister) {
+        await syncRegister(syncForm.nip, syncForm.nama, syncForm.password);
+        showToast('Akun sync berhasil dibuat!', 'success');
+      } else {
+        await syncLogin(syncForm.nip, syncForm.password);
+        showToast('Login server berhasil!', 'success');
+      }
+      setIsSyncModalOpen(false);
+      // Auto sync after login
+      await executeSync();
+    } catch (error: any) {
+      setSyncStatus('error');
+      setSyncMessage(error.message);
+      showToast(error.message, 'error');
+    }
+  };
+
+  const handleSyncLogout = () => {
+    clearSyncAuth();
+    setSyncStatus('idle');
+    setSyncMessage('');
+    showToast('Akun sinkronisasi telah diputus.', 'info');
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -69,7 +143,7 @@ export default function Profil() {
   const handleSaveProfil = async (e: React.FormEvent) => {
     e.preventDefault();
     if (profil) {
-      await db.profil.put({ ...profil, ...formData });
+      await db.profil.put({ ...profil, ...formData, updatedAt: Date.now() });
       showToast("Data berhasil diperbarui!", "success");
       setIsModalOpen(false);
     }
@@ -82,7 +156,7 @@ export default function Profil() {
     reader.onload = async (event) => {
       const base64 = event.target?.result as string;
       if (profil) {
-        await db.profil.put({ ...profil, avatarUrl: base64 });
+        await db.profil.put({ ...profil, avatarUrl: base64, updatedAt: Date.now() });
         showToast("Foto profil berhasil diperbarui!", "success");
       }
     };
@@ -146,7 +220,7 @@ export default function Profil() {
     const canvas = canvasRef.current;
     if (canvas && profil) {
       const dataUrl = canvas.toDataURL('image/png');
-      await db.profil.put({ ...profil, ttdUrl: dataUrl });
+      await db.profil.put({ ...profil, ttdUrl: dataUrl, updatedAt: Date.now() });
       showToast("Tanda tangan berhasil disimpan!", "success");
       setIsSignatureModalOpen(false);
     }
@@ -336,16 +410,53 @@ export default function Profil() {
               </button>
             </li>
             <li>
-              <a href="#" className="flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+              <button onClick={handleSyncClick} className="w-full flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <div className="flex items-center gap-4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${syncStatus === 'syncing' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600' : syncStatus === 'success' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : syncStatus === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                    <span className={`material-symbols-outlined text-[18px] ${syncStatus === 'syncing' ? 'animate-spin' : ''}`}>sync</span>
+                  </div>
+                  <div className="text-left">
+                    <span className="font-semibold text-slate-700 dark:text-slate-200 block">Sinkronisasi Data</span>
+                    {syncUser && (
+                      <span className="text-[10px] text-slate-400 font-medium">Server: {syncUser.nip}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {syncStatus === 'syncing' && (
+                    <span className="text-xs font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-1 rounded-md">Syncing...</span>
+                  )}
+                  {syncStatus === 'success' && (
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-md">✓ Berhasil</span>
+                  )}
+                  {syncStatus === 'error' && (
+                    <span className="text-xs font-bold text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-1 rounded-md">Gagal</span>
+                  )}
+                  {syncStatus === 'idle' && lastSyncDate && (
+                    <span className="text-xs font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-1 rounded-md">
+                      {new Date(lastSyncDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  )}
+                  {syncStatus === 'idle' && !lastSyncDate && !syncUser && (
+                    <span className="text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded-md">Belum diatur</span>
+                  )}
+                  <span className="material-symbols-outlined text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
+                </div>
+              </button>
+            </li>
+            {syncUser && (
+            <li>
+              <button onClick={handleSyncLogout} className="w-full flex items-center justify-between p-5 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-[18px]">sync</span>
+                    <span className="material-symbols-outlined text-[18px]">link_off</span>
                   </div>
-                  <span className="font-semibold text-slate-700 dark:text-slate-200">Sinkronisasi Data Lokal</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">Putus Koneksi Server</span>
                 </div>
-                <span className="text-xs font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-1 rounded-md mr-2">Baru saja</span>
-              </a>
+                <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500 transition-colors">chevron_right</span>
+              </button>
             </li>
+            )}
             <li>
               <button onClick={() => useAppStore.getState().setBantuanOpen(true)} className="w-full text-left flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                 <div className="flex items-center gap-4">
@@ -547,6 +658,87 @@ export default function Profil() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sync Auth Modal */}
+      {isSyncModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
+              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <span className="material-symbols-outlined text-cyan-600">cloud_sync</span>
+                {syncIsRegister ? 'Daftar Akun Sinkronisasi' : 'Login Server Sinkronisasi'}
+              </h2>
+              <button onClick={() => setIsSyncModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            <div className="p-6 bg-cyan-50/50 dark:bg-cyan-950/20 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-start gap-3">
+                <span className="material-symbols-outlined text-cyan-500 shrink-0 mt-0.5">info</span>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Fitur ini menghubungkan data LKD di perangkat ini ke server, sehingga Anda bisa mengakses data yang sama di perangkat lain (HP, Laptop, dsb).
+                </p>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSyncAuth} className="p-6 space-y-4 bg-white dark:bg-slate-900">
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">NIP</label>
+                <input 
+                  type="text" value={syncForm.nip} onChange={e => setSyncForm({...syncForm, nip: e.target.value})}
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none"
+                  required
+                />
+              </div>
+              {syncIsRegister && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Nama Lengkap</label>
+                  <input 
+                    type="text" value={syncForm.nama} onChange={e => setSyncForm({...syncForm, nama: e.target.value})}
+                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none"
+                    required
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Password Sinkronisasi</label>
+                <input 
+                  type="password" value={syncForm.password} onChange={e => setSyncForm({...syncForm, password: e.target.value})}
+                  placeholder="Buat password untuk akun sync"
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none placeholder:font-normal"
+                  required minLength={4}
+                />
+              </div>
+
+              {syncMessage && syncStatus === 'error' && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3 rounded-xl text-sm text-red-600 dark:text-red-400 font-medium flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">error</span>
+                  {syncMessage}
+                </div>
+              )}
+
+              <div className="pt-4 space-y-3">
+                <button 
+                  type="submit" 
+                  disabled={syncStatus === 'syncing'}
+                  className="w-full bg-cyan-600 text-white font-bold py-3.5 rounded-xl hover:bg-cyan-700 active:scale-95 transition-all shadow-lg shadow-cyan-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {syncStatus === 'syncing' && <span className="material-symbols-outlined text-[18px] animate-spin">sync</span>}
+                  {syncIsRegister ? 'Daftar & Sinkronkan' : 'Login & Sinkronkan'}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setSyncIsRegister(!syncIsRegister)}
+                  className="w-full text-sm font-semibold text-slate-500 hover:text-cyan-600 transition-colors py-2"
+                >
+                  {syncIsRegister ? 'Sudah punya akun? Login di sini' : 'Belum punya akun? Daftar di sini'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

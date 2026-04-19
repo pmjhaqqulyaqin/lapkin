@@ -26,6 +26,7 @@ export default function RiwayatLkh() {
       await db.lkh.update(editId, {
         kegiatan: editKegiatan,
         uraian: editUraian,
+        updatedAt: Date.now(),
       });
       showToast("Aktivitas berhasil diperbarui!", "success");
       setIsEditModalOpen(false);
@@ -36,14 +37,14 @@ export default function RiwayatLkh() {
   const handleDelete = async (id?: number) => {
     if (id) {
       if (window.confirm("Apakah Anda yakin ingin menghapus aktivitas ini?")) {
-        await db.lkh.delete(id);
+        await db.lkh.update(id, { isDeleted: true, updatedAt: Date.now() });
         showToast("Aktivitas berhasil dihapus", "success");
       }
     }
   };
 
   // Ambil semua LKH
-  const semuaLkh = useLiveQuery(() => db.lkh.orderBy('tanggal').reverse().toArray());
+  const semuaLkh = useLiveQuery(() => db.lkh.orderBy('tanggal').reverse().toArray().then(arr => arr.filter(l => !l.isDeleted)));
 
   // Filter LKH berdasarkan bulan dan tahun terpilih
   const lkhFiltered = semuaLkh?.filter((l) => {

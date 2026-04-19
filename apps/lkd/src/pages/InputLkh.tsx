@@ -43,7 +43,7 @@ export default function InputLkh() {
 
   // Fetch jadwal berdasarkan hari
   const jadwalHariIni = useLiveQuery(
-    () => db.jadwal.where('hari').equals(hariIni).toArray(),
+    () => db.jadwal.where('hari').equals(hariIni).toArray().then(arr => arr.filter(j => !j.isDeleted)),
     [hariIni]
   );
 
@@ -51,6 +51,7 @@ export default function InputLkh() {
   const tugasHariIni = useLiveQuery(
     () => db.tugasTambahan.toArray().then(arr => 
       arr.filter(t => {
+        if (t.isDeleted) return false;
         if (t.templates && Array.isArray(t.templates)) {
           return t.templates.some(temp => temp.hari === hariIni || temp.hari === 'Tiap Hari');
         }
@@ -124,7 +125,8 @@ export default function InputLkh() {
           keteranganOutput: 'Jurnal Mengajar',
           sumberId: j.id,
           tipeSumber: 'jadwal',
-          createdAt: Date.now()
+          createdAt: Date.now(),
+          updatedAt: Date.now()
         });
       }
     }
@@ -139,7 +141,8 @@ export default function InputLkh() {
         keteranganOutput: 'Laporan/Dokumentasi',
         sumberId: t.id,
         tipeSumber: 'tugas_tambahan',
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       });
     }
 
@@ -151,7 +154,8 @@ export default function InputLkh() {
         uraian: manualUraian.trim(),
         keteranganOutput: 'Dokumentasi/Laporan',
         tipeSumber: 'manual',
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       });
     }
 

@@ -30,7 +30,8 @@ export default function Login() {
         pangkat: '-',
         golongan: '-',
         namaKepsek: '-',
-        nipKepsek: '-'
+        nipKepsek: '-',
+        updatedAt: Date.now()
       });
       showToast("Pendaftaran berhasil!", "success");
     } else {

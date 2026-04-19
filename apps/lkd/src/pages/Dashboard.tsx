@@ -11,6 +11,7 @@ export default function Dashboard() {
   const lkhBulanIni = useLiveQuery(
     () => db.lkh.orderBy('tanggal').reverse().toArray().then(arr => 
       arr.filter(l => {
+        if (l.isDeleted) return false;
         const d = new Date(l.tanggal);
         return d.getMonth() === activeMonthIndex && d.getFullYear() === activeYear;
       })
@@ -55,6 +56,7 @@ export default function Dashboard() {
       await db.lkh.update(editId, {
         kegiatan: editKegiatan,
         uraian: editUraian,
+        updatedAt: Date.now(),
       });
       useAppStore.getState().showToast("Aktivitas berhasil diperbarui!", "success");
       setIsEditModalOpen(false);
