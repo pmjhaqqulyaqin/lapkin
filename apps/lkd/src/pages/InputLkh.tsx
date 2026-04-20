@@ -208,7 +208,10 @@ export default function InputLkh() {
       setManualKegiatan(kegiatanManual[0] || '');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      navigate('/dashboard');
+      // Tetap di halaman input, reset form manual saja
+      setManualUraian('');
+      setManualKegiatan(kegiatanManual[0] || '');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 

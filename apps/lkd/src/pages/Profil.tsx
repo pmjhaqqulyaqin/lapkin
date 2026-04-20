@@ -414,35 +414,35 @@ export default function Profil() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/tugas" className="flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-[18px]">assignment_ind</span>
+              <NavLink to="/tugas" className="flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                    <span className="material-symbols-outlined text-[16px]">assignment_ind</span>
                   </div>
-                  <span className="font-semibold text-slate-700 dark:text-slate-200">Manajemen Tugas Tambahan</span>
+                  <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200">Manajemen Tugas Tambahan</span>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
+                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
               </NavLink>
             </li>
             <li>
-              <button onClick={handleOpenSignatureModal} className="w-full flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-[18px]">draw</span>
+              <button onClick={handleOpenSignatureModal} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                    <span className="material-symbols-outlined text-[16px]">draw</span>
                   </div>
-                  <span className="font-semibold text-slate-700 dark:text-slate-200">Manajemen Tanda Tangan</span>
+                  <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200">Manajemen Tanda Tangan</span>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
+                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
               </button>
             </li>
             <li>
-              <button onClick={handleSyncClick} className="w-full flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                <div className="flex items-center gap-4">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${syncStatus === 'syncing' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600' : syncStatus === 'success' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : syncStatus === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
-                    <span className={`material-symbols-outlined text-[18px] ${syncStatus === 'syncing' ? 'animate-spin' : ''}`}>sync</span>
+              <button onClick={handleSyncClick} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${syncStatus === 'syncing' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600' : syncStatus === 'success' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : syncStatus === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                    <span className={`material-symbols-outlined text-[16px] ${syncStatus === 'syncing' ? 'animate-spin' : ''}`}>sync</span>
                   </div>
                   <div className="text-left">
-                    <span className="font-semibold text-slate-700 dark:text-slate-200 block">Sinkronisasi Data</span>
+                    <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200 block">Sinkronisasi Data</span>
                     {syncUser && (
                       <span className="text-[10px] text-slate-400 font-medium">Server: {syncUser.nip}</span>
                     )}
@@ -450,23 +450,23 @@ export default function Profil() {
                 </div>
                 <div className="flex items-center gap-2">
                   {syncStatus === 'syncing' && (
-                    <span className="text-xs font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-1 rounded-md">Syncing...</span>
+                    <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-0.5 rounded-md">Syncing...</span>
                   )}
                   {syncStatus === 'success' && (
-                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 rounded-md">✓ Berhasil</span>
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-md">✓ Berhasil</span>
                   )}
                   {syncStatus === 'error' && (
-                    <span className="text-xs font-bold text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-1 rounded-md">Gagal</span>
+                    <span className="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded-md">Gagal</span>
                   )}
                   {syncStatus === 'idle' && lastSyncDate && (
-                    <span className="text-xs font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-1 rounded-md">
+                    <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-0.5 rounded-md">
                       {new Date(lastSyncDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
                   {syncStatus === 'idle' && !lastSyncDate && !syncUser && (
-                    <span className="text-xs font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded-md">Belum diatur</span>
+                    <span className="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-md">Belum diatur</span>
                   )}
-                  <span className="material-symbols-outlined text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
+                  <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
                 </div>
               </button>
             </li>
@@ -525,14 +525,14 @@ export default function Profil() {
               </button>
             </li>
             <li>
-              <button onClick={() => useAppStore.getState().setBantuanOpen(true)} className="w-full text-left flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-[18px]">help</span>
+              <button onClick={() => useAppStore.getState().setBantuanOpen(true)} className="w-full text-left flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                    <span className="material-symbols-outlined text-[16px]">help</span>
                   </div>
-                  <span className="font-semibold text-slate-700 dark:text-slate-200">Bantuan & Panduan LKD</span>
+                  <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200">Bantuan & Panduan LKD</span>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
+                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
               </button>
             </li>
           </ul>

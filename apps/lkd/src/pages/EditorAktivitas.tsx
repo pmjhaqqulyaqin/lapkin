@@ -155,42 +155,42 @@ export default function EditorAktivitas() {
         </div>
       </header>
 
-      <main className="pt-16 pb-24 px-4 md:px-6 max-w-3xl mx-auto space-y-4">
+      <main className="pt-14 pb-24 px-4 md:px-6 max-w-3xl mx-auto space-y-3">
         
         {/* Editorial Header */}
-        <div className="mb-5">
-          <h2 className="font-headline font-extrabold text-teal-800 dark:text-teal-400 text-lg tracking-tight mb-1">
+        <div className="mb-3">
+          <h2 className="font-headline font-extrabold text-teal-800 dark:text-teal-400 text-[15px] tracking-tight mb-0.5">
             Kelola Tugas & Jabatan
           </h2>
-          <p className="text-slate-500 text-[12px]">
+          <p className="text-slate-500 text-[11px]">
             Tugas tambahan di sini akan muncul sebagai template otomatis saat mengisi LKH.
           </p>
         </div>
 
         {/* List of Tugas */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {tugasData && tugasData.length > 0 ? (
             tugasData.map(item => (
-              <div key={item.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4 justify-between items-start">
+              <div key={item.id} className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-3 justify-between items-start">
                 <div>
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 text-[10px] font-bold px-2 py-1 rounded-md uppercase">
+                  <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                    <span className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">
                       {item.kategori}
                     </span>
-                    <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[10px] font-bold px-2 py-1 rounded-md uppercase flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[12px]">calendar_month</span>
-                      Rutin: {item.templates && Array.isArray(item.templates) ? item.templates.map(t => t?.hari).filter(Boolean).join(', ') : Array.isArray(item.hariRutin) ? item.hariRutin.join(', ') : (item.hariRutin || 'Tiap Hari')}
+                    <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-[11px]">calendar_month</span>
+                      {item.templates && Array.isArray(item.templates) ? item.templates.map(t => t?.hari).filter(Boolean).join(', ') : Array.isArray(item.hariRutin) ? item.hariRutin.join(', ') : (item.hariRutin || 'Tiap Hari')}
                     </span>
                   </div>
-                  <h3 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100 mb-1">{item.namaTugas}</h3>
-                  <p className="text-sm text-slate-500 line-clamp-2">Template LKH: {item.templates && Array.isArray(item.templates) ? `${item.templates.reduce((acc, t) => acc + (t?.uraian?.length || 0), 0)} uraian kegiatan` : Array.isArray(item.deskripsiLkh) ? `${item.deskripsiLkh.length} uraian kegiatan` : (item.deskripsiLkh || '-')}</p>
+                  <h3 className="font-manrope font-bold text-[14px] text-slate-800 dark:text-slate-100 mb-0.5">{item.namaTugas}</h3>
+                  <p className="text-[12px] text-slate-500 line-clamp-2">Template LKH: {item.templates && Array.isArray(item.templates) ? `${item.templates.reduce((acc, t) => acc + (t?.uraian?.length || 0), 0)} uraian kegiatan` : Array.isArray(item.deskripsiLkh) ? `${item.deskripsiLkh.length} uraian kegiatan` : (item.deskripsiLkh || '-')}</p>
                 </div>
-                <div className="flex gap-2 w-full md:w-auto justify-end">
-                  <button onClick={() => handleEdit(item)} className="w-10 h-10 rounded-full bg-slate-50 hover:bg-cyan-50 text-slate-400 hover:text-cyan-600 transition-colors flex items-center justify-center">
-                    <span className="material-symbols-outlined">edit</span>
+                <div className="flex gap-1.5 w-full md:w-auto justify-end">
+                  <button onClick={() => handleEdit(item)} className="w-8 h-8 rounded-full bg-slate-50 hover:bg-cyan-50 text-slate-400 hover:text-cyan-600 transition-colors flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[18px]">edit</span>
                   </button>
-                  <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.namaTugas })} className="w-10 h-10 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
-                    <span className="material-symbols-outlined">delete</span>
+                  <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.namaTugas })} className="w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[18px]">delete</span>
                   </button>
                 </div>
               </div>
