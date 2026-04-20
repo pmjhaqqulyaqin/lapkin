@@ -6,12 +6,14 @@ import { query } from '../config/database.js';
 export const getAllReferensi = async (req: Request, res: Response) => {
   try {
     const result = await query('SELECT * FROM master_referensi ORDER BY jenis, id ASC');
+    const kalenderResult = await query('SELECT * FROM master_kalender ORDER BY tanggal_mulai ASC');
     
     // Grouping by jenis
     const referensi = {
       kegiatan: [] as string[],
       tugas: [] as string[],
-      kalender: [] as string[]
+      kalender: [] as string[],
+      jadwal_kalender: kalenderResult.rows
     };
 
     result.rows.forEach(row => {

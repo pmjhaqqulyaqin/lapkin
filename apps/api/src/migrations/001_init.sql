@@ -139,3 +139,15 @@ INSERT INTO master_referensi (nilai, jenis) VALUES
     ('Cuti Bersama', 'kalender'),
     ('Ujian Semester', 'kalender')
 ON CONFLICT ON CONSTRAINT uq_referensi_nilai_jenis DO NOTHING;
+
+-- 8. Tabel Master Kalender: Data jadwal akademik global untuk aplikasi
+CREATE TABLE IF NOT EXISTS master_kalender (
+    id              SERIAL PRIMARY KEY,
+    tanggal_mulai   VARCHAR(10) NOT NULL,
+    tanggal_selesai VARCHAR(10) NOT NULL,
+    status          VARCHAR(50) NOT NULL,
+    keterangan      TEXT,
+    created_at      TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_kalender_tanggal ON master_kalender (tanggal_mulai);

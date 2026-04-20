@@ -23,4 +23,10 @@ router.post('/users/:id/reset', resetUserData);
 // Hapus akun guru
 router.delete('/users/:id', deleteUser);
 
+import { addKalender, updateKalender, deleteKalender } from '../controllers/kalender.controller.js';
+// Routes for Master Kalender
+router.post('/kalender', addKalender);
+router.put('/kalender/:id', updateKalender);
+router.delete('/kalender/:id', deleteKalender);
+
 export default router;

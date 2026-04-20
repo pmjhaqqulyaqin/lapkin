@@ -505,7 +505,7 @@ export default function Profil() {
                   showToast('Menarik data referensi...');
                   const result = await useAppStore.getState().pullReferensiData();
                   if (result) {
-                    showToast(`Data referensi diperbarui! (${result.kegiatan} KBM, ${result.tugas} Tugas, ${result.kalender} Kalender)`, 'success');
+                    showToast(`Referensi diperbarui! ${result.kegiatan} KBM, ${result.tugas} Tugas, ${result.kalender} Status, ${result.jadwalKalender} Jadwal`, 'success');
                   } else {
                     showToast('Gagal menarik referensi', 'error');
                   }

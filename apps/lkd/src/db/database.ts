@@ -64,6 +64,7 @@ export interface KalenderAkademik {
   tanggal: string; // YYYY-MM-DD
   status: string; // Custom status from store
   keterangan: string;
+  isGlobal?: number; // 1 if from admin master, 0 or undefined if manual
   updatedAt?: number; // Epoch ms — for sync tracking
   isDeleted?: boolean; // Soft delete for sync
 }
@@ -116,6 +117,11 @@ db.version(3).stores({
       if (!item.updatedAt) item.updatedAt = now;
     }),
   ]);
+});
+
+// Version 4: Add isGlobal index to kalender
+db.version(4).stores({
+  kalender: '++id, tanggal, updatedAt, isGlobal',
 });
 
 export { db };

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { db } from '../db/database';
 
 interface Toast {
   message: string;
@@ -32,7 +33,7 @@ interface AppState {
   setKegiatanManual: (list: string[]) => void;
   setKategoriTugas: (list: string[]) => void;
   setStatusKalender: (list: string[]) => void;
-  pullReferensiData: () => Promise<{kegiatan: number, tugas: number, kalender: number} | undefined>;
+  pullReferensiData: () => Promise<{kegiatan: number, tugas: number, kalender: number, jadwalKalender: number} | undefined>;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -101,6 +102,7 @@ export const useAppStore = create<AppState>((set) => ({
       if (!res.ok) throw new Error('Gagal menarik data');
       const data = await res.json();
       if (data.success) {
+        // 1. Merge opsi referensi (kegiatan, tugas, status kalender)
         set((state) => {
           const mergedKegiatan = Array.from(new Set([...data.data.kegiatan, ...state.kegiatanManual]));
           const mergedTugas = Array.from(new Set([...data.data.tugas, ...state.kategoriTugas]));
@@ -116,11 +118,48 @@ export const useAppStore = create<AppState>((set) => ({
             statusKalender: mergedKalender
           };
         });
+
+        // 2. Sync jadwal kalender master ke Dexie (clear-and-replace for isGlobal=1)
+        const jadwalKalender = data.data.jadwal_kalender || [];
+        try {
+          // Hapus semua data kalender global lama
+          const globalEntries = await db.kalender.where('isGlobal').equals(1).toArray();
+          const globalIds = globalEntries.map(e => e.id!).filter(Boolean);
+          if (globalIds.length > 0) {
+            await db.kalender.bulkDelete(globalIds);
+          }
+
+          // Masukkan data global terbaru dari server
+          if (jadwalKalender.length > 0) {
+            const newEntries: Array<{tanggal: string; status: string; keterangan: string; isGlobal: number; updatedAt: number}> = [];
+            for (const jk of jadwalKalender) {
+              // Expand rentang tanggal menjadi entry per hari
+              const start = new Date(jk.tanggal_mulai);
+              const end = new Date(jk.tanggal_selesai);
+              for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                const dateStr = d.toISOString().split('T')[0];
+                newEntries.push({
+                  tanggal: dateStr,
+                  status: jk.status,
+                  keterangan: jk.keterangan || '',
+                  isGlobal: 1,
+                  updatedAt: Date.now(),
+                });
+              }
+            }
+            if (newEntries.length > 0) {
+              await db.kalender.bulkAdd(newEntries);
+            }
+          }
+        } catch (dbErr) {
+          console.error('Error syncing jadwal kalender to Dexie:', dbErr);
+        }
         
         return {
           kegiatan: data.data.kegiatan.length,
           tugas: data.data.tugas.length,
-          kalender: data.data.kalender.length
+          kalender: data.data.kalender.length,
+          jadwalKalender: jadwalKalender.length
         };
       }
     } catch (err) {

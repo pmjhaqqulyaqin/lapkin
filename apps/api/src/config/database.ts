@@ -171,6 +171,24 @@ async function runAdditionalMigrations() {
   } catch (err) {
     console.error('⚠️  Gagal membuat tabel master_referensi:', err);
   }
+
+  // Migrasi untuk Tabel master_kalender
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS master_kalender (
+          id              SERIAL PRIMARY KEY,
+          tanggal_mulai   VARCHAR(10) NOT NULL,
+          tanggal_selesai VARCHAR(10) NOT NULL,
+          status          VARCHAR(50) NOT NULL,
+          keterangan      TEXT,
+          created_at      TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    await query(`CREATE INDEX IF NOT EXISTS idx_kalender_tanggal ON master_kalender (tanggal_mulai);`);
+    console.log('✅ Tabel master_kalender siap!');
+  } catch (err) {
+    console.error('⚠️  Gagal membuat tabel master_kalender:', err);
+  }
 }
 
 /**
