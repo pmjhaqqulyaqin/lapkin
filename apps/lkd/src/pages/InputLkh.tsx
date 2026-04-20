@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
@@ -9,10 +9,12 @@ const HARI_LIST = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu
 
 export default function InputLkh() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { showToast, kegiatanManual, setKegiatanManual } = useAppStore();
-  // Gunakan tanggal hari ini sebagai default
+  
+  // Gunakan tanggal dari navigasi (jika ada) atau hari ini
   const todayStr = new Date().toISOString().split('T')[0];
-  const [tanggal, setTanggal] = useState(todayStr);
+  const [tanggal, setTanggal] = useState(location.state?.date || todayStr);
   
   const [isManageKegiatanOpen, setIsManageKegiatanOpen] = useState(false);
   

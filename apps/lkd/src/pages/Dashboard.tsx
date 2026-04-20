@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { activeMonthIndex, activeYear, setActiveMonthYear } = useAppStore();
   const profil = useLiveQuery(async () => {
     const p = await db.profil.get(1);
@@ -12,6 +13,14 @@ export default function Dashboard() {
     return db.profil.toCollection().first();
   });
   
+  const kalenderBulanIni = useLiveQuery(
+    () => db.kalender.where('tanggal').between(
+      `${activeYear}-${String(activeMonthIndex + 1).padStart(2, '0')}-01`,
+      `${activeYear}-${String(activeMonthIndex + 1).padStart(2, '0')}-31`
+    ).toArray().then(arr => arr.filter(k => !k.isDeleted)),
+    [activeMonthIndex, activeYear]
+  );
+
   const lkhBulanIni = useLiveQuery(
     () => db.lkh.orderBy('tanggal').reverse().toArray().then(arr => 
       arr.filter(l => {
@@ -188,6 +197,75 @@ export default function Dashboard() {
                 <span>Target: {targetHari} Hari Aktif</span>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Calendar Widget */}
+        <section className="mb-5 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4">
+          <h3 className="font-headline font-bold text-[13px] text-primary mb-3 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[18px]">calendar_month</span>
+            Kalender LKH
+          </h3>
+          <div className="grid grid-cols-7 gap-1.5 text-center mb-2">
+            {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(day => (
+              <span key={day} className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">{day}</span>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1.5">
+            {/* Empty slots for padding */}
+            {Array.from({ length: (new Date(activeYear, activeMonthIndex, 1).getDay() + 6) % 7 }).map((_, i) => (
+              <div key={`empty-${i}`} className="aspect-square rounded-lg bg-transparent"></div>
+            ))}
+            
+            {/* Days */}
+            {Array.from({ length: new Date(activeYear, activeMonthIndex + 1, 0).getDate() }).map((_, i) => {
+              const dayNum = i + 1;
+              const dateStr = `${activeYear}-${String(activeMonthIndex + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+              const dayOfWeek = new Date(activeYear, activeMonthIndex, dayNum).getDay();
+              const isSunday = dayOfWeek === 0;
+              const isToday = dateStr === new Date().toISOString().split('T')[0];
+              
+              // Check LKH status
+              const hasLkh = uniqueDates.has(dateStr);
+              
+              // Check Holiday status
+              const kalenderEvent = kalenderBulanIni?.find(k => k.tanggal === dateStr);
+              const isHoliday = isSunday || (kalenderEvent && (kalenderEvent.status.toLowerCase().includes('libur') || kalenderEvent.status.toLowerCase().includes('cuti')));
+
+              // Determine classes
+              let boxClasses = "aspect-square rounded-lg flex items-center justify-center text-[12px] font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer ";
+              
+              if (hasLkh) {
+                boxClasses += "bg-teal-500 text-white shadow-sm shadow-teal-500/30";
+              } else if (isHoliday) {
+                boxClasses += "bg-red-50 text-red-500 border border-red-100";
+              } else if (isToday) {
+                boxClasses += "bg-white text-teal-600 border-2 border-teal-500 shadow-sm";
+              } else {
+                // Past dates that are empty -> light red border? No, just gray for now as requested
+                const isPast = new Date(activeYear, activeMonthIndex, dayNum) < new Date(new Date().setHours(0,0,0,0));
+                if (isPast && !isSunday) {
+                  boxClasses += "bg-slate-50 text-slate-400 border border-slate-200/50";
+                } else {
+                  boxClasses += "bg-slate-100 text-slate-500";
+                }
+              }
+
+              if (isToday && !hasLkh && !isHoliday) {
+                boxClasses += " ring-2 ring-teal-500 ring-offset-1";
+              }
+
+              return (
+                <button 
+                  key={dayNum} 
+                  title={kalenderEvent ? kalenderEvent.keterangan : (hasLkh ? 'LKH Terisi' : 'Belum Terisi')}
+                  className={boxClasses}
+                  onClick={() => navigate('/lkh/input', { state: { date: dateStr } })}
+                >
+                  {dayNum}
+                </button>
+              );
+            })}
           </div>
         </section>
 
