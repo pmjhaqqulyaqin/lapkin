@@ -109,3 +109,33 @@ CREATE INDEX IF NOT EXISTS idx_kalender_updated ON sync_kalender (user_id, updat
 
 -- Index pada NIP untuk login cepat
 CREATE INDEX IF NOT EXISTS idx_users_nip ON users (nip);
+
+-- =============================================
+-- Tabel Master Referensi (Global Admin)
+-- =============================================
+
+-- 7. Tabel Master Referensi: Data opsi global untuk aplikasi
+CREATE TABLE IF NOT EXISTS master_referensi (
+    id          SERIAL PRIMARY KEY,
+    nilai       VARCHAR(255) NOT NULL,
+    jenis       VARCHAR(50) NOT NULL, -- 'kegiatan', 'tugas', 'kalender'
+    created_at  TIMESTAMP DEFAULT NOW(),
+
+    CONSTRAINT uq_referensi_nilai_jenis UNIQUE (nilai, jenis)
+);
+
+CREATE INDEX IF NOT EXISTS idx_referensi_jenis ON master_referensi (jenis);
+
+-- Insert data default jika tabel kosong
+INSERT INTO master_referensi (nilai, jenis) VALUES
+    ('KBM', 'kegiatan'),
+    ('Membimbing Siswa', 'kegiatan'),
+    ('Tugas Tambahan', 'kegiatan'),
+    ('Tugas Lainnya', 'kegiatan'),
+    ('Wali Kelas', 'tugas'),
+    ('Guru Piket', 'tugas'),
+    ('Pembina Pramuka', 'tugas'),
+    ('Libur Nasional', 'kalender'),
+    ('Cuti Bersama', 'kalender'),
+    ('Ujian Semester', 'kalender')
+ON CONFLICT ON CONSTRAINT uq_referensi_nilai_jenis DO NOTHING;

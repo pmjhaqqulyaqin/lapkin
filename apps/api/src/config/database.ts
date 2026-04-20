@@ -134,6 +134,39 @@ async function runAdditionalMigrations() {
   } catch (err) {
     console.error('⚠️  Gagal menambah kolom role:', err);
   }
+
+  // Migrasi untuk Tabel master_referensi
+  try {
+    await query(`
+      CREATE TABLE IF NOT EXISTS master_referensi (
+          id          SERIAL PRIMARY KEY,
+          nilai       VARCHAR(255) NOT NULL,
+          jenis       VARCHAR(50) NOT NULL,
+          created_at  TIMESTAMP DEFAULT NOW(),
+          CONSTRAINT uq_referensi_nilai_jenis UNIQUE (nilai, jenis)
+      );
+    `);
+    await query(`CREATE INDEX IF NOT EXISTS idx_referensi_jenis ON master_referensi (jenis);`);
+    
+    // Seed default data
+    await query(`
+      INSERT INTO master_referensi (nilai, jenis) VALUES
+          ('KBM', 'kegiatan'),
+          ('Membimbing Siswa', 'kegiatan'),
+          ('Tugas Tambahan', 'kegiatan'),
+          ('Tugas Lainnya', 'kegiatan'),
+          ('Wali Kelas', 'tugas'),
+          ('Guru Piket', 'tugas'),
+          ('Pembina Pramuka', 'tugas'),
+          ('Libur Nasional', 'kalender'),
+          ('Cuti Bersama', 'kalender'),
+          ('Ujian Semester', 'kalender')
+      ON CONFLICT ON CONSTRAINT uq_referensi_nilai_jenis DO NOTHING;
+    `);
+    console.log('✅ Tabel master_referensi siap!');
+  } catch (err) {
+    console.error('⚠️  Gagal membuat tabel master_referensi:', err);
+  }
 }
 
 /**

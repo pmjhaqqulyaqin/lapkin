@@ -4,6 +4,7 @@ import { initializeDatabase } from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
 import syncRoutes from './routes/sync.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import referensiRoutes from './routes/referensi.routes.js';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
@@ -44,6 +45,9 @@ app.use('/api/sync', syncRoutes);
 
 // Admin routes: /api/admin/stats, /api/admin/users, etc.
 app.use('/api/admin', adminRoutes);
+
+// Referensi routes: /api/referensi
+app.use('/api/referensi', referensiRoutes);
 
 // 404 handler
 app.use((_req, res) => {
