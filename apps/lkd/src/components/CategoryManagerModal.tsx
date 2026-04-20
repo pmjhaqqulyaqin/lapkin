@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 interface Props {
   title: string;
@@ -10,6 +11,7 @@ interface Props {
 export default function CategoryManagerModal({ title, items: initialItems, onSave, onClose }: Props) {
   const [items, setItems] = useState<string[]>(initialItems);
   const [newItem, setNewItem] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<{ index: number; name: string } | null>(null);
 
   const handleAdd = () => {
     if (newItem.trim() && !items.includes(newItem.trim())) {
@@ -18,10 +20,13 @@ export default function CategoryManagerModal({ title, items: initialItems, onSav
     }
   };
 
-  const handleRemove = (index: number) => {
-    const newArr = [...items];
-    newArr.splice(index, 1);
-    setItems(newArr);
+  const handleRemoveConfirm = () => {
+    if (deleteTarget !== null) {
+      const newArr = [...items];
+      newArr.splice(deleteTarget.index, 1);
+      setItems(newArr);
+      setDeleteTarget(null);
+    }
   };
 
   return (
@@ -64,7 +69,7 @@ export default function CategoryManagerModal({ title, items: initialItems, onSav
               items.map((item, index) => (
                 <div key={index} className="flex justify-between items-center bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-3 rounded-xl shadow-sm">
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{item}</span>
-                  <button onClick={() => handleRemove(index)} className="text-slate-400 hover:text-red-500 transition-colors">
+                  <button onClick={() => setDeleteTarget({ index, name: item })} className="text-slate-400 hover:text-red-500 transition-colors">
                     <span className="material-symbols-outlined text-[18px]">delete</span>
                   </button>
                 </div>
@@ -83,6 +88,15 @@ export default function CategoryManagerModal({ title, items: initialItems, onSav
         </div>
 
       </div>
+
+      <ConfirmDeleteModal
+        isOpen={!!deleteTarget}
+        title="Hapus Opsi?"
+        message="Opsi ini akan dihapus dari daftar."
+        itemName={deleteTarget?.name}
+        onConfirm={handleRemoveConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

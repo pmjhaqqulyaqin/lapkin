@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -77,10 +78,14 @@ export default function EditorAktivitas() {
     resetForm();
   };
 
-  const handleDelete = async (id?: number) => {
-    if (id && window.confirm("Hapus tugas tambahan ini?")) {
-      await db.tugasTambahan.update(id, { isDeleted: true, updatedAt: Date.now() });
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+
+  const handleDeleteConfirm = async () => {
+    if (deleteTarget) {
+      await db.tugasTambahan.update(deleteTarget.id, { isDeleted: true, updatedAt: Date.now() });
       showToast("Tugas tambahan dihapus", "success");
+      setDeleteTarget(null);
     }
   };
 
@@ -143,7 +148,7 @@ export default function EditorAktivitas() {
                   <p className="text-sm text-slate-500 line-clamp-2">Template LKH: {item.templates && Array.isArray(item.templates) ? `${item.templates.reduce((acc, t) => acc + (t?.uraian?.length || 0), 0)} uraian kegiatan` : Array.isArray(item.deskripsiLkh) ? `${item.deskripsiLkh.length} uraian kegiatan` : (item.deskripsiLkh || '-')}</p>
                 </div>
                 <div className="flex gap-2 w-full md:w-auto justify-end">
-                  <button onClick={() => handleDelete(item.id)} className="w-10 h-10 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
+                  <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.namaTugas })} className="w-10 h-10 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
                     <span className="material-symbols-outlined">delete</span>
                   </button>
                 </div>
@@ -295,6 +300,15 @@ export default function EditorAktivitas() {
           onClose={() => setIsManageKategoriOpen(false)}
         />
       )}
+
+      <ConfirmDeleteModal
+        isOpen={!!deleteTarget}
+        title="Hapus Tugas Tambahan?"
+        message="Tugas tambahan ini akan dihapus secara permanen beserta semua template uraian kegiatan."
+        itemName={deleteTarget?.name}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }

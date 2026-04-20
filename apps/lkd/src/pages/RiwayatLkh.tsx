@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -12,6 +13,9 @@ export default function RiwayatLkh() {
   const [editId, setEditId] = useState<number | null>(null);
   const [editKegiatan, setEditKegiatan] = useState('');
   const [editUraian, setEditUraian] = useState('');
+
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
 
   const handleEditOpen = (item: any) => {
     setEditId(item.id);
@@ -34,12 +38,11 @@ export default function RiwayatLkh() {
   };
 
   // Delete Handler
-  const handleDelete = async (id?: number) => {
-    if (id) {
-      if (window.confirm("Apakah Anda yakin ingin menghapus aktivitas ini?")) {
-        await db.lkh.update(id, { isDeleted: true, updatedAt: Date.now() });
-        showToast("Aktivitas berhasil dihapus", "success");
-      }
+  const handleDeleteConfirm = async () => {
+    if (deleteTarget) {
+      await db.lkh.update(deleteTarget.id, { isDeleted: true, updatedAt: Date.now() });
+      showToast("Aktivitas berhasil dihapus", "success");
+      setDeleteTarget(null);
     }
   };
 
@@ -122,7 +125,7 @@ export default function RiwayatLkh() {
                       <button onClick={() => handleEditOpen(item)} className="text-slate-400 hover:text-teal-600 transition-colors">
                         <span className="material-symbols-outlined text-[18px]">edit</span>
                       </button>
-                      <button onClick={() => handleDelete(item.id)} className="text-slate-400 hover:text-red-600 transition-colors">
+                      <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.kegiatan })} className="text-slate-400 hover:text-red-600 transition-colors">
                         <span className="material-symbols-outlined text-[18px]">delete</span>
                       </button>
                     </div>
@@ -185,6 +188,15 @@ export default function RiwayatLkh() {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={!!deleteTarget}
+        title="Hapus Aktivitas?"
+        message="Aktivitas LKH ini akan dihapus secara permanen dari riwayat Anda."
+        itemName={deleteTarget?.name}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -28,10 +29,14 @@ export default function KalenderAkademik() {
     setKeterangan('');
   };
 
-  const handleDelete = async (id?: number) => {
-    if (id) {
-      await db.kalender.update(id, { isDeleted: true, updatedAt: Date.now() });
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+
+  const handleDeleteConfirm = async () => {
+    if (deleteTarget) {
+      await db.kalender.update(deleteTarget.id, { isDeleted: true, updatedAt: Date.now() });
       showToast("Dihapus dari kalender", "success");
+      setDeleteTarget(null);
     }
   };
 
@@ -106,13 +111,21 @@ export default function KalenderAkademik() {
                   <p className="text-xs font-medium text-slate-500 mt-0.5">{formatterTanggal.format(new Date(item.tanggal))}</p>
                 </div>
               </div>
-              <button onClick={() => handleDelete(item.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
+              <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.keterangan })} className="p-2 text-slate-400 hover:text-red-500 transition-colors">
                 <span className="material-symbols-outlined">delete</span>
               </button>
             </div>
           ))}
         </div>
       </main>
+      <ConfirmDeleteModal
+        isOpen={!!deleteTarget}
+        title="Hapus dari Kalender?"
+        message="Data kalender akademik ini akan dihapus secara permanen."
+        itemName={deleteTarget?.name}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }

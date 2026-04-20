@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -34,6 +35,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'overview' | 'users'>('overview');
+  const [actionTarget, setActionTarget] = useState<{ userId: number; type: 'reset' | 'delete'; userName: string } | null>(null);
 
   useEffect(() => {
     if (!getToken()) { navigate('/admin/login'); return; }
@@ -49,12 +51,9 @@ export default function AdminDashboard() {
     navigate('/admin/login');
   };
 
-  const handleUserAction = async (userId: number, type: 'reset' | 'delete', userName: string) => {
-    const msg = type === 'reset' 
-      ? `Yakin ingin MERESET DATA (menghapus semua LKH, Jadwal, Profil dari server) untuk ${userName}? Akun tetap bisa login.` 
-      : `Yakin ingin MENGHAPUS PERMANEN akun dan seluruh data guru ${userName}? Mereka harus mendaftar ulang.`;
-      
-    if (!window.confirm(msg)) return;
+  const handleUserActionConfirm = async () => {
+    if (!actionTarget) return;
+    const { userId, type } = actionTarget;
     
     try {
       const url = type === 'reset' ? `/api/admin/users/${userId}/reset` : `/api/admin/users/${userId}`;
@@ -70,6 +69,8 @@ export default function AdminDashboard() {
       adminFetch('/api/admin/users').then(u => setUsers(u.data));
     } catch(err: any) {
       alert(err.message);
+    } finally {
+      setActionTarget(null);
     }
   };
 
@@ -182,10 +183,10 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 text-slate-500 text-xs">{fmtDate(u.lastLkhSync)}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <button onClick={() => handleUserAction(u.id, 'reset', u.nama)} title="Reset Data Sync" className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
+                          <button onClick={() => setActionTarget({ userId: u.id, type: 'reset', userName: u.nama })} title="Reset Data Sync" className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
                             <span className="material-symbols-outlined text-[18px]">device_reset</span>
                           </button>
-                          <button onClick={() => handleUserAction(u.id, 'delete', u.nama)} title="Hapus Akun Permanen" className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                          <button onClick={() => setActionTarget({ userId: u.id, type: 'delete', userName: u.nama })} title="Hapus Akun Permanen" className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                             <span className="material-symbols-outlined text-[18px]">delete_forever</span>
                           </button>
                           <NavLink to={`/admin/users/${u.id}`} className="ml-2 text-teal-600 font-bold text-xs bg-teal-50 px-3 py-1.5 rounded-lg hover:bg-teal-100 transition-colors">Detail</NavLink>
@@ -211,10 +212,10 @@ export default function AdminDashboard() {
                   </div>
                   <div className="flex items-center justify-between pl-14">
                     <div className="flex items-center gap-1">
-                      <button onClick={() => handleUserAction(u.id, 'reset', u.nama)} className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 rounded-lg">
+                      <button onClick={() => setActionTarget({ userId: u.id, type: 'reset', userName: u.nama })} className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 rounded-lg">
                         <span className="material-symbols-outlined text-[14px]">device_reset</span> Reset
                       </button>
-                      <button onClick={() => handleUserAction(u.id, 'delete', u.nama)} className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-red-700 bg-red-50 rounded-lg">
+                      <button onClick={() => setActionTarget({ userId: u.id, type: 'delete', userName: u.nama })} className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-red-700 bg-red-50 rounded-lg">
                         <span className="material-symbols-outlined text-[14px]">delete_forever</span> Hapus
                       </button>
                     </div>
@@ -227,6 +228,17 @@ export default function AdminDashboard() {
           </div>
         )}
       </main>
+
+      <ConfirmDeleteModal
+        isOpen={!!actionTarget}
+        title={actionTarget?.type === 'reset' ? 'Reset Data Guru?' : 'Hapus Akun Guru?'}
+        message={actionTarget?.type === 'reset'
+          ? 'Semua data LKH, Jadwal, dan Profil guru ini akan dihapus dari server. Akun tetap bisa login kembali.'
+          : 'Akun dan seluruh data guru ini akan dihapus secara PERMANEN. Guru harus mendaftar ulang untuk menggunakan aplikasi lagi.'}
+        itemName={actionTarget?.userName}
+        onConfirm={handleUserActionConfirm}
+        onCancel={() => setActionTarget(null)}
+      />
     </div>
   );
 }

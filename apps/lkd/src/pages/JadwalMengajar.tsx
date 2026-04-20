@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
@@ -86,10 +87,14 @@ export default function JadwalMengajar() {
     }
   };
 
-  const handleDelete = async (id?: number) => {
-    if (id && window.confirm("Hapus jadwal ini?")) {
-      await db.jadwal.update(id, { isDeleted: true, updatedAt: Date.now() });
+  // Delete Confirmation State
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+
+  const handleDeleteConfirm = async () => {
+    if (deleteTarget) {
+      await db.jadwal.update(deleteTarget.id, { isDeleted: true, updatedAt: Date.now() });
       showToast("Jadwal dihapus", "success");
+      setDeleteTarget(null);
     }
   };
 
@@ -159,7 +164,7 @@ export default function JadwalMengajar() {
                         <button onClick={() => handleEdit(item)} className="text-slate-400 hover:text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity">
                           <span className="material-symbols-outlined">edit</span>
                         </button>
-                        <button onClick={() => handleDelete(item.id)} className="text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: `${item.mataPelajaran} (${item.kelas})` })} className="text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
                           <span className="material-symbols-outlined">delete</span>
                         </button>
                       </div>
@@ -333,6 +338,15 @@ export default function JadwalMengajar() {
           </div>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={!!deleteTarget}
+        title="Hapus Jadwal?"
+        message="Jadwal mengajar ini akan dihapus secara permanen."
+        itemName={deleteTarget?.name}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }
