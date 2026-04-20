@@ -41,9 +41,9 @@ export async function pushData(req: Request, res: Response): Promise<void> {
           updated_at = EXCLUDED.updated_at
       `, [
         userId,
-        profil.nama, profil.nip, profil.jabatan,
-        profil.pangkat, profil.golongan,
-        profil.namaKepsek, profil.nipKepsek,
+        profil.nama || null, profil.nip || null, profil.jabatan || null,
+        profil.pangkat || null, profil.golongan || null,
+        profil.namaKepsek || null, profil.nipKepsek || null,
         profil.ttdUrl || null, profil.avatarUrl || null,
         profil.updatedAt || Date.now()
       ]);
@@ -67,8 +67,8 @@ export async function pushData(req: Request, res: Response): Promise<void> {
             is_deleted = EXCLUDED.is_deleted
         `, [
           item.id, userId,
-          item.hari, item.jamMulai, item.jamSelesai,
-          item.mataPelajaran, item.kelas,
+          item.hari || null, item.jamMulai || null, item.jamSelesai || null,
+          item.mataPelajaran || null, item.kelas || null,
           item.ruangan || null, item.warna || null,
           item.updatedAt || Date.now(),
           item.isDeleted || false
@@ -91,7 +91,7 @@ export async function pushData(req: Request, res: Response): Promise<void> {
             is_deleted = EXCLUDED.is_deleted
         `, [
           item.id, userId,
-          item.namaTugas, item.kategori,
+          item.namaTugas || null, item.kategori || null,
           JSON.stringify(item.templates || []),
           item.isDraft || false,
           item.updatedAt || Date.now(),
@@ -117,9 +117,9 @@ export async function pushData(req: Request, res: Response): Promise<void> {
             is_deleted = EXCLUDED.is_deleted
         `, [
           item.id, userId,
-          item.tanggal, item.kegiatan, item.uraian,
+          item.tanggal || null, item.kegiatan || null, item.uraian || null,
           item.keteranganOutput || null,
-          item.sumberId || null, item.tipeSumber,
+          item.sumberId || null, item.tipeSumber || null,
           item.createdAt || Date.now(),
           item.updatedAt || Date.now(),
           item.isDeleted || false
@@ -141,7 +141,7 @@ export async function pushData(req: Request, res: Response): Promise<void> {
             is_deleted = EXCLUDED.is_deleted
         `, [
           item.id, userId,
-          item.tanggal, item.status, item.keterangan,
+          item.tanggal || null, item.status || null, item.keterangan || null,
           item.updatedAt || Date.now(),
           item.isDeleted || false
         ]);
