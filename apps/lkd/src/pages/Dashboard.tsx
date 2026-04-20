@@ -271,7 +271,7 @@ export default function Dashboard() {
       )}
 
       {/* Profile Quick View Modal */}
-      {isProfileOpen && profil && (
+      {isProfileOpen && (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsProfileOpen(false)}>
           <div className="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
             {/* Header with photo */}
@@ -281,7 +281,7 @@ export default function Dashboard() {
               </button>
               <div className="relative group">
                 <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-white/30 shadow-lg">
-                  <img src={profil.avatarUrl || `https://ui-avatars.com/api/?name=${profil.nama || 'G'}&background=0D9488&color=fff&size=128`} alt="Profil" className="w-full h-full object-cover" />
+                  <img src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=128`} alt="Profil" className="w-full h-full object-cover" />
                 </div>
                 <label className="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-slate-100 transition-colors">
                   <span className="material-symbols-outlined text-[14px] text-teal-700">photo_camera</span>
@@ -291,7 +291,8 @@ export default function Dashboard() {
                     const reader = new FileReader();
                     reader.onload = async (event) => {
                       const base64 = event.target?.result as string;
-                      const current = await db.profil.get(1) || await db.profil.toCollection().first();
+                      let current = await db.profil.get(1);
+                      if (!current) current = await db.profil.toCollection().first();
                       if (current) {
                         await db.profil.put({ ...current, avatarUrl: base64, updatedAt: Date.now() });
                         useAppStore.getState().showToast("Foto profil diperbarui!", "success");
@@ -301,8 +302,8 @@ export default function Dashboard() {
                   }} />
                 </label>
               </div>
-              <h2 className="text-white font-bold text-[16px] mt-3 text-center">{profil.nama}</h2>
-              <p className="text-cyan-200 text-[12px] font-medium">NIP. {profil.nip}</p>
+              <h2 className="text-white font-bold text-[16px] mt-3 text-center">{profil?.nama || 'Pengguna'}</h2>
+              <p className="text-cyan-200 text-[12px] font-medium">NIP. {profil?.nip || '-'}</p>
             </div>
 
             {/* Profile Details */}
@@ -311,7 +312,7 @@ export default function Dashboard() {
                 <span className="material-symbols-outlined text-[18px] text-teal-600">work</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Jabatan</p>
-                  <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil.jabatan || '-'}</p>
+                  <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil?.jabatan || '-'}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -319,14 +320,14 @@ export default function Dashboard() {
                   <span className="material-symbols-outlined text-[16px] text-amber-600">military_tech</span>
                   <div className="min-w-0">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Pangkat</p>
-                    <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil.pangkat || '-'}</p>
+                    <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil?.pangkat || '-'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2.5">
                   <span className="material-symbols-outlined text-[16px] text-indigo-600">badge</span>
                   <div className="min-w-0">
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Golongan</p>
-                    <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil.golongan || '-'}</p>
+                    <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil?.golongan || '-'}</p>
                   </div>
                 </div>
               </div>
