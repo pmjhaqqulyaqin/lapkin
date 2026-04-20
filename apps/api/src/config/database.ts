@@ -113,26 +113,30 @@ async function runAdditionalMigrations() {
     join(process.cwd(), 'migrations', '002_admin_role.sql'),         // docker: /app/migrations
   ];
 
+  let found002 = false;
   for (const migrationPath of possiblePaths) {
     if (existsSync(migrationPath)) {
       console.log(`📂 Ditemukan migrasi 002 di: ${migrationPath}`);
       const sql = readFileSync(migrationPath, 'utf-8');
       await query(sql);
       console.log('✅ Migrasi 002_admin_role berhasil!');
-      return;
+      found002 = true;
+      break;
     }
   }
 
-  console.log('⚠️  File migrasi 002_admin_role.sql tidak ditemukan di path manapun.');
-  console.log('   Mencoba ALTER TABLE langsung...');
-  
-  // Fallback: jalankan SQL langsung tanpa file
-  try {
-    await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'guru'");
-    await query('CREATE INDEX IF NOT EXISTS idx_users_role ON users (role)');
-    console.log('✅ Kolom role berhasil ditambahkan via fallback!');
-  } catch (err) {
-    console.error('⚠️  Gagal menambah kolom role:', err);
+  if (!found002) {
+    console.log('⚠️  File migrasi 002_admin_role.sql tidak ditemukan di path manapun.');
+    console.log('   Mencoba ALTER TABLE langsung...');
+    
+    // Fallback: jalankan SQL langsung tanpa file
+    try {
+      await query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'guru'");
+      await query('CREATE INDEX IF NOT EXISTS idx_users_role ON users (role)');
+      console.log('✅ Kolom role berhasil ditambahkan via fallback!');
+    } catch (err) {
+      console.error('⚠️  Gagal menambah kolom role:', err);
+    }
   }
 
   // Migrasi untuk Tabel master_referensi
