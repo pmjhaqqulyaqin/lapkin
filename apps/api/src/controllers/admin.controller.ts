@@ -184,6 +184,69 @@ export async function getUserDetail(req: Request, res: Response): Promise<void> 
 }
 
 // =============================================
+// Manage Users
+// =============================================
+
+/**
+ * DELETE /api/admin/users/:id
+ * Menghapus akun guru beserta seluruh datanya secara permanen.
+ */
+export async function deleteUser(req: Request, res: Response): Promise<void> {
+  try {
+    const userId = parseInt(String(req.params.id));
+    if (isNaN(userId)) {
+      res.status(400).json({ success: false, error: 'ID tidak valid' });
+      return;
+    }
+    
+    // Karena ada foreign key ON DELETE CASCADE, menghapus dari tabel users
+    // akan otomatis menghapus dari sync_profil, sync_lkh, dll (jika ada cascade).
+    // Tapi mari kita hapus manual untuk pastikan.
+    await query('BEGIN');
+    await query('DELETE FROM sync_lkh WHERE user_id = $1', [userId]);
+    await query('DELETE FROM sync_jadwal WHERE user_id = $1', [userId]);
+    await query('DELETE FROM sync_tugas_tambahan WHERE user_id = $1', [userId]);
+    await query('DELETE FROM sync_profil WHERE user_id = $1', [userId]);
+    await query('DELETE FROM users WHERE id = $1 AND role = $2', [userId, 'guru']);
+    await query('COMMIT');
+
+    res.json({ success: true, message: 'Akun guru dan seluruh datanya berhasil dihapus permanen.' });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('❌ Admin delete user error:', error);
+    res.status(500).json({ success: false, error: 'Gagal menghapus guru.' });
+  }
+}
+
+/**
+ * POST /api/admin/users/:id/reset
+ * Menghapus seluruh data LKH, Jadwal, Tugas guru di server, TAPI akun tetap bisa login.
+ */
+export async function resetUserData(req: Request, res: Response): Promise<void> {
+  try {
+    const userId = parseInt(String(req.params.id));
+    if (isNaN(userId)) {
+      res.status(400).json({ success: false, error: 'ID tidak valid' });
+      return;
+    }
+
+    await query('BEGIN');
+    await query('DELETE FROM sync_lkh WHERE user_id = $1', [userId]);
+    await query('DELETE FROM sync_jadwal WHERE user_id = $1', [userId]);
+    await query('DELETE FROM sync_tugas_tambahan WHERE user_id = $1', [userId]);
+    await query('DELETE FROM sync_profil WHERE user_id = $1', [userId]);
+    // update password to default? Or just data. The prompt says "reset data guru". We'll just clear synced data.
+    await query('COMMIT');
+
+    res.json({ success: true, message: 'Seluruh data sinkronisasi guru berhasil direset (dikosongkan dari server).' });
+  } catch (error) {
+    await query('ROLLBACK');
+    console.error('❌ Admin reset user data error:', error);
+    res.status(500).json({ success: false, error: 'Gagal mereset data guru.' });
+  }
+}
+
+// =============================================
 // Helpers
 // =============================================
 

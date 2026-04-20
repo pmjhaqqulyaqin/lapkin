@@ -49,6 +49,30 @@ export default function AdminDashboard() {
     navigate('/admin/login');
   };
 
+  const handleUserAction = async (userId: number, type: 'reset' | 'delete', userName: string) => {
+    const msg = type === 'reset' 
+      ? `Yakin ingin MERESET DATA (menghapus semua LKH, Jadwal, Profil dari server) untuk ${userName}? Akun tetap bisa login.` 
+      : `Yakin ingin MENGHAPUS PERMANEN akun dan seluruh data guru ${userName}? Mereka harus mendaftar ulang.`;
+      
+    if (!window.confirm(msg)) return;
+    
+    try {
+      const url = type === 'reset' ? `/api/admin/users/${userId}/reset` : `/api/admin/users/${userId}`;
+      const res = await fetch(`${API_BASE}${url}`, {
+        method: type === 'reset' ? 'POST' : 'DELETE',
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal');
+      alert(data.message || 'Berhasil');
+      
+      // Refresh user list
+      adminFetch('/api/admin/users').then(u => setUsers(u.data));
+    } catch(err: any) {
+      alert(err.message);
+    }
+  };
+
   const fmtDate = (ts: number | null) => ts ? new Date(ts).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Belum pernah';
 
   if (loading) return (
@@ -156,7 +180,17 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 text-slate-500">{u.jabatan}</td>
                       <td className="px-6 py-4 text-center"><span className="bg-teal-100 text-teal-700 px-2.5 py-1 rounded-lg font-bold text-xs">{u.totalLkh}</span></td>
                       <td className="px-6 py-4 text-slate-500 text-xs">{fmtDate(u.lastLkhSync)}</td>
-                      <td className="px-6 py-4"><NavLink to={`/admin/users/${u.id}`} className="text-teal-600 font-bold text-xs">Detail →</NavLink></td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button onClick={() => handleUserAction(u.id, 'reset', u.nama)} title="Reset Data Sync" className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
+                            <span className="material-symbols-outlined text-[18px]">device_reset</span>
+                          </button>
+                          <button onClick={() => handleUserAction(u.id, 'delete', u.nama)} title="Hapus Akun Permanen" className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+                          </button>
+                          <NavLink to={`/admin/users/${u.id}`} className="ml-2 text-teal-600 font-bold text-xs bg-teal-50 px-3 py-1.5 rounded-lg hover:bg-teal-100 transition-colors">Detail</NavLink>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -165,16 +199,28 @@ export default function AdminDashboard() {
             {/* Mobile */}
             <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
               {users.map(u => (
-                <NavLink key={u.id} to={`/admin/users/${u.id}`} className="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors">
-                  <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-teal-700">person</span>
+                <div key={u.id} className="p-4 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center shrink-0">
+                      <span className="material-symbols-outlined text-teal-700">person</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-sm text-slate-800 truncate">{u.nama}</h4>
+                      <p className="text-xs text-slate-500">{u.jabatan} • {u.totalLkh} LKH</p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm text-slate-800 truncate">{u.nama}</h4>
-                    <p className="text-xs text-slate-500">{u.jabatan} • {u.totalLkh} LKH</p>
+                  <div className="flex items-center justify-between pl-14">
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => handleUserAction(u.id, 'reset', u.nama)} className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-amber-700 bg-amber-50 rounded-lg">
+                        <span className="material-symbols-outlined text-[14px]">device_reset</span> Reset
+                      </button>
+                      <button onClick={() => handleUserAction(u.id, 'delete', u.nama)} className="flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-bold text-red-700 bg-red-50 rounded-lg">
+                        <span className="material-symbols-outlined text-[14px]">delete_forever</span> Hapus
+                      </button>
+                    </div>
+                    <NavLink to={`/admin/users/${u.id}`} className="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-lg">Detail →</NavLink>
                   </div>
-                  <span className="material-symbols-outlined text-slate-400">chevron_right</span>
-                </NavLink>
+                </div>
               ))}
             </div>
             {users.length === 0 && <div className="py-12 text-center text-slate-500">Belum ada guru terdaftar.</div>}

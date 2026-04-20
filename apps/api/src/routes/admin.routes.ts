@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getStats, getUsers, getUserDetail } from '../controllers/admin.controller.js';
+import { getStats, getUsers, getUserDetail, deleteUser, resetUserData } from '../controllers/admin.controller.js';
 import { authenticate, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
@@ -16,5 +16,11 @@ router.get('/users', getUsers);
 
 // Detail data guru (termasuk LKH per bulan)
 router.get('/users/:id', getUserDetail);
+
+// Reset data sync guru
+router.post('/users/:id/reset', resetUserData);
+
+// Hapus akun guru
+router.delete('/users/:id', deleteUser);
 
 export default router;
