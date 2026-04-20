@@ -2,10 +2,20 @@ import { NavLink } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
+import { useEffect } from 'react';
 
 export default function Sidebar() {
   const { isSidebarOpen, setSidebarOpen, logout } = useAppStore();
   const profil = useLiveQuery(() => db.profil.get(1));
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isSidebarOpen]);
 
   if (!isSidebarOpen) return null;
 
@@ -16,9 +26,9 @@ export default function Sidebar() {
         onClick={() => setSidebarOpen(false)}
       ></div>
 
-      <div className="fixed top-0 left-0 w-60 max-h-screen bg-white dark:bg-slate-900 shadow-2xl z-[110] flex flex-col transform transition-transform animate-slide-in-left rounded-br-2xl overflow-hidden border-b border-r border-slate-100 dark:border-slate-800">
+      <div className="fixed top-3 left-3 w-64 max-h-[calc(100vh-24px)] bg-white dark:bg-slate-900 shadow-2xl z-[110] flex flex-col transform transition-transform animate-slide-in-left rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800">
         {/* Header */}
-        <div className="px-4 py-3.5 bg-teal-50 dark:bg-teal-900/20 border-b border-teal-100 dark:border-teal-900/30">
+        <div className="px-4 py-4 bg-teal-50 dark:bg-teal-900/20 border-b border-teal-100 dark:border-teal-900/30">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center overflow-hidden shrink-0">
               <img alt="Avatar" className="w-full h-full object-cover" src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=64`} />

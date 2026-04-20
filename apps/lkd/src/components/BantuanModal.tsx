@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 
 const FAQ_DATA = [
@@ -31,6 +31,15 @@ const FAQ_DATA = [
 export default function BantuanModal() {
   const { isBantuanOpen, setBantuanOpen } = useAppStore();
   const [openIndex, setOpenIndex] = useState<number | null>(0); // Buka yang pertama secara default
+
+  useEffect(() => {
+    if (isBantuanOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isBantuanOpen]);
 
   if (!isBantuanOpen) return null;
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -19,6 +19,15 @@ export default function EditorAktivitas() {
   const [templates, setTemplates] = useState<{hari: string, uraian: string[]}[]>([
     { hari: 'Senin', uraian: [''] }
   ]);
+
+  useEffect(() => {
+    if (isModalOpen || isManageKategoriOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isModalOpen, isManageKategoriOpen]);
 
   const addHari = () => {
     setTemplates([...templates, { hari: 'Senin', uraian: [''] }]);

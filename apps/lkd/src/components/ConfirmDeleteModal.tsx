@@ -19,7 +19,13 @@ export default function ConfirmDeleteModal({ isOpen, title = 'Konfirmasi Hapus',
 
   // Reset step saat modal dibuka/ditutup
   useEffect(() => {
-    if (isOpen) setStep(1);
+    if (isOpen) {
+      setStep(1);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   if (!isOpen) return null;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -47,6 +47,15 @@ export default function Dashboard() {
   const [editId, setEditId] = useState<number | null>(null);
   const [editKegiatan, setEditKegiatan] = useState('');
   const [editUraian, setEditUraian] = useState('');
+
+  useEffect(() => {
+    if (isProfileOpen || isEditModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isProfileOpen, isEditModalOpen]);
 
   const handleEditOpen = (item: any) => {
     setEditId(item.id);

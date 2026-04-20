@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 interface Props {
@@ -9,6 +9,11 @@ interface Props {
 }
 
 export default function CategoryManagerModal({ title, items: initialItems, onSave, onClose }: Props) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
   const [items, setItems] = useState<string[]>(initialItems);
   const [newItem, setNewItem] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<{ index: number; name: string } | null>(null);
