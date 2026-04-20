@@ -272,8 +272,8 @@ export default function Dashboard() {
 
       {/* Profile Quick View Modal */}
       {isProfileOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsProfileOpen(false)}>
-          <div className="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsProfileOpen(false)}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-scale-up" onClick={e => e.stopPropagation()}>
             {/* Header with photo */}
             <div className="bg-gradient-to-br from-teal-700 to-cyan-900 p-5 flex flex-col items-center relative">
               <button onClick={() => setIsProfileOpen(false)} className="absolute top-3 right-3 text-white/60 hover:text-white bg-white/10 rounded-full p-1 transition-colors">
