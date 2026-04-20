@@ -6,7 +6,11 @@ import { useAppStore } from '../store/useAppStore';
 
 export default function Dashboard() {
   const { activeMonthIndex, activeYear, setActiveMonthYear } = useAppStore();
-  const profil = useLiveQuery(() => db.profil.get(1));
+  const profil = useLiveQuery(async () => {
+    const p = await db.profil.get(1);
+    if (p) return p;
+    return db.profil.toCollection().first();
+  });
   
   const lkhBulanIni = useLiveQuery(
     () => db.lkh.orderBy('tanggal').reverse().toArray().then(arr => 
@@ -106,10 +110,10 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          <button onClick={() => setIsProfileOpen(true)} className="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform">
+          <button onClick={() => setIsProfileOpen(true)} className="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform relative z-10 shrink-0">
             <img
               alt="Profil"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover pointer-events-none"
               src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=64`}
             />
           </button>
