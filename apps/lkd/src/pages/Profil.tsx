@@ -77,10 +77,14 @@ export default function Profil() {
     await executeSync();
   };
 
-  const executeSync = async () => {
+  const executeSync = async (forceFullSync = false) => {
     setSyncStatus('syncing');
     setSyncMessage('Menghubungkan ke server...');
     try {
+      if (forceFullSync) {
+        // Reset lastSync to 0 so ALL data is pushed and pulled
+        localStorage.setItem('lkd_last_sync', '0');
+      }
       const result = await fullSync();
       setSyncStatus('success');
       setSyncMessage(`${result.message} (↑${result.pushed} ↓${result.pulled})`);
@@ -465,17 +469,33 @@ export default function Profil() {
               </button>
             </li>
             {syncUser && (
+            <>
             <li>
-              <button onClick={handleSyncLogout} className="w-full flex items-center justify-between p-5 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-[18px]">link_off</span>
+              <button onClick={() => executeSync(true)} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-cyan-50 dark:hover:bg-cyan-900/10 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                    <span className="material-symbols-outlined text-[16px]">sync_problem</span>
                   </div>
-                  <span className="font-semibold text-slate-700 dark:text-slate-200">Putus Koneksi Server</span>
+                  <div className="text-left">
+                    <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200 block">Sync Ulang Penuh</span>
+                    <span className="text-[10px] text-slate-400">Kirim & terima ulang semua data</span>
+                  </div>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500 transition-colors">chevron_right</span>
+                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
               </button>
             </li>
+            <li>
+              <button onClick={handleSyncLogout} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                    <span className="material-symbols-outlined text-[16px]">link_off</span>
+                  </div>
+                  <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200">Putus Koneksi Server</span>
+                </div>
+                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-red-500 transition-colors">chevron_right</span>
+              </button>
+            </li>
+            </>
             )}
             <li>
               <button onClick={() => useAppStore.getState().setBantuanOpen(true)} className="w-full text-left flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
