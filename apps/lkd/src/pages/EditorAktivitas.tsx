@@ -168,19 +168,19 @@ export default function EditorAktivitas() {
       {/* Modal Tambah Tugas */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto pt-20 pb-10">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-auto">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900 sticky top-0 z-10">
-              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100">Tambah Tugas Tambahan</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
-                <span className="material-symbols-outlined text-[20px]">close</span>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden my-auto">
+            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 z-10 bg-white dark:bg-slate-900">
+              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">Tambah Tugas</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors">
+                <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
             
-            <form onSubmit={handleSimpanTugas} className="p-6 space-y-5 bg-white dark:bg-slate-900">
+            <form onSubmit={handleSimpanTugas} className="p-4 space-y-3 bg-white dark:bg-slate-900">
               {/* Kategori */}
               <div>
-                <div className="flex justify-between items-center mb-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Kategori</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Kategori</label>
                   <button 
                     type="button" 
                     onClick={() => setIsManageKategoriOpen(true)}
@@ -193,7 +193,7 @@ export default function EditorAktivitas() {
                   <select 
                     value={kategori}
                     onChange={e => setKategori(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none appearance-none"
+                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none appearance-none"
                   >
                     {kategoriTugas.map(kat => (
                       <option key={kat} value={kat}>{kat}</option>
@@ -205,28 +205,25 @@ export default function EditorAktivitas() {
 
               {/* Nama Tugas */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Nama Jabatan / Tugas</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nama Jabatan / Tugas</label>
                 <input 
-                  type="text" 
-                  value={namaTugas}
-                  onChange={e => setNamaTugas(e.target.value)}
-                  placeholder="Contoh: Wali Kelas X-IPA 1"
-                  required
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                  type="text" value={namaTugas} onChange={e => setNamaTugas(e.target.value)}
+                  placeholder="Contoh: Wali Kelas X-IPA 1" required
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                 />
               </div>
 
               {/* Jadwal & Template Uraian */}
-              <div className="space-y-4 pt-2">
-                <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Jadwal & Uraian Kegiatan</label>
-                  <button type="button" onClick={addHari} className="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded uppercase tracking-wider hover:bg-teal-100 transition-colors">
+              <div className="space-y-3 pt-1">
+                <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-1.5">
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Jadwal & Uraian</label>
+                  <button type="button" onClick={addHari} className="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded uppercase tracking-wider hover:bg-teal-100 transition-colors">
                     + Tambah Hari
                   </button>
                 </div>
                 
                 {templates.map((templateItem, hIdx) => (
-                  <div key={hIdx} className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 relative">
+                  <div key={hIdx} className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-3 border border-slate-100 dark:border-slate-800 relative">
                     {templates.length > 1 && (
                       <button type="button" onClick={() => removeHari(hIdx)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center hover:bg-red-200">
                         <span className="material-symbols-outlined text-[14px]">close</span>
@@ -274,10 +271,10 @@ export default function EditorAktivitas() {
                 ))}
               </div>
 
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button type="submit" className="w-full bg-teal-800 text-white font-bold py-3.5 rounded-xl hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20 flex justify-center gap-2 items-center">
-                  <span className="material-symbols-outlined text-[20px]">save</span>
-                  Simpan Tugas Tambahan
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button type="submit" className="w-full bg-teal-800 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20 flex justify-center gap-1.5 items-center">
+                  <span className="material-symbols-outlined text-[18px]">save</span>
+                  Simpan Tugas
                 </button>
               </div>
             </form>

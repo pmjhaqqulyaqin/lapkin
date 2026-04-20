@@ -147,23 +147,15 @@ export default function Profil() {
   const handleSaveProfil = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const current = await db.profil.toCollection().first();
+      if (!current) {
+        showToast("Profil tidak ditemukan.", "error");
+        return;
+      }
       if (editMode === 'atasan') {
-        // Update only atasan fields to avoid stale data issues
-        await db.profil.update(1, {
-          namaKepsek: formData.namaKepsek,
-          nipKepsek: formData.nipKepsek,
-          updatedAt: Date.now(),
-        });
+        await db.profil.put({ ...current, namaKepsek: formData.namaKepsek, nipKepsek: formData.nipKepsek, updatedAt: Date.now() });
       } else {
-        // Update only profil fields
-        await db.profil.update(1, {
-          nama: formData.nama,
-          nip: formData.nip,
-          jabatan: formData.jabatan,
-          pangkat: formData.pangkat,
-          golongan: formData.golongan,
-          updatedAt: Date.now(),
-        });
+        await db.profil.put({ ...current, nama: formData.nama, nip: formData.nip, jabatan: formData.jabatan, pangkat: formData.pangkat, golongan: formData.golongan, updatedAt: Date.now() });
       }
       showToast("Data berhasil diperbarui!", "success");
       setIsModalOpen(false);
@@ -525,53 +517,53 @@ export default function Profil() {
       {/* Modal Edit */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">
                 {editMode === 'profil' ? 'Edit Profil' : 'Data Kepala Sekolah'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
-                <span className="material-symbols-outlined text-[20px]">close</span>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-1.5 transition-colors">
+                <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
             
-            <form onSubmit={handleSaveProfil} className="p-6 space-y-4 bg-white dark:bg-slate-900">
+            <form onSubmit={handleSaveProfil} className="p-4 space-y-3 bg-white dark:bg-slate-900">
               {editMode === 'profil' ? (
                 <>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Nama Lengkap</label>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nama Lengkap</label>
                     <input 
                       type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">NIP</label>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">NIP</label>
                     <input 
                       type="text" value={formData.nip} onChange={e => setFormData({...formData, nip: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Jabatan</label>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Jabatan</label>
                     <input 
                       type="text" value={formData.jabatan} onChange={e => setFormData({...formData, jabatan: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Pangkat</label>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Pangkat</label>
                       <input 
                         type="text" value={formData.pangkat} onChange={e => setFormData({...formData, pangkat: e.target.value})}
-                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Golongan</label>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Golongan</label>
                       <input 
                         type="text" value={formData.golongan} onChange={e => setFormData({...formData, golongan: e.target.value})}
-                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                       />
                     </div>
                   </div>
@@ -579,24 +571,24 @@ export default function Profil() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Nama Kepala Sekolah</label>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nama Kepala Sekolah</label>
                     <input 
                       type="text" value={formData.namaKepsek} onChange={e => setFormData({...formData, namaKepsek: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">NIP Kepala Sekolah</label>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">NIP Kepala Sekolah</label>
                     <input 
                       type="text" value={formData.nipKepsek} onChange={e => setFormData({...formData, nipKepsek: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                 </>
               )}
 
-              <div className="pt-4">
-                <button type="submit" className="w-full bg-cyan-600 text-white font-bold py-3.5 rounded-xl hover:bg-cyan-700 active:scale-95 transition-all shadow-lg shadow-cyan-900/20">
+              <div className="pt-2">
+                <button type="submit" className="w-full bg-cyan-600 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-cyan-700 active:scale-95 transition-all shadow-lg shadow-cyan-900/20">
                   Simpan Perubahan
                 </button>
               </div>
@@ -608,41 +600,21 @@ export default function Profil() {
       {/* Modal Signature */}
       {isSignatureModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100">
-                Tanda Tangan Digital
-              </h2>
-              <button onClick={() => setIsSignatureModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
-                <span className="material-symbols-outlined text-[20px]">close</span>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">Tanda Tangan Digital</h2>
+              <button onClick={() => setIsSignatureModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors">
+                <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
-            
-            <div className="p-6 bg-slate-50 dark:bg-slate-950">
-              <p className="text-xs text-slate-500 mb-3 font-semibold uppercase tracking-widest text-center">Goreskan Tanda Tangan di Kotak Bawah</p>
-              <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-2xl overflow-hidden touch-none relative">
-                <canvas
-                  ref={canvasRef}
-                  width={350}
-                  height={200}
-                  className="w-full h-[200px] cursor-crosshair"
-                  onMouseDown={startDrawing}
-                  onMouseUp={endDrawing}
-                  onMouseOut={endDrawing}
-                  onMouseMove={draw}
-                  onTouchStart={startDrawing}
-                  onTouchEnd={endDrawing}
-                  onTouchMove={draw}
-                />
+            <div className="p-4 bg-slate-50 dark:bg-slate-950">
+              <p className="text-[10px] text-slate-500 mb-2 font-semibold uppercase tracking-widest text-center">Goreskan Tanda Tangan</p>
+              <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl overflow-hidden touch-none relative">
+                <canvas ref={canvasRef} width={350} height={180} className="w-full h-[180px] cursor-crosshair" onMouseDown={startDrawing} onMouseUp={endDrawing} onMouseOut={endDrawing} onMouseMove={draw} onTouchStart={startDrawing} onTouchEnd={endDrawing} onTouchMove={draw} />
               </div>
-
-              <div className="flex gap-3 mt-6">
-                <button onClick={clearSignature} type="button" className="flex-1 bg-red-50 text-red-600 font-bold py-3.5 rounded-xl hover:bg-red-100 active:scale-95 transition-all">
-                  Hapus
-                </button>
-                <button onClick={saveSignature} type="button" className="flex-[2] bg-emerald-600 text-white font-bold py-3.5 rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-900/20">
-                  Simpan Tanda Tangan
-                </button>
+              <div className="flex gap-2 mt-3">
+                <button onClick={clearSignature} type="button" className="flex-1 bg-red-50 text-red-600 font-bold text-[13px] py-2.5 rounded-lg hover:bg-red-100 active:scale-95 transition-all">Hapus</button>
+                <button onClick={saveSignature} type="button" className="flex-[2] bg-emerald-600 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-900/20">Simpan Tanda Tangan</button>
               </div>
             </div>
           </div>
@@ -652,51 +624,35 @@ export default function Profil() {
       {/* PWA Install Fallback Modal */}
       {isInstallModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up border border-slate-200 dark:border-slate-800">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="font-manrope font-bold text-xl text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-teal-500">install_mobile</span>
-                  Cara Install LKD
-                </h3>
-                <button onClick={() => setIsInstallModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-100 p-2 rounded-full">
-                  <span className="material-symbols-outlined text-[20px]">close</span>
-                </button>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800">
+            <div className="px-4 py-3 flex justify-between items-center border-b border-slate-100 dark:border-slate-800">
+              <h3 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[18px] text-teal-500">install_mobile</span>
+                Cara Install LKD
+              </h3>
+              <button onClick={() => setIsInstallModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-100 p-1.5 rounded-full">
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+            <div className="p-4 space-y-3 text-slate-600 dark:text-slate-300 text-[12px]">
+              <p>Ikuti panduan manual ini:</p>
+              <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
+                <h4 className="font-bold text-[12px] text-slate-800 dark:text-slate-200 mb-1.5 flex items-center gap-1.5">Chrome (Android)</h4>
+                <ol className="list-decimal pl-4 space-y-0.5 text-[11px]">
+                  <li>Ketuk ikon <span className="font-bold">⋮</span> di pojok kanan atas.</li>
+                  <li>Pilih <span className="font-bold text-teal-600">"Tambahkan ke Layar Utama"</span>.</li>
+                  <li>Ketuk "Tambah".</li>
+                </ol>
               </div>
-              
-              <div className="space-y-4 text-slate-600 dark:text-slate-300 text-sm">
-                <p>Browser Anda tidak mendukung instalasi otomatis. Ikuti panduan manual ini:</p>
-                
-                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Chrome_icon_%28September_2014%29.svg" className="w-4 h-4" alt="Chrome"/>
-                    Chrome (Android)
-                  </h4>
-                  <ol className="list-decimal pl-5 space-y-1">
-                    <li>Ketuk ikon tiga titik <span className="font-bold">⋮</span> di pojok kanan atas browser.</li>
-                    <li>Pilih menu <span className="font-bold text-teal-600">"Tambahkan ke Layar Utama"</span> (Add to Home Screen).</li>
-                    <li>Ketuk "Tambah".</li>
-                  </ol>
-                </div>
-
-                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                  <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2 flex items-center gap-2">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Safari_browser_logo.svg" className="w-4 h-4" alt="Safari"/>
-                    Safari (iPhone / iOS)
-                  </h4>
-                  <ol className="list-decimal pl-5 space-y-1">
-                    <li>Ketuk ikon Bagikan (Share) <span className="inline-block border border-slate-400 px-1 rounded mx-1 pb-0.5">↑</span> di bagian bawah layar.</li>
-                    <li>Gulir ke bawah dan pilih <span className="font-bold text-teal-600">"Tambah ke Layar Utama"</span> (Add to Home Screen).</li>
-                    <li>Ketuk "Tambah" di pojok kanan atas.</li>
-                  </ol>
-                </div>
+              <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
+                <h4 className="font-bold text-[12px] text-slate-800 dark:text-slate-200 mb-1.5 flex items-center gap-1.5">Safari (iPhone)</h4>
+                <ol className="list-decimal pl-4 space-y-0.5 text-[11px]">
+                  <li>Ketuk ikon Bagikan <span className="inline-block border border-slate-400 px-0.5 rounded mx-0.5">↑</span>.</li>
+                  <li>Pilih <span className="font-bold text-teal-600">"Tambah ke Layar Utama"</span>.</li>
+                  <li>Ketuk "Tambah".</li>
+                </ol>
               </div>
-
-              <div className="mt-6 flex justify-end">
-                <button onClick={() => setIsInstallModalOpen(false)} className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 px-6 py-2.5 rounded-xl font-bold transition-colors">
-                  Tutup
-                </button>
-              </div>
+              <button onClick={() => setIsInstallModalOpen(false)} className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 py-2 rounded-lg text-[13px] font-bold transition-colors">Tutup</button>
             </div>
           </div>
         </div>
@@ -705,51 +661,49 @@ export default function Profil() {
       {/* Sync Auth Modal */}
       {isSyncModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <span className="material-symbols-outlined text-cyan-600">cloud_sync</span>
-                {syncIsRegister ? 'Daftar Akun Sinkronisasi' : 'Login Server Sinkronisasi'}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[18px] text-cyan-600">cloud_sync</span>
+                {syncIsRegister ? 'Daftar Akun Sync' : 'Login Server Sync'}
               </h2>
-              <button onClick={() => setIsSyncModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
-                <span className="material-symbols-outlined text-[20px]">close</span>
+              <button onClick={() => setIsSyncModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors">
+                <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
 
-            <div className="p-6 bg-cyan-50/50 dark:bg-cyan-950/20 border-b border-slate-100 dark:border-slate-800">
-              <div className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-cyan-500 shrink-0 mt-0.5">info</span>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Fitur ini menghubungkan data LKD di perangkat ini ke server, sehingga Anda bisa mengakses data yang sama di perangkat lain (HP, Laptop, dsb).
-                </p>
+            <div className="px-4 py-2.5 bg-cyan-50/50 dark:bg-cyan-950/20 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-[16px] text-cyan-500 shrink-0 mt-0.5">info</span>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">Hubungkan data LKD ke server agar bisa diakses di perangkat lain.</p>
               </div>
             </div>
             
-            <form onSubmit={handleSyncAuth} className="p-6 space-y-4 bg-white dark:bg-slate-900">
+            <form onSubmit={handleSyncAuth} className="p-4 space-y-3 bg-white dark:bg-slate-900">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">NIP</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">NIP</label>
                 <input 
                   type="text" value={syncForm.nip} onChange={e => setSyncForm({...syncForm, nip: e.target.value})}
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none"
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none"
                   required
                 />
               </div>
               {syncIsRegister && (
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Nama Lengkap</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nama Lengkap</label>
                   <input 
                     type="text" value={syncForm.nama} onChange={e => setSyncForm({...syncForm, nama: e.target.value})}
-                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none"
+                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none"
                     required
                   />
                 </div>
               )}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Password Sinkronisasi</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Password Sinkronisasi</label>
                 <input 
                   type="password" value={syncForm.password} onChange={e => setSyncForm({...syncForm, password: e.target.value})}
                   placeholder="Buat password untuk akun sync"
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none placeholder:font-normal"
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-cyan-500/50 outline-none placeholder:font-normal"
                   required minLength={4}
                 />
               </div>
@@ -761,21 +715,16 @@ export default function Profil() {
                 </div>
               )}
 
-              <div className="pt-4 space-y-3">
+              <div className="pt-2 space-y-2">
                 <button 
-                  type="submit" 
-                  disabled={syncStatus === 'syncing'}
-                  className="w-full bg-cyan-600 text-white font-bold py-3.5 rounded-xl hover:bg-cyan-700 active:scale-95 transition-all shadow-lg shadow-cyan-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  type="submit" disabled={syncStatus === 'syncing'}
+                  className="w-full bg-cyan-600 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-cyan-700 active:scale-95 transition-all shadow-lg shadow-cyan-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {syncStatus === 'syncing' && <span className="material-symbols-outlined text-[18px] animate-spin">sync</span>}
+                  {syncStatus === 'syncing' && <span className="material-symbols-outlined text-[16px] animate-spin">sync</span>}
                   {syncIsRegister ? 'Daftar & Sinkronkan' : 'Login & Sinkronkan'}
                 </button>
-                <button 
-                  type="button"
-                  onClick={() => setSyncIsRegister(!syncIsRegister)}
-                  className="w-full text-sm font-semibold text-slate-500 hover:text-cyan-600 transition-colors py-2"
-                >
-                  {syncIsRegister ? 'Sudah punya akun? Login di sini' : 'Belum punya akun? Daftar di sini'}
+                <button type="button" onClick={() => setSyncIsRegister(!syncIsRegister)} className="w-full text-[12px] font-semibold text-slate-500 hover:text-cyan-600 transition-colors py-1.5">
+                  {syncIsRegister ? 'Sudah punya akun? Login' : 'Belum punya akun? Daftar'}
                 </button>
               </div>
             </form>
