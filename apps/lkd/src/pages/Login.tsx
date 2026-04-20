@@ -8,6 +8,7 @@ export default function Login() {
   const navigate = useNavigate();
   const login = useAppStore((state) => state.login);
   const showToast = useAppStore((state) => state.showToast);
+  const pullReferensiData = useAppStore((state) => state.pullReferensiData);
 
   const [isRegister, setIsRegister] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
@@ -35,6 +36,7 @@ export default function Login() {
         
         // Tarik semua data dari server ke Dexie lokal
         const result = await fullSync();
+        await pullReferensiData(); // Tarik opsi referensi terbaru
         showToast(`Data berhasil diambil! (↓${result.pulled} item)`, 'success');
         
         login(); // Set Zustand logged-in state
@@ -60,6 +62,7 @@ export default function Login() {
         nipKepsek: '-',
         updatedAt: Date.now()
       });
+      await pullReferensiData(); // Tarik data referensi pertama kali
       showToast("Pendaftaran berhasil!", "success");
     } else {
       // Login - check if exists
@@ -68,6 +71,7 @@ export default function Login() {
         showToast("Pengguna belum terdaftar di perangkat ini. Silakan daftar atau gunakan 'Login dari Server'.", "error");
         return;
       }
+      await pullReferensiData(); // Coba tarik data saat login
     }
     
     login(); // Set Zustand state

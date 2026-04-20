@@ -9,8 +9,8 @@ import {
 
 const router = Router();
 
-// Endpoint Publik/Semua User (harus login)
-router.get('/', authenticate, getAllReferensi);
+// Endpoint Publik/Semua User (tanpa perlu login)
+router.get('/', getAllReferensi);
 
 // Endpoint Khusus Admin
 router.post('/', authenticate, requireAdmin, addReferensi);

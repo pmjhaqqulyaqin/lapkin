@@ -500,6 +500,27 @@ export default function Profil() {
             </>
             )}
             <li>
+              <button 
+                onClick={async () => {
+                  showToast('Menarik data referensi...');
+                  await useAppStore.getState().pullReferensiData();
+                  showToast('Data referensi (KBM, Tugas, Kalender) berhasil diperbarui!', 'success');
+                }} 
+                className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <span className="material-symbols-outlined text-[16px]">download</span>
+                  </div>
+                  <div className="text-left">
+                    <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200 block">Perbarui Referensi Data Sekolah</span>
+                    <span className="text-[10px] text-slate-400">Unduh master data terbaru dari Admin</span>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-indigo-600 transition-colors">chevron_right</span>
+              </button>
+            </li>
+            <li>
               <button onClick={() => useAppStore.getState().setBantuanOpen(true)} className="w-full text-left flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">

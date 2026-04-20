@@ -32,6 +32,7 @@ interface AppState {
   setKegiatanManual: (list: string[]) => void;
   setKategoriTugas: (list: string[]) => void;
   setStatusKalender: (list: string[]) => void;
+  pullReferensiData: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -92,5 +93,32 @@ export const useAppStore = create<AppState>((set) => ({
   setStatusKalender: (list) => {
     localStorage.setItem('lkd_status_kalender', JSON.stringify(list));
     set({ statusKalender: list });
+  },
+  pullReferensiData: async () => {
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${API_BASE}/api/referensi`);
+      if (!res.ok) throw new Error('Gagal menarik data');
+      const data = await res.json();
+      if (data.success) {
+        set((state) => {
+          const mergedKegiatan = Array.from(new Set([...data.data.kegiatan, ...state.kegiatanManual]));
+          const mergedTugas = Array.from(new Set([...data.data.tugas, ...state.kategoriTugas]));
+          const mergedKalender = Array.from(new Set([...data.data.kalender, ...state.statusKalender]));
+          
+          localStorage.setItem('lkd_kegiatan_manual', JSON.stringify(mergedKegiatan));
+          localStorage.setItem('lkd_kategori_tugas', JSON.stringify(mergedTugas));
+          localStorage.setItem('lkd_status_kalender', JSON.stringify(mergedKalender));
+          
+          return {
+            kegiatanManual: mergedKegiatan,
+            kategoriTugas: mergedTugas,
+            statusKalender: mergedKalender
+          };
+        });
+      }
+    } catch (err) {
+      console.error('Error pulling referensi:', err);
+    }
   },
 }));
