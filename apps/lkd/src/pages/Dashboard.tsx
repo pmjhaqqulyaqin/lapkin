@@ -56,15 +56,18 @@ export default function Dashboard() {
   const [editId, setEditId] = useState<number | null>(null);
   const [editKegiatan, setEditKegiatan] = useState('');
   const [editUraian, setEditUraian] = useState('');
+  
+  // Date Detail Modal State
+  const [viewDateDetails, setViewDateDetails] = useState<{ date: string, type: 'lkh' | 'holiday', info?: string } | null>(null);
 
   useEffect(() => {
-    if (isProfileOpen || isEditModalOpen) {
+    if (isProfileOpen || isEditModalOpen || viewDateDetails) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [isProfileOpen, isEditModalOpen]);
+  }, [isProfileOpen, isEditModalOpen, viewDateDetails]);
 
   const handleEditOpen = (item: any) => {
     setEditId(item.id);
@@ -260,7 +263,15 @@ export default function Dashboard() {
                   key={dayNum} 
                   title={kalenderEvent ? kalenderEvent.keterangan : (hasLkh ? 'LKH Terisi' : 'Belum Terisi')}
                   className={boxClasses}
-                  onClick={() => navigate('/lkh/input', { state: { date: dateStr } })}
+                  onClick={() => {
+                    if (hasLkh) {
+                      setViewDateDetails({ date: dateStr, type: 'lkh' });
+                    } else if (isHoliday) {
+                      setViewDateDetails({ date: dateStr, type: 'holiday', info: kalenderEvent?.keterangan || 'Hari Libur / Minggu' });
+                    } else {
+                      navigate('/lkh/input', { state: { date: dateStr } });
+                    }
+                  }}
                 >
                   {dayNum}
                 </button>
@@ -429,6 +440,74 @@ export default function Dashboard() {
                   <span className="material-symbols-outlined text-[18px] text-teal-400 group-hover:translate-x-0.5 transition-transform">chevron_right</span>
                 </NavLink>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Date Detail Modal */}
+      {viewDateDetails && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setViewDateDetails(null)}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-scale-up border border-slate-200 dark:border-slate-800 flex flex-col max-h-[80vh]" onClick={e => e.stopPropagation()}>
+            <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50 shrink-0">
+              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[20px] text-teal-600">
+                  {viewDateDetails.type === 'lkh' ? 'list_alt' : 'event_busy'}
+                </span>
+                {new Date(viewDateDetails.date).toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}
+              </h2>
+              <button onClick={() => setViewDateDetails(null)} className="text-slate-400 hover:text-slate-600 bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-1.5 transition-colors shadow-sm">
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+            
+            <div className="p-5 overflow-y-auto space-y-3">
+              {viewDateDetails.type === 'holiday' ? (
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 mx-auto bg-red-50 dark:bg-red-900/20 text-red-500 rounded-full flex items-center justify-center mb-3">
+                    <span className="material-symbols-outlined text-3xl">event_busy</span>
+                  </div>
+                  <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-1">Hari Libur</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{viewDateDetails.info}</p>
+                </div>
+              ) : (
+                <>
+                  {lkhBulanIni?.filter(item => item.tanggal === viewDateDetails.date).map(item => (
+                    <div key={item.id} className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-4 rounded-xl shadow-sm relative group">
+                      <div className="flex gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${item.tipeSumber === 'jadwal' ? 'bg-teal-50 dark:bg-teal-900/20 text-teal-600' : 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600'}`}>
+                          <span className="material-symbols-outlined">{item.tipeSumber === 'jadwal' ? 'school' : 'task_alt'}</span>
+                        </div>
+                        <div className="flex-1 min-w-0 pr-8">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">{item.tipeSumber}</span>
+                          <h4 className="font-bold text-[13px] text-slate-800 dark:text-slate-100 mb-1 leading-snug">{item.kegiatan}</h4>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">{item.uraian}</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => { setViewDateDetails(null); handleEditOpen(item); }} 
+                        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 hover:bg-teal-50 text-slate-400 hover:text-teal-600 transition-colors flex items-center justify-center opacity-100 lg:opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        title="Koreksi"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">edit</span>
+                      </button>
+                    </div>
+                  ))}
+                  <div className="pt-2 text-center">
+                    <button 
+                      onClick={() => {
+                        const date = viewDateDetails.date;
+                        setViewDateDetails(null);
+                        navigate('/lkh/input', { state: { date } });
+                      }}
+                      className="text-[12px] font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20 hover:bg-teal-100 dark:hover:bg-teal-900/40 px-4 py-2 rounded-full transition-colors inline-flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">add</span>
+                      Tambah Aktivitas Lain
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
