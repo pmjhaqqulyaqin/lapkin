@@ -28,18 +28,20 @@ export default function InputLkh() {
     () => db.kalender.where('tanggal').equals(tanggal).first(),
     [tanggal]
   );
-  const isLibur = kalenderHariIni?.status === 'libur';
+  
+  const statusLower = kalenderHariIni?.status?.toLowerCase() || '';
+  const isLibur = statusLower.includes('libur') || statusLower.includes('cuti');
 
   // Pre-fill form jika ada kegiatan khusus di kalender
   useEffect(() => {
-    if (kalenderHariIni?.status === 'kegiatan') {
-      setManualKegiatan('Kegiatan Khusus');
+    if (kalenderHariIni && !isLibur) {
+      setManualKegiatan(kalenderHariIni.status); // Use the custom status as the category
       // Set uraian hanya jika masih kosong, supaya tidak menimpa ketikan user secara tidak sengaja
       setManualUraian(prev => prev ? prev : kalenderHariIni.keterangan);
     } else if (!manualUraian) {
       setManualKegiatan(kegiatanManual[0] || '');
     }
-  }, [kalenderHariIni, tanggal, kegiatanManual]);
+  }, [kalenderHariIni, tanggal, kegiatanManual, isLibur]);
 
   // Fetch jadwal berdasarkan hari
   const jadwalHariIni = useLiveQuery(
@@ -243,17 +245,17 @@ export default function InputLkh() {
 
         {/* Kalender Akademik Info */}
         {kalenderHariIni && (
-          <div className={`mb-6 p-4 rounded-2xl border ${kalenderHariIni.status === 'libur' ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-cyan-50 border-cyan-200 dark:bg-cyan-900/20 dark:border-cyan-800'} flex items-start gap-3`}>
-            <span className={`material-symbols-outlined shrink-0 ${kalenderHariIni.status === 'libur' ? 'text-red-500' : 'text-cyan-500'}`}>
-              {kalenderHariIni.status === 'libur' ? 'event_busy' : 'event_available'}
+          <div className={`mb-6 p-4 rounded-2xl border ${isLibur ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-cyan-50 border-cyan-200 dark:bg-cyan-900/20 dark:border-cyan-800'} flex items-start gap-3`}>
+            <span className={`material-symbols-outlined shrink-0 ${isLibur ? 'text-red-500' : 'text-cyan-500'}`}>
+              {isLibur ? 'event_busy' : 'event_available'}
             </span>
             <div>
-              <h3 className={`font-bold text-sm ${kalenderHariIni.status === 'libur' ? 'text-red-800 dark:text-red-400' : 'text-cyan-800 dark:text-cyan-400'}`}>
-                {kalenderHariIni.status === 'libur' ? 'Hari Libur Nasional / Cuti' : 'Kegiatan Khusus'}
+              <h3 className={`font-bold text-sm ${isLibur ? 'text-red-800 dark:text-red-400' : 'text-cyan-800 dark:text-cyan-400'}`}>
+                {kalenderHariIni.status}
               </h3>
-              <p className={`text-[11px] mt-0.5 ${kalenderHariIni.status === 'libur' ? 'text-red-600 dark:text-red-300' : 'text-cyan-600 dark:text-cyan-300'}`}>
+              <p className={`text-[11px] mt-0.5 ${isLibur ? 'text-red-600 dark:text-red-300' : 'text-cyan-600 dark:text-cyan-300'}`}>
                 {kalenderHariIni.keterangan}
-                {kalenderHariIni.status === 'libur' && ' - Anda tidak perlu mengisi Laporan Kinerja hari ini.'}
+                {isLibur && ' - Anda tidak perlu mengisi Laporan Kinerja hari ini.'}
               </p>
             </div>
           </div>

@@ -13,6 +13,7 @@ export default function EditorAktivitas() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isManageKategoriOpen, setIsManageKategoriOpen] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
   const [namaTugas, setNamaTugas] = useState('');
   const [kategori, setKategori] = useState(kategoriTugas[0] || '');
   const [templates, setTemplates] = useState<{hari: string, uraian: string[]}[]>([
@@ -65,17 +66,44 @@ export default function EditorAktivitas() {
       uraian: t.uraian.filter(u => u.trim() !== '')
     })).filter(t => t.uraian.length > 0);
     
-    await db.tugasTambahan.add({
-      namaTugas,
-      kategori,
-      templates: cleanedTemplates,
-      isDraft: false,
-      updatedAt: Date.now(),
-    });
+    if (editId) {
+      await db.tugasTambahan.update(editId, {
+        namaTugas,
+        kategori,
+        templates: cleanedTemplates,
+        isDraft: false,
+        updatedAt: Date.now(),
+      });
+      showToast("Tugas tambahan berhasil diperbarui!", "success");
+    } else {
+      await db.tugasTambahan.add({
+        namaTugas,
+        kategori,
+        templates: cleanedTemplates,
+        isDraft: false,
+        updatedAt: Date.now(),
+      });
+      showToast("Tugas tambahan berhasil disimpan!", "success");
+    }
     
-    showToast("Tugas tambahan berhasil disimpan!", "success");
     setIsModalOpen(false);
     resetForm();
+  };
+
+  const handleEdit = (item: any) => {
+    setEditId(item.id);
+    setNamaTugas(item.namaTugas);
+    setKategori(item.kategori);
+    
+    if (item.templates && Array.isArray(item.templates) && item.templates.length > 0) {
+      setTemplates(item.templates.map((t: any) => ({
+        hari: t.hari,
+        uraian: Array.isArray(t.uraian) && t.uraian.length > 0 ? [...t.uraian] : ['']
+      })));
+    } else {
+      setTemplates([{ hari: 'Senin', uraian: [''] }]);
+    }
+    setIsModalOpen(true);
   };
 
   // Delete Confirmation State
@@ -90,6 +118,7 @@ export default function EditorAktivitas() {
   };
 
   const resetForm = () => {
+    setEditId(null);
     setNamaTugas('');
     setKategori(kategoriTugas[0] || '');
     setTemplates([{ hari: 'Senin', uraian: [''] }]);
@@ -148,6 +177,9 @@ export default function EditorAktivitas() {
                   <p className="text-sm text-slate-500 line-clamp-2">Template LKH: {item.templates && Array.isArray(item.templates) ? `${item.templates.reduce((acc, t) => acc + (t?.uraian?.length || 0), 0)} uraian kegiatan` : Array.isArray(item.deskripsiLkh) ? `${item.deskripsiLkh.length} uraian kegiatan` : (item.deskripsiLkh || '-')}</p>
                 </div>
                 <div className="flex gap-2 w-full md:w-auto justify-end">
+                  <button onClick={() => handleEdit(item)} className="w-10 h-10 rounded-full bg-slate-50 hover:bg-cyan-50 text-slate-400 hover:text-cyan-600 transition-colors flex items-center justify-center">
+                    <span className="material-symbols-outlined">edit</span>
+                  </button>
                   <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.namaTugas })} className="w-10 h-10 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
                     <span className="material-symbols-outlined">delete</span>
                   </button>
@@ -175,7 +207,7 @@ export default function EditorAktivitas() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto pt-20 pb-10">
           <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden my-auto">
             <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 z-10 bg-white dark:bg-slate-900">
-              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">Tambah Tugas</h2>
+              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">{editId ? 'Edit Tugas' : 'Tambah Tugas'}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors">
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -277,9 +309,9 @@ export default function EditorAktivitas() {
               </div>
 
               <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                <button type="submit" className="w-full bg-teal-800 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20 flex justify-center gap-1.5 items-center">
+                <button type="submit" className={`w-full text-white font-bold text-[13px] py-2.5 rounded-lg active:scale-95 transition-all shadow-lg flex justify-center gap-1.5 items-center ${editId ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-900/20' : 'bg-teal-800 hover:bg-teal-900 shadow-teal-900/20'}`}>
                   <span className="material-symbols-outlined text-[18px]">save</span>
-                  Simpan Tugas
+                  {editId ? 'Simpan Perubahan' : 'Simpan Tugas'}
                 </button>
               </div>
             </form>

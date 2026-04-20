@@ -62,7 +62,7 @@ export interface LaporanHarian {
 export interface KalenderAkademik {
   id?: number;
   tanggal: string; // YYYY-MM-DD
-  status: 'masuk' | 'libur' | 'kegiatan';
+  status: string; // Custom status from store
   keterangan: string;
   updatedAt?: number; // Epoch ms — for sync tracking
   isDeleted?: boolean; // Soft delete for sync

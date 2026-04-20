@@ -18,6 +18,7 @@ interface AppState {
   // Custom Lists
   kegiatanManual: string[];
   kategoriTugas: string[];
+  statusKalender: string[];
   
   // Actions
   login: () => void;
@@ -30,6 +31,7 @@ interface AppState {
   setBantuanOpen: (isOpen: boolean) => void;
   setKegiatanManual: (list: string[]) => void;
   setKategoriTugas: (list: string[]) => void;
+  setStatusKalender: (list: string[]) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -44,6 +46,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   kegiatanManual: JSON.parse(localStorage.getItem('lkd_kegiatan_manual') || '["Rapat Sekolah", "Upacara Bendera", "Kegiatan IMTAQ", "Penyusunan Bahan Ajar", "Kegiatan Khusus", "Tugas Tambahan Lainnya..."]'),
   kategoriTugas: JSON.parse(localStorage.getItem('lkd_kategori_tugas') || '["Administrasi Kurikulum", "Wali Kelas", "Pembina Ekstrakurikuler", "Pengelola Perpustakaan", "Lainnya"]'),
+  statusKalender: JSON.parse(localStorage.getItem('lkd_status_kalender') || '["Libur Nasional", "Kegiatan Khusus", "Cuti Bersama"]'),
 
   login: () => {
     localStorage.setItem('lkd_logged_in', 'true');
@@ -85,5 +88,9 @@ export const useAppStore = create<AppState>((set) => ({
   setKategoriTugas: (list) => {
     localStorage.setItem('lkd_kategori_tugas', JSON.stringify(list));
     set({ kategoriTugas: list });
+  },
+  setStatusKalender: (list) => {
+    localStorage.setItem('lkd_status_kalender', JSON.stringify(list));
+    set({ statusKalender: list });
   },
 }));
