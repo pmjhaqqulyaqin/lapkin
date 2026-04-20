@@ -160,7 +160,7 @@ export default function AdminUserDetail() {
                         <div key={idx} className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 text-sm">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-bold text-slate-800 dark:text-slate-200">{item.kegiatan}</span>
-                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${item.tipeSumber === 'jadwal' ? 'bg-teal-100 text-teal-700' : item.tipeSumber === 'tugas_tambahan' ? 'bg-orange-100 text-orange-700' : 'bg-slate-200 text-slate-600'}`}>{item.tipeSumber}</span>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${item.tipeSumber === 'jadwal' ? 'bg-teal-100 text-teal-700' : item.tipeSumber === 'tugas_tambahan' ? 'bg-orange-100 text-orange-700' : item.tipeSumber === 'kalender' ? 'bg-cyan-100 text-cyan-700' : 'bg-slate-200 text-slate-600'}`}>{item.tipeSumber}</span>
                           </div>
                           <p className="text-slate-600 dark:text-slate-400 text-xs">{item.uraian}</p>
                         </div>

@@ -189,6 +189,15 @@ async function runAdditionalMigrations() {
   } catch (err) {
     console.error('⚠️  Gagal membuat tabel master_kalender:', err);
   }
+
+  // Migrasi 003: Fix sync_kalender.status column length (was VARCHAR(20), too short)
+  try {
+    await query(`ALTER TABLE sync_kalender ALTER COLUMN status TYPE VARCHAR(100);`);
+    console.log('✅ Migrasi 003: sync_kalender.status diperlebar ke VARCHAR(100).');
+  } catch (err) {
+    // Akan gagal jika tabel belum ada (sudah dihandle di init), atau tipe sudah benar — aman diabaikan
+    console.log('ℹ️  Migrasi 003 sync_kalender status: sudah sesuai atau tabel belum ada.');
+  }
 }
 
 /**

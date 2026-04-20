@@ -53,7 +53,7 @@ export interface LaporanHarian {
   uraian: string;
   keteranganOutput?: string;
   sumberId?: number; // ID Jadwal or TugasTambahan (if auto-populated)
-  tipeSumber: 'manual' | 'jadwal' | 'tugas_tambahan';
+  tipeSumber: 'manual' | 'jadwal' | 'tugas_tambahan' | 'kalender';
   createdAt: number;
   updatedAt?: number; // Epoch ms — for sync tracking
   isDeleted?: boolean; // Soft delete for sync

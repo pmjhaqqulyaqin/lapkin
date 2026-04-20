@@ -290,8 +290,8 @@ export default function Dashboard() {
             {aktivitasTerakhir.length > 0 ? (
               aktivitasTerakhir.map((item) => (
                 <div key={item.id} onClick={() => handleEditOpen(item)} className="bg-surface-container-lowest border border-outline-variant/20 p-3 rounded-xl flex items-center gap-3 hover:bg-surface-container-low transition-colors cursor-pointer group">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${item.tipeSumber === 'jadwal' ? 'bg-primary/10 text-primary' : 'bg-tertiary/10 text-tertiary'}`}>
-                    <span className="material-symbols-outlined text-[20px]">{item.tipeSumber === 'jadwal' ? 'school' : 'task_alt'}</span>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${item.tipeSumber === 'jadwal' ? 'bg-primary/10 text-primary' : item.tipeSumber === 'kalender' ? 'bg-cyan-500/10 text-cyan-600' : 'bg-tertiary/10 text-tertiary'}`}>
+                    <span className="material-symbols-outlined text-[20px]">{item.tipeSumber === 'jadwal' ? 'school' : item.tipeSumber === 'kalender' ? 'event_note' : 'task_alt'}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-bold text-[13px] text-on-surface line-clamp-1 group-hover:text-primary transition-colors">{item.kegiatan}</h4>
@@ -475,8 +475,8 @@ export default function Dashboard() {
                   {lkhBulanIni?.filter(item => item.tanggal === viewDateDetails.date).map(item => (
                     <div key={item.id} className="bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-4 rounded-xl shadow-sm relative group">
                       <div className="flex gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${item.tipeSumber === 'jadwal' ? 'bg-teal-50 dark:bg-teal-900/20 text-teal-600' : 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600'}`}>
-                          <span className="material-symbols-outlined">{item.tipeSumber === 'jadwal' ? 'school' : 'task_alt'}</span>
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${item.tipeSumber === 'jadwal' ? 'bg-teal-50 dark:bg-teal-900/20 text-teal-600' : item.tipeSumber === 'kalender' ? 'bg-cyan-50 dark:bg-cyan-900/20 text-cyan-600' : 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600'}`}>
+                          <span className="material-symbols-outlined">{item.tipeSumber === 'jadwal' ? 'school' : item.tipeSumber === 'kalender' ? 'event_note' : 'task_alt'}</span>
                         </div>
                         <div className="flex-1 min-w-0 pr-8">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 block">{item.tipeSumber}</span>

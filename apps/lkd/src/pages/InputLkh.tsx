@@ -24,24 +24,34 @@ export default function InputLkh() {
   const dateObj = new Date(tanggal);
   const hariIni = HARI_LIST[dateObj.getDay()];
 
-  // Cek libur di kalender akademik
+  // Cek semua entri kalender di tanggal ini (bisa lebih dari satu: global + pribadi)
   const kalenderHariIni = useLiveQuery(
-    () => db.kalender.where('tanggal').equals(tanggal).first(),
+    () => db.kalender.where('tanggal').equals(tanggal).toArray().then(arr => arr.filter(k => !k.isDeleted)),
     [tanggal]
   );
-  
-  const statusLower = kalenderHariIni?.status?.toLowerCase() || '';
-  const isLibur = statusLower.includes('libur') || statusLower.includes('cuti');
 
-  // Pre-fill form jika ada kegiatan khusus di kalender
+  // Pisahkan: entri libur vs kegiatan (non-libur)
+  const liburEntries = kalenderHariIni?.filter(k => {
+    const s = k.status?.toLowerCase() || '';
+    return s.includes('libur') || s.includes('cuti');
+  }) || [];
+
+  const kegiatanKalenderEntries = kalenderHariIni?.filter(k => {
+    const s = k.status?.toLowerCase() || '';
+    return !s.includes('libur') && !s.includes('cuti');
+  }) || [];
+
+  const isLibur = liburEntries.length > 0;
+
+  // Pre-fill form jika ada kegiatan khusus di kalender (legacy behavior for manual input)
   useEffect(() => {
-    if (kalenderHariIni && !isLibur) {
-      setManualKegiatan(kalenderHariIni.status); // Use the custom status as the category
-      // Set uraian hanya jika masih kosong, supaya tidak menimpa ketikan user secara tidak sengaja
-      setManualUraian(prev => prev ? prev : kalenderHariIni.keterangan);
+    if (kegiatanKalenderEntries.length > 0 && !isLibur) {
+      setManualKegiatan(kegiatanKalenderEntries[0].status);
+      setManualUraian(prev => prev ? prev : kegiatanKalenderEntries[0].keterangan);
     } else if (!manualUraian) {
       setManualKegiatan(kegiatanManual[0] || '');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kalenderHariIni, tanggal, kegiatanManual, isLibur]);
 
   // Fetch jadwal berdasarkan hari
@@ -92,7 +102,7 @@ export default function InputLkh() {
     }));
   }) || [];
 
-  // Menyimpan checked status untuk sumber otomatis (gabungan jadwal dan tugas)
+  // Menyimpan checked status untuk sumber otomatis (gabungan jadwal, tugas, dan kalender)
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -106,9 +116,13 @@ export default function InputLkh() {
     tugasTemplates.forEach(t => {
       initialChecked[t.uniqueId] = true;
     });
+    // Auto-check kegiatan kalender (non-libur)
+    kegiatanKalenderEntries.forEach(k => {
+      if (k.id) initialChecked[`kalender-${k.id}`] = true;
+    });
     setCheckedItems(initialChecked);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jadwalHariIni, tugasHariIni]);
+  }, [jadwalHariIni, tugasHariIni, kalenderHariIni]);
 
   const toggleCheck = (key: string) => {
     setCheckedItems(prev => ({ ...prev, [key]: !prev[key] }));
@@ -170,7 +184,29 @@ export default function InputLkh() {
       savedCount++;
     }
 
-    // 3. Simpan Manual (Jika ada isinya)
+    // 3. Simpan Kegiatan Kalender Akademik yang dicentang
+    const kalenderToSave = kegiatanKalenderEntries.filter(k => k.id && checkedItems[`kalender-${k.id}`]);
+    for (const k of kalenderToSave) {
+      // Cek duplikasi berdasarkan sumberId + tipeSumber kalender
+      const isDuplicate = existingLkh.some(
+        lkh => lkh.tipeSumber === 'kalender' && lkh.sumberId === k.id && !lkh.isDeleted
+      );
+      if (isDuplicate) { skippedCount++; continue; }
+
+      await db.lkh.add({
+        tanggal: tanggal,
+        kegiatan: k.status,
+        uraian: k.keterangan || `Melaksanakan kegiatan ${k.status}.`,
+        keteranganOutput: 'Dokumentasi/Laporan',
+        sumberId: k.id,
+        tipeSumber: 'kalender',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+      savedCount++;
+    }
+
+    // 4. Simpan Manual (Jika ada isinya)
     if (manualUraian.trim()) {
       await db.lkh.add({
         tanggal: tanggal,
@@ -217,6 +253,9 @@ export default function InputLkh() {
   // Format header display
   const displayDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' });
 
+  // Count total auto items
+  const totalAutoItems = (jadwalHariIni?.length || 0) + tugasTemplates.length + kegiatanKalenderEntries.length;
+
   return (
     <>
       {/* Header / TopAppBar */}
@@ -247,23 +286,18 @@ export default function InputLkh() {
             />
         </div>
 
-        {/* Kalender Akademik Info */}
-        {kalenderHariIni && (
-          <div className={`mb-6 p-4 rounded-2xl border ${isLibur ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800' : 'bg-cyan-50 border-cyan-200 dark:bg-cyan-900/20 dark:border-cyan-800'} flex items-start gap-3`}>
-            <span className={`material-symbols-outlined shrink-0 ${isLibur ? 'text-red-500' : 'text-cyan-500'}`}>
-              {isLibur ? 'event_busy' : 'event_available'}
-            </span>
+        {/* Kalender Akademik Info — Libur */}
+        {isLibur && liburEntries.map(entry => (
+          <div key={entry.id || entry.tanggal} className="mb-4 p-4 rounded-2xl border bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800 flex items-start gap-3">
+            <span className="material-symbols-outlined shrink-0 text-red-500">event_busy</span>
             <div>
-              <h3 className={`font-bold text-sm ${isLibur ? 'text-red-800 dark:text-red-400' : 'text-cyan-800 dark:text-cyan-400'}`}>
-                {kalenderHariIni.status}
-              </h3>
-              <p className={`text-[11px] mt-0.5 ${isLibur ? 'text-red-600 dark:text-red-300' : 'text-cyan-600 dark:text-cyan-300'}`}>
-                {kalenderHariIni.keterangan}
-                {isLibur && ' - Anda tidak perlu mengisi Laporan Kinerja hari ini.'}
+              <h3 className="font-bold text-sm text-red-800 dark:text-red-400">{entry.status}</h3>
+              <p className="text-[11px] mt-0.5 text-red-600 dark:text-red-300">
+                {entry.keterangan} - Anda tidak perlu mengisi Laporan Kinerja hari ini.
               </p>
             </div>
           </div>
-        )}
+        ))}
 
         {/* Jadwal / Auto-Populate Section */}
         <section className="mb-5 bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm">
@@ -277,10 +311,11 @@ export default function InputLkh() {
           <div className="space-y-2">
             {hariIni === 'Minggu' ? (
               <p className="text-sm text-slate-500 italic">Hari Libur.</p>
-            ) : (!jadwalHariIni?.length && !tugasHariIni?.length) ? (
-              <p className="text-sm text-slate-500 italic">Tidak ada jadwal atau tugas tersimpan untuk hari {hariIni}.</p>
+            ) : (totalAutoItems === 0) ? (
+              <p className="text-sm text-slate-500 italic">Tidak ada jadwal, tugas, atau kegiatan tersimpan untuk hari {hariIni}.</p>
             ) : (
               <>
+                {/* Jadwal Mengajar */}
                 {jadwalHariIni?.map((j) => (
                   <label key={`jadwal-${j.id}`} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-800">
                     <input 
@@ -296,6 +331,7 @@ export default function InputLkh() {
                   </label>
                 ))}
 
+                {/* Tugas Tambahan */}
                 {tugasTemplates?.map((t) => (
                   <label key={t.uniqueId} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-800">
                     <input 
@@ -310,6 +346,31 @@ export default function InputLkh() {
                         <span className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Tugas</span>
                       </div>
                       <p className="text-xs text-slate-500 line-clamp-2">{t.deskripsiCurrent}</p>
+                    </div>
+                  </label>
+                ))}
+
+                {/* Kegiatan Kalender Akademik (non-libur) */}
+                {kegiatanKalenderEntries.map((k) => (
+                  <label key={`kalender-${k.id}`} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-800">
+                    <input 
+                      type="checkbox" 
+                      checked={!!(k.id && checkedItems[`kalender-${k.id}`])} 
+                      onChange={() => toggleCheck(`kalender-${k.id}`)}
+                      className="mt-1 w-5 h-5 rounded text-cyan-600 border-slate-300 focus:ring-cyan-500" 
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200">{k.status}</h3>
+                        <span className="bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase flex items-center gap-0.5">
+                          {k.isGlobal ? (
+                            <><span className="material-symbols-outlined text-[10px]">school</span> Sekolah</>
+                          ) : (
+                            'Kalender'
+                          )}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 line-clamp-2">{k.keterangan || `Kegiatan ${k.status}`}</p>
                     </div>
                   </label>
                 ))}

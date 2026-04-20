@@ -117,7 +117,7 @@ export default function RiwayatLkh() {
                       <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
                         {new Date(item.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'short' })}
                       </span>
-                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider ${item.tipeSumber === 'jadwal' ? 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'}`}>
+                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider ${item.tipeSumber === 'jadwal' ? 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300' : item.tipeSumber === 'kalender' ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'}`}>
                         {item.tipeSumber}
                       </span>
                     </div>

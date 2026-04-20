@@ -166,7 +166,8 @@ async function pushToServer(token: string): Promise<{ serverTimestamp: number; c
   const jadwal = await db.jadwal.toArray().then(arr => arr.filter(j => filterChanged(j.updatedAt)));
   const tugasTambahan = await db.tugasTambahan.toArray().then(arr => arr.filter(t => filterChanged(t.updatedAt)));
   const lkh = await db.lkh.toArray().then(arr => arr.filter(l => filterChanged(l.updatedAt)));
-  const kalender = await db.kalender.toArray().then(arr => arr.filter(k => filterChanged(k.updatedAt)));
+  // Exclude global kalender entries (isGlobal=1) — these are admin-managed and should not be pushed
+  const kalender = await db.kalender.toArray().then(arr => arr.filter(k => filterChanged(k.updatedAt) && !k.isGlobal));
 
   // Only push profil if it changed (or first sync)
   const profilPayload = profil && filterChanged(profil.updatedAt) ? profil : undefined;
