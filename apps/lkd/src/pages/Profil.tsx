@@ -147,9 +147,19 @@ export default function Profil() {
   const handleSaveProfil = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const current = await db.profil.toCollection().first();
+      // Try multiple strategies to find profil
+      let current = await db.profil.get(1);
+      if (!current) current = await db.profil.toCollection().first();
       if (!current) {
-        showToast("Profil tidak ditemukan.", "error");
+        const all = await db.profil.toArray();
+        current = all[0];
+      }
+      if (!current && profil) {
+        // Use the React state as last resort
+        current = { ...profil };
+      }
+      if (!current) {
+        showToast("Profil tidak ditemukan. Silakan logout dan login ulang.", "error");
         return;
       }
       if (editMode === 'atasan') {
