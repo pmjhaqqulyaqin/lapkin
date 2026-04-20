@@ -102,7 +102,7 @@ export default function JadwalMengajar() {
             Jadwal Mengajar
           </h1>
           <button 
-            onClick={() => { resetForm(); setIsModalOpen(true); }}
+            onClick={handleOpenModal}
             className="w-9 h-9 rounded-full bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 transition-colors flex items-center justify-center text-teal-800 dark:text-teal-200 shadow-sm"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
