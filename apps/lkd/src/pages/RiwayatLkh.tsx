@@ -57,28 +57,28 @@ export default function RiwayatLkh() {
 
   return (
     <>
-      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md flex justify-between items-center w-full px-6 py-4 mx-auto sticky top-0 z-50 shadow-sm shadow-teal-900/5">
-        <div className="flex items-center gap-3">
-          <NavLink to="/dashboard" className="text-teal-950 dark:text-teal-50 bg-teal-900/5 p-2 rounded-full active:scale-95 transition-all">
-            <span className="material-symbols-outlined">arrow_back</span>
+      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md flex justify-between items-center w-full px-4 py-3 mx-auto sticky top-0 z-50 shadow-sm shadow-teal-900/5">
+        <div className="flex items-center gap-2.5">
+          <NavLink to="/dashboard" className="text-teal-950 dark:text-teal-50 bg-teal-900/5 p-1.5 rounded-full active:scale-95 transition-all">
+            <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           </NavLink>
           <div>
-            <h1 className="font-manrope font-bold text-lg tracking-tight text-teal-950 dark:text-teal-50">
+            <h1 className="font-manrope font-bold text-[15px] tracking-tight text-teal-950 dark:text-teal-50">
               Riwayat LHK
             </h1>
-            <p className="text-xs font-semibold text-slate-500">Kelola dan Filter Laporan</p>
+            <p className="text-[11px] font-semibold text-slate-500">Kelola dan Filter Laporan</p>
           </div>
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-6 pb-32">
+      <main className="max-w-3xl mx-auto px-4 py-4 pb-24">
         {/* Month & Year Filter */}
-        <section className="mb-8">
-          <div className="flex gap-4 items-center">
+        <section className="mb-5">
+          <div className="flex gap-3 items-center">
             <select 
               value={activeMonthIndex}
               onChange={(e) => setActiveMonthYear(Number(e.target.value), activeYear)}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none flex-1"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-[13px] text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none flex-1"
             >
               {Array.from({ length: 12 }).map((_, i) => (
                 <option key={i} value={i}>{formatterBulan.format(new Date(2026, i))}</option>
@@ -87,7 +87,7 @@ export default function RiwayatLkh() {
             <select 
               value={activeYear}
               onChange={(e) => setActiveMonthYear(activeMonthIndex, Number(e.target.value))}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none w-32"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-[13px] text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none w-28"
             >
               <option value={2025}>2025</option>
               <option value={2026}>2026</option>

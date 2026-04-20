@@ -95,32 +95,32 @@ export default function EditorAktivitas() {
       {/* TopAppBar */}
       <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shadow-teal-950/5">
         <div className="flex justify-between items-center w-full px-4 py-3 max-w-5xl mx-auto">
-          <div className="flex items-center gap-3">
-            <NavLink to="/dashboard" className="text-slate-600 dark:text-slate-300 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-              <span className="material-symbols-outlined">arrow_back</span>
+          <div className="flex items-center gap-2.5">
+            <NavLink to="/dashboard" className="text-slate-600 dark:text-slate-300 p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+              <span className="material-symbols-outlined text-[20px]">arrow_back</span>
             </NavLink>
-            <h1 className="font-manrope font-extrabold text-xl tracking-tight text-teal-950 dark:text-teal-50">
+            <h1 className="font-manrope font-extrabold text-[17px] tracking-tight text-teal-950 dark:text-teal-50">
               Tugas Tambahan
             </h1>
           </div>
           <button 
             onClick={() => { resetForm(); setIsModalOpen(true); }}
-            className="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 transition-colors flex items-center justify-center text-teal-800 dark:text-teal-200 shadow-sm"
+            className="w-9 h-9 rounded-full bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 transition-colors flex items-center justify-center text-teal-800 dark:text-teal-200 shadow-sm"
           >
-            <span className="material-symbols-outlined">add</span>
+            <span className="material-symbols-outlined text-[20px]">add</span>
           </button>
         </div>
       </header>
 
-      <main className="pt-20 pb-28 px-4 md:px-6 max-w-3xl mx-auto space-y-6">
+      <main className="pt-16 pb-24 px-4 md:px-6 max-w-3xl mx-auto space-y-4">
         
         {/* Editorial Header */}
-        <div className="mb-8">
-          <h2 className="font-headline font-extrabold text-teal-800 dark:text-teal-400 text-2xl tracking-tight mb-2">
+        <div className="mb-5">
+          <h2 className="font-headline font-extrabold text-teal-800 dark:text-teal-400 text-lg tracking-tight mb-1">
             Kelola Tugas & Jabatan
           </h2>
-          <p className="text-slate-500 text-sm">
-            Tugas tambahan yang Anda daftarkan di sini akan muncul sebagai template otomatis saat Anda mengisi LKH.
+          <p className="text-slate-500 text-[12px]">
+            Tugas tambahan di sini akan muncul sebagai template otomatis saat mengisi LKH.
           </p>
         </div>
 

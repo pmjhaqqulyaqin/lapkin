@@ -89,6 +89,8 @@ export async function syncLogin(nip: string, password: string): Promise<SyncAuth
 
   const authData: SyncAuthData = data.data;
   saveSyncAuth(authData);
+  // Reset last sync timestamp so full pull happens on next sync
+  localStorage.setItem('lkd_last_sync', '0');
   return authData;
 }
 
@@ -127,9 +129,14 @@ export async function fullSync(): Promise<SyncResult> {
   const pushResult = await pushToServer(token);
   const pullResult = await pullFromServer(token);
 
-  // Update last sync timestamp
-  const serverTimestamp = Math.max(pushResult.serverTimestamp, pullResult.serverTimestamp);
-  localStorage.setItem('lkd_last_sync', String(serverTimestamp));
+  // Use ONLY server timestamps for lastSync to avoid client clock skew
+  const serverTimestamp = Math.max(
+    pushResult.serverTimestamp || 0,
+    pullResult.serverTimestamp || 0
+  );
+  if (serverTimestamp > 0) {
+    localStorage.setItem('lkd_last_sync', String(serverTimestamp));
+  }
   localStorage.setItem('lkd_last_sync_date', new Date().toISOString());
 
   return {
@@ -147,27 +154,28 @@ async function pushToServer(token: string): Promise<{ serverTimestamp: number; c
   const lastSync = getLastSyncTimestamp();
 
   // Gather all data that changed since last sync
+  // If lastSync === 0 (first sync), push ALL records that have updatedAt > 0
+  // Otherwise, push only records changed after lastSync
   const profil = await db.profil.get(1);
-  const jadwal = await db.jadwal.toArray().then(arr =>
-    arr.filter(j => (j.updatedAt || 0) > lastSync)
-  );
-  const tugasTambahan = await db.tugasTambahan.toArray().then(arr =>
-    arr.filter(t => (t.updatedAt || 0) > lastSync)
-  );
-  const lkh = await db.lkh.toArray().then(arr =>
-    arr.filter(l => (l.updatedAt || 0) > lastSync)
-  );
-  const kalender = await db.kalender.toArray().then(arr =>
-    arr.filter(k => (k.updatedAt || 0) > lastSync)
-  );
+  const filterChanged = (updatedAt: number | undefined) => {
+    const ts = updatedAt || 0;
+    if (lastSync === 0) return ts > 0; // First sync: push everything with a timestamp
+    return ts > lastSync;
+  };
 
-  // Only push profil if it changed
-  const profilPayload = profil && (profil.updatedAt || 0) > lastSync ? profil : undefined;
+  const jadwal = await db.jadwal.toArray().then(arr => arr.filter(j => filterChanged(j.updatedAt)));
+  const tugasTambahan = await db.tugasTambahan.toArray().then(arr => arr.filter(t => filterChanged(t.updatedAt)));
+  const lkh = await db.lkh.toArray().then(arr => arr.filter(l => filterChanged(l.updatedAt)));
+  const kalender = await db.kalender.toArray().then(arr => arr.filter(k => filterChanged(k.updatedAt)));
+
+  // Only push profil if it changed (or first sync)
+  const profilPayload = profil && filterChanged(profil.updatedAt) ? profil : undefined;
 
   const totalItems = (profilPayload ? 1 : 0) + jadwal.length + tugasTambahan.length + lkh.length + kalender.length;
 
   if (totalItems === 0) {
-    return { serverTimestamp: Date.now(), count: 0 };
+    // Return serverTimestamp as 0 — don't use client time to avoid clock skew
+    return { serverTimestamp: 0, count: 0 };
   }
 
   const res = await fetch(`${API_BASE}/api/sync/push`, {
@@ -218,7 +226,7 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
     // 1. Merge Profil
     if (serverData.profil) {
       const local = await db.profil.get(1);
-      if (!local || (serverData.profil.updatedAt || 0) > (local.updatedAt || 0)) {
+      if (!local || (serverData.profil.updatedAt || 0) >= (local.updatedAt || 0)) {
         await db.profil.put({ ...serverData.profil, id: 1 });
         totalMerged++;
       }
@@ -227,13 +235,13 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
     // 2. Merge Jadwal
     for (const item of serverData.jadwal || []) {
       const localId = item.clientId;
-      const local = await db.jadwal.get(localId);
+      const local = localId ? await db.jadwal.get(localId) : null;
 
       if (item.isDeleted) {
         if (local) {
           await db.jadwal.update(localId, { isDeleted: true, updatedAt: item.updatedAt });
         }
-      } else if (!local || (item.updatedAt || 0) > (local.updatedAt || 0)) {
+      } else if (!local || (item.updatedAt || 0) >= (local.updatedAt || 0)) {
         await db.jadwal.put({
           id: localId,
           hari: item.hari,
@@ -253,13 +261,13 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
     // 3. Merge Tugas Tambahan
     for (const item of serverData.tugasTambahan || []) {
       const localId = item.clientId;
-      const local = await db.tugasTambahan.get(localId);
+      const local = localId ? await db.tugasTambahan.get(localId) : null;
 
       if (item.isDeleted) {
         if (local) {
           await db.tugasTambahan.update(localId, { isDeleted: true, updatedAt: item.updatedAt });
         }
-      } else if (!local || (item.updatedAt || 0) > (local.updatedAt || 0)) {
+      } else if (!local || (item.updatedAt || 0) >= (local.updatedAt || 0)) {
         await db.tugasTambahan.put({
           id: localId,
           namaTugas: item.namaTugas,
@@ -276,13 +284,13 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
     // 4. Merge LKH
     for (const item of serverData.lkh || []) {
       const localId = item.clientId;
-      const local = await db.lkh.get(localId);
+      const local = localId ? await db.lkh.get(localId) : null;
 
       if (item.isDeleted) {
         if (local) {
           await db.lkh.update(localId, { isDeleted: true, updatedAt: item.updatedAt });
         }
-      } else if (!local || (item.updatedAt || 0) > (local.updatedAt || 0)) {
+      } else if (!local || (item.updatedAt || 0) >= (local.updatedAt || 0)) {
         await db.lkh.put({
           id: localId,
           tanggal: item.tanggal,
@@ -302,13 +310,13 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
     // 5. Merge Kalender
     for (const item of serverData.kalender || []) {
       const localId = item.clientId;
-      const local = await db.kalender.get(localId);
+      const local = localId ? await db.kalender.get(localId) : null;
 
       if (item.isDeleted) {
         if (local) {
           await db.kalender.update(localId, { isDeleted: true, updatedAt: item.updatedAt });
         }
-      } else if (!local || (item.updatedAt || 0) > (local.updatedAt || 0)) {
+      } else if (!local || (item.updatedAt || 0) >= (local.updatedAt || 0)) {
         await db.kalender.put({
           id: localId,
           tanggal: item.tanggal,

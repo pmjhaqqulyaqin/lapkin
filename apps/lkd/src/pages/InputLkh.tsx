@@ -214,33 +214,31 @@ export default function InputLkh() {
   return (
     <>
       {/* Header / TopAppBar */}
-      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md flex justify-between items-center w-full px-6 py-4 mx-auto sticky top-0 z-50 shadow-sm shadow-teal-900/5">
-        <div className="flex items-center gap-3">
-          <NavLink to="/dashboard" className="text-teal-950 dark:text-teal-50 bg-teal-900/5 p-2 rounded-full active:scale-95 transition-all">
-            <span className="material-symbols-outlined">arrow_back</span>
+      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md flex justify-between items-center w-full px-4 py-3 mx-auto sticky top-0 z-50 shadow-sm shadow-teal-900/5">
+        <div className="flex items-center gap-2.5">
+          <NavLink to="/dashboard" className="text-teal-950 dark:text-teal-50 bg-teal-900/5 p-1.5 rounded-full active:scale-95 transition-all">
+            <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           </NavLink>
           <div>
-            <h1 className="font-manrope font-bold text-lg tracking-tight text-teal-950 dark:text-teal-50">
-              Input Kinerja <span className="material-symbols-outlined text-sm text-teal-600 align-middle">save</span>
+            <h1 className="font-manrope font-bold text-[15px] tracking-tight text-teal-950 dark:text-teal-50">
+              Input Kinerja
             </h1>
-            <p className="text-xs font-semibold text-slate-500">{displayDate}</p>
+            <p className="text-[11px] font-semibold text-slate-500">{displayDate}</p>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-md mx-auto px-6 py-6 pb-32">
+      <main className="max-w-md mx-auto px-4 py-4 pb-24">
         {/* Date Picker Native Input (Styled) */}
-        <div className="mb-6">
-          <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Tanggal LKH</label>
-          <div className="relative">
-            <input
+        <div className="mb-4">
+          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Tanggal LKH</label>
+          <input
               type="date"
               value={tanggal}
               onChange={(e) => setTanggal(e.target.value)}
-              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3.5 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-[13px] text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm"
             />
-          </div>
         </div>
 
         {/* Kalender Akademik Info */}
@@ -253,7 +251,7 @@ export default function InputLkh() {
               <h3 className={`font-bold text-sm ${kalenderHariIni.status === 'libur' ? 'text-red-800 dark:text-red-400' : 'text-cyan-800 dark:text-cyan-400'}`}>
                 {kalenderHariIni.status === 'libur' ? 'Hari Libur Nasional / Cuti' : 'Kegiatan Khusus'}
               </h3>
-              <p className={`text-xs mt-1 ${kalenderHariIni.status === 'libur' ? 'text-red-600 dark:text-red-300' : 'text-cyan-600 dark:text-cyan-300'}`}>
+              <p className={`text-[11px] mt-0.5 ${kalenderHariIni.status === 'libur' ? 'text-red-600 dark:text-red-300' : 'text-cyan-600 dark:text-cyan-300'}`}>
                 {kalenderHariIni.keterangan}
                 {kalenderHariIni.status === 'libur' && ' - Anda tidak perlu mengisi Laporan Kinerja hari ini.'}
               </p>
@@ -262,15 +260,15 @@ export default function InputLkh() {
         )}
 
         {/* Jadwal / Auto-Populate Section */}
-        <section className="mb-8 bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-manrope font-bold text-slate-800 dark:text-slate-100 text-base">Jadwal & Tugas ({hariIni})</h2>
+        <section className="mb-5 bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-manrope font-bold text-slate-800 dark:text-slate-100 text-[13px]">Jadwal & Tugas ({hariIni})</h2>
             <span className="bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
               Otomatis
             </span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {hariIni === 'Minggu' ? (
               <p className="text-sm text-slate-500 italic">Hari Libur.</p>
             ) : (!jadwalHariIni?.length && !tugasHariIni?.length) ? (
@@ -369,12 +367,12 @@ export default function InputLkh() {
         </section>
 
         {/* Save Buttons */}
-        <div className="flex gap-3 mt-8">
+        <div className="flex gap-2 mt-5">
           <button 
             type="button" 
             disabled={isLibur}
             onClick={(e) => handleSimpan(e as any, false)}
-            className={`flex-1 font-bold py-4 rounded-2xl transition-all shadow-lg flex justify-center items-center gap-2 ${isLibur ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-800 text-white hover:bg-teal-900 active:scale-95 shadow-teal-900/20'}`}
+            className={`flex-1 font-bold text-[13px] py-3 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 ${isLibur ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-800 text-white hover:bg-teal-900 active:scale-95 shadow-teal-900/20'}`}
           >
             Simpan LKH
           </button>
@@ -382,9 +380,9 @@ export default function InputLkh() {
             type="button" 
             disabled={isLibur}
             onClick={(e) => handleSimpan(e as any, true)}
-            className={`flex-[1.5] font-bold py-4 rounded-2xl transition-all shadow-lg flex justify-center items-center gap-2 ${isLibur ? 'bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:opacity-90 active:scale-95 shadow-emerald-900/20'}`}
+            className={`flex-[1.5] font-bold text-[13px] py-3 rounded-xl transition-all shadow-lg flex justify-center items-center gap-1.5 ${isLibur ? 'bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:opacity-90 active:scale-95 shadow-emerald-900/20'}`}
           >
-            Simpan & Lanjut <span className="material-symbols-outlined text-[18px]">skip_next</span>
+            Simpan & Lanjut <span className="material-symbols-outlined text-[16px]">skip_next</span>
           </button>
         </div>
       </main>

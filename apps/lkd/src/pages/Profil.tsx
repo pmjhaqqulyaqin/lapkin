@@ -142,10 +142,30 @@ export default function Profil() {
 
   const handleSaveProfil = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (profil) {
-      await db.profil.put({ ...profil, ...formData, updatedAt: Date.now() });
+    try {
+      if (editMode === 'atasan') {
+        // Update only atasan fields to avoid stale data issues
+        await db.profil.update(1, {
+          namaKepsek: formData.namaKepsek,
+          nipKepsek: formData.nipKepsek,
+          updatedAt: Date.now(),
+        });
+      } else {
+        // Update only profil fields
+        await db.profil.update(1, {
+          nama: formData.nama,
+          nip: formData.nip,
+          jabatan: formData.jabatan,
+          pangkat: formData.pangkat,
+          golongan: formData.golongan,
+          updatedAt: Date.now(),
+        });
+      }
       showToast("Data berhasil diperbarui!", "success");
       setIsModalOpen(false);
+    } catch (err) {
+      console.error('Gagal simpan profil:', err);
+      showToast("Gagal menyimpan data. Coba lagi.", "error");
     }
   };
 
@@ -237,19 +257,19 @@ export default function Profil() {
   return (
     <>
       {/* TopAppBar */}
-      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md text-cyan-950 dark:text-cyan-50 font-manrope text-xl font-bold tracking-tight docked full-width top-0 sticky z-50 no-border shadow-sm shadow-cyan-900/5">
-        <div className="flex justify-start items-center w-full px-6 py-4 mx-auto max-w-3xl">
+      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md text-cyan-950 dark:text-cyan-50 font-manrope text-[17px] font-bold tracking-tight docked full-width top-0 sticky z-50 no-border shadow-sm shadow-cyan-900/5">
+        <div className="flex justify-start items-center w-full px-4 py-3 mx-auto max-w-3xl">
           <h1>Profil & Pengaturan</h1>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-3xl mx-auto px-6 py-8 pb-32">
+      <main className="max-w-3xl mx-auto px-4 py-5 pb-24">
         
         {/* Profile Card Header (Bento Style) */}
         {profil && (
-          <section className="bg-cyan-950 dark:bg-slate-900 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left shadow-lg shadow-cyan-950/20 relative overflow-hidden mb-6">
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-white/20 relative z-10 shrink-0">
+          <section className="bg-cyan-950 dark:bg-slate-900 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left shadow-lg shadow-cyan-950/20 relative overflow-hidden mb-4">
+            <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-3 border-white/20 relative z-10 shrink-0">
               <img 
                 src={profil.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'Guru'}&background=0D9488&color=fff`} 
                 alt="Teacher Profile Picture" 
@@ -257,38 +277,38 @@ export default function Profil() {
               />
             </div>
             <div className="text-white relative z-10 flex-1 w-full">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
                 <div>
-                  <h2 className="font-manrope font-extrabold text-2xl md:text-3xl tracking-tight mb-1">
+                  <h2 className="font-manrope font-extrabold text-xl md:text-2xl tracking-tight mb-0.5">
                     {profil.nama}
                   </h2>
-                  <p className="text-cyan-100 font-medium">NIP. {profil.nip}</p>
+                  <p className="text-cyan-100 font-medium text-[13px]">NIP. {profil.nip}</p>
                 </div>
-                <div className="flex flex-col gap-2 w-full md:w-auto">
-                  <button onClick={() => handleOpenEdit('profil')} className="bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 self-center md:self-start w-full">
-                    <span className="material-symbols-outlined text-[18px]">edit</span>
+                <div className="flex flex-row gap-2 w-full md:w-auto">
+                  <button onClick={() => handleOpenEdit('profil')} className="bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm px-3 py-1.5 rounded-lg text-[12px] font-bold flex items-center justify-center gap-1.5 flex-1">
+                    <span className="material-symbols-outlined text-[16px]">edit</span>
                     Edit Profil
                   </button>
-                  <label className="bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 self-center md:self-start w-full cursor-pointer">
-                    <span className="material-symbols-outlined text-[18px]">photo_camera</span>
+                  <label className="bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm px-3 py-1.5 rounded-lg text-[12px] font-bold flex items-center justify-center gap-1.5 flex-1 cursor-pointer">
+                    <span className="material-symbols-outlined text-[16px]">photo_camera</span>
                     Ubah Foto
                     <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
                   </label>
                 </div>
               </div>
               
-              <div className="mt-6 flex flex-wrap gap-2 justify-center md:justify-start">
-                <span className="bg-cyan-900/50 border border-cyan-800 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[14px]">school</span>
+              <div className="mt-3 flex flex-wrap gap-1.5 justify-center md:justify-start">
+                <span className="bg-cyan-900/50 border border-cyan-800 px-2 py-1 rounded text-[10px] font-semibold tracking-wide flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[12px]">school</span>
                   {profil.jabatan.split('/')[0] || profil.jabatan}
                 </span>
-                <span className="bg-cyan-900/50 border border-cyan-800 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[14px]">badge</span>
+                <span className="bg-cyan-900/50 border border-cyan-800 px-2 py-1 rounded text-[10px] font-semibold tracking-wide flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[12px]">badge</span>
                   {profil.pangkat} / {profil.golongan}
                 </span>
-                <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[14px]">verified</span>
-                  TTD Digital Tersimpan
+                <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-1 rounded text-[10px] font-bold tracking-wide flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[12px]">verified</span>
+                  TTD Tersimpan
                 </span>
               </div>
             </div>
@@ -298,56 +318,56 @@ export default function Profil() {
         )}
 
         {/* Install PWA Prompt Banner */}
-        <div className="mb-6 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-3xl p-6 text-white shadow-lg shadow-teal-900/20 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[28px]">install_mobile</span>
+        <div className="mb-4 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-4 text-white shadow-lg shadow-teal-900/20 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-[20px]">install_mobile</span>
             </div>
             <div>
-              <h3 className="font-bold text-lg leading-tight">Install LKD ke HP Anda</h3>
-              <p className="text-teal-50 text-sm mt-1">Akses lebih cepat & bisa digunakan secara offline layaknya aplikasi native!</p>
+              <h3 className="font-bold text-[13px] leading-tight">Install LKD ke HP Anda</h3>
+              <p className="text-teal-50 text-[11px] mt-0.5">Akses cepat & offline!</p>
             </div>
           </div>
           <button 
             onClick={handleInstallClick}
-            className="w-full md:w-auto whitespace-nowrap bg-white text-teal-700 hover:bg-teal-50 font-bold px-6 py-3 rounded-xl transition-colors shadow-sm"
+            className="whitespace-nowrap bg-white text-teal-700 hover:bg-teal-50 font-bold text-[12px] px-4 py-2 rounded-lg transition-colors shadow-sm shrink-0"
           >
-            {deferredPrompt ? 'Install Sekarang' : 'Cara Install'}
+            {deferredPrompt ? 'Install' : 'Cara Install'}
           </button>
         </div>
 
         {/* Bento Grid layout for details */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
           
           {/* Kepala Sekolah Section */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between group hover:border-cyan-200 dark:hover:border-cyan-900 transition-colors cursor-pointer">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between group hover:border-cyan-200 dark:hover:border-cyan-900 transition-colors cursor-pointer">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                  <span className="material-symbols-outlined">shield_person</span>
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[18px]">shield_person</span>
                 </div>
-                <h3 className="font-manrope font-bold text-slate-800 dark:text-slate-100">Kepala Sekolah</h3>
+                <h3 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">Kepala Sekolah</h3>
               </div>
-              <p className="font-semibold text-slate-700 dark:text-slate-300">{profil?.namaKepsek || 'Belum diatur'}</p>
-              <p className="text-sm text-slate-500 mt-1">NIP. {profil?.nipKepsek || '-'}</p>
+              <p className="font-semibold text-[13px] text-slate-700 dark:text-slate-300">{profil?.namaKepsek || 'Belum diatur'}</p>
+              <p className="text-[12px] text-slate-500 mt-0.5">NIP. {profil?.nipKepsek || '-'}</p>
             </div>
-            <div className="mt-4 flex items-center text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest gap-1 group-hover:translate-x-1 transition-transform" onClick={() => handleOpenEdit('atasan')}>
-              Ubah Data Atasan <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+            <div className="mt-3 flex items-center text-[10px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest gap-1 group-hover:translate-x-1 transition-transform" onClick={() => handleOpenEdit('atasan')}>
+              Ubah Data Atasan <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
             </div>
           </div>
 
           {/* Pengaturan Aplikasi Section */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                  <span className="material-symbols-outlined">settings_suggest</span>
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[18px]">settings_suggest</span>
                 </div>
-                <h3 className="font-manrope font-bold text-slate-800 dark:text-slate-100">Preferensi Sistem</h3>
+                <h3 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">Preferensi Sistem</h3>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Mode Gelap (Dark Mode)</span>
+                  <span className="text-[13px] font-medium text-slate-700 dark:text-slate-300">Mode Gelap</span>
                   <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                     <input 
                       type="checkbox" 
@@ -361,7 +381,7 @@ export default function Profil() {
                   </div>
                 </label>
                 <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Notifikasi Pengingat LKH</span>
+                  <span className="text-[13px] font-medium text-slate-700 dark:text-slate-300">Notifikasi Pengingat</span>
                   <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
                     <input type="checkbox" defaultChecked name="toggle2" id="toggle2" className="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-cyan-500 appearance-none cursor-pointer translate-x-5" />
                     <label htmlFor="toggle2" className="toggle-label block overflow-hidden h-5 rounded-full bg-cyan-500 cursor-pointer"></label>
@@ -374,17 +394,17 @@ export default function Profil() {
         </section>
 
         {/* Menu List */}
-        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm mb-8">
+        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm mb-5">
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             <li>
-              <NavLink to="/kalender" className="flex items-center justify-between p-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-[18px]">calendar_month</span>
+              <NavLink to="/kalender" className="flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                    <span className="material-symbols-outlined text-[16px]">calendar_month</span>
                   </div>
-                  <span className="font-semibold text-slate-700 dark:text-slate-200">Kalender Akademik</span>
+                  <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200">Kalender Akademik</span>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
+                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
               </NavLink>
             </li>
             <li>
@@ -474,9 +494,9 @@ export default function Profil() {
         {/* Logout Button */}
         <button 
           onClick={handleLogout}
-          className="w-full bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors"
+          className="w-full bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 font-bold text-[13px] py-3 rounded-xl flex items-center justify-center gap-2 transition-colors"
         >
-          <span className="material-symbols-outlined">logout</span>
+          <span className="material-symbols-outlined text-[20px]">logout</span>
           Keluar dari Aplikasi
         </button>
 
