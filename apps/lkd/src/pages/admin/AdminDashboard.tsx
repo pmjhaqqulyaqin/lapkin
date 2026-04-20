@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
+import AdminReferensiTab from './AdminReferensiTab';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -34,7 +35,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'overview' | 'users'>('overview');
+  const [tab, setTab] = useState<'overview' | 'users' | 'referensi'>('overview');
   const [actionTarget, setActionTarget] = useState<{ userId: number; type: 'reset' | 'delete'; userName: string } | null>(null);
 
   useEffect(() => {
@@ -107,15 +108,20 @@ export default function AdminDashboard() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 bg-white dark:bg-slate-900 rounded-2xl p-1.5 border border-slate-100 dark:border-slate-800 w-max">
-          {(['overview', 'users'] as const).map(t => (
+        <div className="flex gap-2 mb-8 bg-white dark:bg-slate-900 rounded-2xl p-1.5 border border-slate-100 dark:border-slate-800 w-max overflow-x-auto">
+          {(['overview', 'users', 'referensi'] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${tab === t ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-              <span className="material-symbols-outlined text-[16px] mr-1 align-middle">{t === 'overview' ? 'dashboard' : 'group'}</span>
-              {t === 'overview' ? 'Ringkasan' : 'Daftar Guru'}
+              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${tab === t ? 'bg-teal-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+              <span className="material-symbols-outlined text-[16px] mr-1 align-middle">
+                {t === 'overview' ? 'dashboard' : t === 'users' ? 'group' : 'list_alt'}
+              </span>
+              {t === 'overview' ? 'Ringkasan' : t === 'users' ? 'Daftar Guru' : 'Master Referensi'}
             </button>
           ))}
         </div>
+
+        {/* Tab Content */}
+        {tab === 'referensi' && <AdminReferensiTab />}
 
         {/* Overview */}
         {tab === 'overview' && stats && (<>
