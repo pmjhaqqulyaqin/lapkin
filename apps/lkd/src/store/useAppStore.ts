@@ -32,7 +32,7 @@ interface AppState {
   setKegiatanManual: (list: string[]) => void;
   setKategoriTugas: (list: string[]) => void;
   setStatusKalender: (list: string[]) => void;
-  pullReferensiData: () => Promise<void>;
+  pullReferensiData: () => Promise<{kegiatan: number, tugas: number, kalender: number} | undefined>;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -116,9 +116,16 @@ export const useAppStore = create<AppState>((set) => ({
             statusKalender: mergedKalender
           };
         });
+        
+        return {
+          kegiatan: data.data.kegiatan.length,
+          tugas: data.data.tugas.length,
+          kalender: data.data.kalender.length
+        };
       }
     } catch (err) {
       console.error('Error pulling referensi:', err);
     }
+    return undefined;
   },
 }));

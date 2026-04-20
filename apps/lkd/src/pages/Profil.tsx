@@ -503,8 +503,12 @@ export default function Profil() {
               <button 
                 onClick={async () => {
                   showToast('Menarik data referensi...');
-                  await useAppStore.getState().pullReferensiData();
-                  showToast('Data referensi (KBM, Tugas, Kalender) berhasil diperbarui!', 'success');
+                  const result = await useAppStore.getState().pullReferensiData();
+                  if (result) {
+                    showToast(`Data referensi diperbarui! (${result.kegiatan} KBM, ${result.tugas} Tugas, ${result.kalender} Kalender)`, 'success');
+                  } else {
+                    showToast('Gagal menarik referensi', 'error');
+                  }
                 }} 
                 className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
               >
