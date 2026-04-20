@@ -44,9 +44,9 @@ export default function BottomNav({ isEditorPage }: { isEditorPage?: boolean }) 
         {({ isActive }) => (
           <>
             <span className="material-symbols-outlined text-[20px]" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>
-              account_circle
+              settings
             </span>
-            <span className="font-inter text-[9px] font-semibold uppercase tracking-widest mt-0.5">Profil</span>
+            <span className="font-inter text-[9px] font-semibold uppercase tracking-widest mt-0.5">Pengaturan</span>
           </>
         )}
       </NavLink>

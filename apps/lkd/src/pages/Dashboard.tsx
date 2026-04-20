@@ -39,6 +39,7 @@ export default function Dashboard() {
 
   // Edit Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [editKegiatan, setEditKegiatan] = useState('');
   const [editUraian, setEditUraian] = useState('');
@@ -105,13 +106,13 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          <div className="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed">
+          <button onClick={() => setIsProfileOpen(true)} className="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform">
             <img
-              alt="Teacher Profile Avatar"
+              alt="Profil"
               className="w-full h-full object-cover"
               src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=64`}
             />
-          </div>
+          </button>
         </div>
       </header>
 
@@ -261,6 +262,82 @@ export default function Dashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Profile Quick View Modal */}
+      {isProfileOpen && profil && (
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsProfileOpen(false)}>
+          <div className="bg-white dark:bg-slate-900 rounded-t-2xl sm:rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            {/* Header with photo */}
+            <div className="bg-gradient-to-br from-teal-700 to-cyan-900 p-5 flex flex-col items-center relative">
+              <button onClick={() => setIsProfileOpen(false)} className="absolute top-3 right-3 text-white/60 hover:text-white bg-white/10 rounded-full p-1 transition-colors">
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+              <div className="relative group">
+                <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-white/30 shadow-lg">
+                  <img src={profil.avatarUrl || `https://ui-avatars.com/api/?name=${profil.nama || 'G'}&background=0D9488&color=fff&size=128`} alt="Profil" className="w-full h-full object-cover" />
+                </div>
+                <label className="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-slate-100 transition-colors">
+                  <span className="material-symbols-outlined text-[14px] text-teal-700">photo_camera</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={async (ev) => {
+                    const file = ev.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                      const base64 = event.target?.result as string;
+                      const current = await db.profil.get(1) || await db.profil.toCollection().first();
+                      if (current) {
+                        await db.profil.put({ ...current, avatarUrl: base64, updatedAt: Date.now() });
+                        useAppStore.getState().showToast("Foto profil diperbarui!", "success");
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  }} />
+                </label>
+              </div>
+              <h2 className="text-white font-bold text-[16px] mt-3 text-center">{profil.nama}</h2>
+              <p className="text-cyan-200 text-[12px] font-medium">NIP. {profil.nip}</p>
+            </div>
+
+            {/* Profile Details */}
+            <div className="p-4 space-y-2.5">
+              <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2.5">
+                <span className="material-symbols-outlined text-[18px] text-teal-600">work</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Jabatan</p>
+                  <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil.jabatan || '-'}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2.5">
+                  <span className="material-symbols-outlined text-[16px] text-amber-600">military_tech</span>
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Pangkat</p>
+                    <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil.pangkat || '-'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2.5">
+                  <span className="material-symbols-outlined text-[16px] text-indigo-600">badge</span>
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Golongan</p>
+                    <p className="text-[13px] text-slate-700 dark:text-slate-200 font-semibold truncate">{profil.golongan || '-'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="pt-1 space-y-2">
+                <NavLink to="/profil" onClick={() => setIsProfileOpen(false)} className="w-full flex items-center justify-between bg-teal-50 dark:bg-teal-900/20 hover:bg-teal-100 px-3 py-2.5 rounded-lg transition-colors group">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[18px] text-teal-700">edit</span>
+                    <span className="text-[13px] font-semibold text-teal-800 dark:text-teal-300">Edit Profil Lengkap</span>
+                  </div>
+                  <span className="material-symbols-outlined text-[18px] text-teal-400 group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+                </NavLink>
+              </div>
+            </div>
           </div>
         </div>
       )}
