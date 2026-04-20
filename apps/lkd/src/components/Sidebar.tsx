@@ -16,7 +16,7 @@ export default function Sidebar() {
         onClick={() => setSidebarOpen(false)}
       ></div>
 
-      <div className="fixed top-0 left-0 bottom-0 w-60 bg-white dark:bg-slate-900 shadow-2xl z-[110] flex flex-col transform transition-transform animate-slide-in-left">
+      <div className="fixed top-0 left-0 w-60 max-h-screen bg-white dark:bg-slate-900 shadow-2xl z-[110] flex flex-col transform transition-transform animate-slide-in-left rounded-br-2xl overflow-hidden border-b border-r border-slate-100 dark:border-slate-800">
         {/* Header */}
         <div className="px-4 py-3.5 bg-teal-50 dark:bg-teal-900/20 border-b border-teal-100 dark:border-teal-900/30">
           <div className="flex items-center gap-3">
@@ -40,7 +40,7 @@ export default function Sidebar() {
         </div>
 
         {/* Menu */}
-        <div className="flex-1 overflow-y-auto py-2">
+        <div className="overflow-y-auto py-2">
           <ul className="space-y-0.5 px-2">
             <li>
               <NavLink to="/kalender" onClick={() => setSidebarOpen(false)} className="flex items-center gap-2.5 px-3 py-2.5 text-[13px] text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
@@ -76,7 +76,7 @@ export default function Sidebar() {
           </ul>
         </div>
         
-        <div className="p-3 text-center text-[9px] font-semibold text-slate-400 border-t border-slate-100 dark:border-slate-800">
+        <div className="p-3 text-center text-[9px] font-semibold text-slate-400 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
           LKD App v1.0.0 &copy; 2026 MAN 2 Lotim
         </div>
       </div>
