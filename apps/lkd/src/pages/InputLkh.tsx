@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
@@ -8,7 +8,6 @@ import CategoryManagerModal from '../components/CategoryManagerModal';
 const HARI_LIST = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as const;
 
 export default function InputLkh() {
-  const navigate = useNavigate();
   const location = useLocation();
   const { showToast, kegiatanManual, setKegiatanManual } = useAppStore();
   
