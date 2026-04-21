@@ -108,30 +108,38 @@ export default function Dashboard() {
   const formatterBulan = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' });
   const displayBulan = formatterBulan.format(new Date(activeYear, activeMonthIndex));
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 11) return 'Selamat Pagi 🌤️';
+    if (hour < 15) return 'Selamat Siang ☀️';
+    if (hour < 18) return 'Selamat Sore 🌇';
+    return 'Selamat Malam 🌙';
+  };
+
   return (
     <>
       {/* TopAppBar */}
       <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-sm shadow-teal-900/5">
         <div className="flex justify-between items-center w-full px-4 py-3">
           <div className="flex items-center gap-3">
-            <button onClick={() => useAppStore.getState().setSidebarOpen(true)} className="text-teal-950 dark:text-teal-50 active:opacity-80 transition-all p-1">
+            <button onClick={() => useAppStore.getState().setSidebarOpen(true)} className="hidden md:block text-teal-950 dark:text-teal-50 active:opacity-80 transition-all p-1">
               <span className="material-symbols-outlined text-[22px]">menu</span>
             </button>
-            <div>
+            <div className="animate-fade-in">
               {profil ? (
                 <>
-                  <h1 className="font-headline font-bold text-[15px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight">{profil.nama}</h1>
-                  <span className="text-[11px] text-on-surface-variant font-medium">{profil.jabatan || 'Guru'}</span>
+                  <span className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">{getGreeting()}</span>
+                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight truncate max-w-[200px]">{profil.nama.split(' ')[0]}</h1>
                 </>
               ) : (
                 <>
-                  <h1 className="font-headline font-bold text-[15px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight">Laporan Kinerja Harian</h1>
-                  <span className="text-[11px] text-on-surface-variant font-medium">MAN 2 Lombok Timur</span>
+                  <span className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">{getGreeting()}</span>
+                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight">Laporan Kinerja</h1>
                 </>
               )}
             </div>
           </div>
-          <button onClick={() => setIsProfileOpen(true)} className="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform relative z-10 shrink-0">
+          <button onClick={() => setIsProfileOpen(true)} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform relative z-10 shrink-0 shadow-sm animate-fade-in">
             <img
               alt="Profil"
               className="w-full h-full object-cover pointer-events-none"
@@ -156,7 +164,7 @@ export default function Dashboard() {
         </div>
 
         {/* Status Card & Progress */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 opacity-0 animate-slide-up" style={{ animationDelay: '0.1s' }}>
           <div className="bg-primary-gradient p-4 rounded-2xl text-white shadow-lg shadow-primary/20 relative overflow-hidden flex flex-col justify-between min-h-[140px]">
             <div className="relative z-10 flex justify-between items-start">
               <div>
@@ -204,7 +212,7 @@ export default function Dashboard() {
         </section>
 
         {/* Calendar Widget */}
-        <section className="mb-5 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4">
+        <section className="mb-5 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 opacity-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <h3 className="font-headline font-bold text-[13px] text-primary mb-3 flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[18px]">calendar_month</span>
             Kalender LKH
@@ -281,13 +289,24 @@ export default function Dashboard() {
         </section>
 
         {/* Recent Activities */}
-        <section className="mb-5">
+        <section className="mb-5 opacity-0 animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <div className="flex justify-between items-end mb-3 px-0.5">
             <h3 className="font-headline font-bold text-[15px] text-primary">Aktivitas Terakhir</h3>
             <NavLink to="/lkh/riwayat" className="text-[12px] font-bold text-secondary hover:underline">Lihat Semua</NavLink>
           </div>
           <div className="space-y-2">
-            {aktivitasTerakhir.length > 0 ? (
+            {lkhBulanIni === undefined ? (
+              // Skeleton Loader
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-surface-container-lowest border border-outline-variant/20 p-3 rounded-xl flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-surface-container-high animate-pulse flex-shrink-0"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3.5 bg-surface-container-high rounded w-3/4 animate-pulse"></div>
+                    <div className="h-2.5 bg-surface-container-high rounded w-1/2 animate-pulse"></div>
+                  </div>
+                </div>
+              ))
+            ) : aktivitasTerakhir.length > 0 ? (
               aktivitasTerakhir.map((item) => (
                 <div key={item.id} onClick={() => handleEditOpen(item)} className="bg-surface-container-lowest border border-outline-variant/20 p-3 rounded-xl flex items-center gap-3 hover:bg-surface-container-low transition-colors cursor-pointer group">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${item.tipeSumber === 'jadwal' ? 'bg-primary/10 text-primary' : item.tipeSumber === 'kalender' ? 'bg-cyan-500/10 text-cyan-600' : 'bg-tertiary/10 text-tertiary'}`}>
@@ -316,7 +335,7 @@ export default function Dashboard() {
         </section>
 
         {/* Print Action */}
-        <section>
+        <section className="opacity-0 animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <NavLink to="/lkh/laporan" className="w-full py-3 bg-surface-container-highest text-primary border border-outline-variant/30 font-headline font-bold text-[13px] rounded-xl flex items-center justify-center gap-2 hover:bg-outline-variant/20 transition-all active:scale-95">
             <span className="material-symbols-outlined text-[20px]">print</span>
             Cetak Laporan Bulan Ini
