@@ -62,11 +62,16 @@ export default function Profil() {
   // Ambil data profil dari Dexie (id = 1)
   const profil = useLiveQuery(() => db.profil.get(1));
 
+  const [isOnboarding, setIsOnboarding] = useState(false);
+
   const location = useLocation();
   useEffect(() => {
     // If navigated from Dashboard onboarding
     if (location.state?.openEdit && profil !== undefined) {
       handleOpenEdit(location.state.openEdit);
+      if (location.state.onboarding) {
+        setIsOnboarding(true);
+      }
       // Clear the state so it doesn't reopen on refresh
       window.history.replaceState({}, document.title);
     }
@@ -174,11 +179,31 @@ export default function Profil() {
       }
       if (editMode === 'atasan') {
         await db.profil.put({ ...current, namaKepsek: formData.namaKepsek, nipKepsek: formData.nipKepsek, updatedAt: Date.now() });
+        showToast("Data Atasan berhasil diperbarui!", "success");
+        if (isOnboarding) {
+          setIsModalOpen(false);
+          setIsOnboarding(false);
+          // Auto trigger pull referensi
+          showToast('Menarik referensi jadwal & tugas...', 'info');
+          const result = await useAppStore.getState().pullReferensiData();
+          if (result) {
+            showToast(`Referensi sukses! Anda siap menggunakan aplikasi.`, 'success');
+          } else {
+            showToast('Selesai! Anda siap menggunakan aplikasi.', 'success'); // fallback if offline
+          }
+        } else {
+          setIsModalOpen(false);
+        }
       } else {
         await db.profil.put({ ...current, nama: formData.nama, nip: formData.nip, jabatan: formData.jabatan, pangkat: formData.pangkat, golongan: formData.golongan, updatedAt: Date.now() });
+        showToast("Data Pegawai berhasil diperbarui!", "success");
+        if (isOnboarding) {
+          // Chain to atasan
+          handleOpenEdit('atasan');
+        } else {
+          setIsModalOpen(false);
+        }
       }
-      showToast("Data berhasil diperbarui!", "success");
-      setIsModalOpen(false);
     } catch (err) {
       console.error('Gagal simpan profil:', err);
       showToast("Gagal menyimpan data. Coba lagi.", "error");

@@ -65,8 +65,14 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (profil !== undefined) {
-      // If profile is loaded but empty/default
-      if (!profil || !profil.nama || profil.nama === 'Nama Pegawai' || !profil.nip || profil.nip === '-') {
+      // Tampilkan onboarding jika profil belum lengkap (meskipun sudah punya nama/nip dari sync)
+      const isLackingData = !profil || 
+                            !profil.nama || profil.nama === 'Nama Pegawai' || profil.nama === 'Admin' ||
+                            !profil.nip || profil.nip === '-' || 
+                            !profil.jabatan || 
+                            !profil.namaKepsek;
+
+      if (isLackingData) {
         // Delay slightly so it doesn't flash immediately on very fast loads
         const timer = setTimeout(() => setShowOnboarding(true), 500);
         return () => clearTimeout(timer);
@@ -557,12 +563,12 @@ export default function Dashboard() {
             </div>
             <h2 className="font-headline font-bold text-[18px] text-slate-800 dark:text-slate-100 mb-2">Selamat Datang di LKD!</h2>
             <p className="text-[13px] text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-              Sebelum mulai mengisi laporan kinerja harian, Anda wajib melengkapi <strong>Data Profil</strong> (Nama dan NIP).
+              Sebelum mulai menggunakan aplikasi, Anda wajib melengkapi <strong>Data Pegawai</strong> dan <strong>Data Atasan</strong> Anda.
             </p>
             <button 
               onClick={() => {
                 setShowOnboarding(false);
-                navigate('/profil', { state: { openEdit: 'profil' } });
+                navigate('/profil', { state: { openEdit: 'profil', onboarding: true } });
               }}
               className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-[14px] py-3.5 rounded-xl shadow-lg shadow-teal-600/30 transition-all active:scale-95"
             >
