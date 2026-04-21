@@ -104,7 +104,7 @@ export default function BottomSheetSelect({
           {/* Bottom Sheet */}
           <div 
             ref={sheetRef}
-            className="relative bg-white dark:bg-slate-900 w-full rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] flex flex-col max-h-[85vh] animate-in slide-in-from-bottom duration-300"
+            className="relative bg-white dark:bg-slate-900 w-[94vw] max-w-md mx-auto mb-4 sm:mb-8 rounded-3xl shadow-2xl flex flex-col max-h-[60vh] animate-in slide-in-from-bottom duration-300"
           >
             {/* Drag Handle Indicator */}
             <div className="flex justify-center pt-3 pb-2 w-full cursor-pointer" onClick={() => setIsOpen(false)}>
@@ -203,8 +203,8 @@ export default function BottomSheetSelect({
               )}
             </div>
             
-            {/* Bottom Padding for Mobile Home Indicator */}
-            <div className="pb-6"></div>
+            {/* Bottom Padding */}
+            <div className="pb-2"></div>
           </div>
         </div>,
         document.body
