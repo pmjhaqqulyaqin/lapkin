@@ -436,56 +436,55 @@ export default function Profil() {
               </button>
             </li>
             <li>
-              <button onClick={handleSyncClick} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                <div className="flex items-center gap-3">
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${syncStatus === 'syncing' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600' : syncStatus === 'success' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : syncStatus === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
-                    <span className={`material-symbols-outlined text-[16px] ${syncStatus === 'syncing' ? 'animate-spin' : ''}`}>sync</span>
+              <div>
+                <button onClick={handleSyncClick} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center ${syncStatus === 'syncing' ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600' : syncStatus === 'success' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : syncStatus === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'}`}>
+                      <span className={`material-symbols-outlined text-[16px] ${syncStatus === 'syncing' ? 'animate-spin' : ''}`}>sync</span>
+                    </div>
+                    <div className="text-left">
+                      <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200 block">Sinkronisasi Data</span>
+                      {syncUser && (
+                        <span className="text-[10px] text-slate-400 font-medium">Server: {syncUser.nip}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200 block">Sinkronisasi Data</span>
-                    {syncUser && (
-                      <span className="text-[10px] text-slate-400 font-medium">Server: {syncUser.nip}</span>
+                  <div className="flex items-center gap-2">
+                    {syncStatus === 'syncing' && (
+                      <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-0.5 rounded-md">Syncing...</span>
                     )}
+                    {syncStatus === 'success' && (
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-md">✓ Berhasil</span>
+                    )}
+                    {syncStatus === 'error' && (
+                      <span className="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded-md">Gagal</span>
+                    )}
+                    {syncStatus === 'idle' && lastSyncDate && (
+                      <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-0.5 rounded-md">
+                        {new Date(lastSyncDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                    {syncStatus === 'idle' && !lastSyncDate && !syncUser && (
+                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-md">Belum diatur</span>
+                    )}
+                    <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {syncStatus === 'syncing' && (
-                    <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-0.5 rounded-md">Syncing...</span>
-                  )}
-                  {syncStatus === 'success' && (
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-md">✓ Berhasil</span>
-                  )}
-                  {syncStatus === 'error' && (
-                    <span className="text-[10px] font-bold text-red-600 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded-md">Gagal</span>
-                  )}
-                  {syncStatus === 'idle' && lastSyncDate && (
-                    <span className="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 px-2 py-0.5 rounded-md">
-                      {new Date(lastSyncDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  )}
-                  {syncStatus === 'idle' && !lastSyncDate && !syncUser && (
-                    <span className="text-[10px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-md">Belum diatur</span>
-                  )}
-                  <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
-                </div>
-              </button>
+                </button>
+                {syncUser && (
+                  <div className="px-4 pb-2.5 -mt-1 pl-[52px]">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); executeSync(true); }}
+                      className="text-[10px] text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium transition-colors flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-[12px]">refresh</span>
+                      Bermasalah? Paksa kirim ulang semua data
+                    </button>
+                  </div>
+                )}
+              </div>
             </li>
             {syncUser && (
             <>
-            <li>
-              <button onClick={() => executeSync(true)} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-cyan-50 dark:hover:bg-cyan-900/10 transition-colors group">
-                <div className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
-                    <span className="material-symbols-outlined text-[16px]">sync_problem</span>
-                  </div>
-                  <div className="text-left">
-                    <span className="font-semibold text-[13px] text-slate-700 dark:text-slate-200 block">Sync Ulang Penuh</span>
-                    <span className="text-[10px] text-slate-400">Kirim & terima ulang semua data</span>
-                  </div>
-                </div>
-                <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-cyan-600 transition-colors">chevron_right</span>
-              </button>
-            </li>
             <li>
               <button onClick={handleSyncLogout} className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors group">
                 <div className="flex items-center gap-3">

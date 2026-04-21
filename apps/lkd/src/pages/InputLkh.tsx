@@ -17,7 +17,7 @@ export default function InputLkh() {
   
   const [isManageKegiatanOpen, setIsManageKegiatanOpen] = useState(false);
   
-  const [manualKegiatan, setManualKegiatan] = useState(kegiatanManual[0] || '');
+  const [manualKegiatan, setManualKegiatan] = useState('');
   const [manualUraian, setManualUraian] = useState('');
 
   // Menentukan nama hari dari tanggal yang dipilih
@@ -43,16 +43,7 @@ export default function InputLkh() {
 
   const isLibur = liburEntries.length > 0;
 
-  // Pre-fill form jika ada kegiatan khusus di kalender (legacy behavior for manual input)
-  useEffect(() => {
-    if (kegiatanKalenderEntries.length > 0 && !isLibur) {
-      setManualKegiatan(kegiatanKalenderEntries[0].status);
-      setManualUraian(prev => prev ? prev : kegiatanKalenderEntries[0].keterangan);
-    } else if (!manualUraian) {
-      setManualKegiatan(kegiatanManual[0] || '');
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kalenderHariIni, tanggal, kegiatanManual, isLibur]);
+
 
   // Fetch jadwal berdasarkan hari
   const jadwalHariIni = useLiveQuery(
@@ -240,7 +231,7 @@ export default function InputLkh() {
       }
       setTanggal(nextDate.toISOString().split('T')[0]);
       setManualUraian('');
-      setManualKegiatan(kegiatanManual[0] || '');
+      setManualKegiatan('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       // Tetap di halaman input, reset form manual saja
@@ -410,6 +401,7 @@ export default function InputLkh() {
                   onChange={(e) => setManualKegiatan(e.target.value)}
                   className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3.5 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm appearance-none"
                 >
+                  <option value="" disabled>— Pilih Kegiatan —</option>
                   {kegiatanManual.map(opt => (
                     <option key={opt} value={opt}>{opt}</option>
                   ))}
