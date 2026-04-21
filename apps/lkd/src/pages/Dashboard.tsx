@@ -70,7 +70,7 @@ export default function Dashboard() {
                             !profil.nama || profil.nama === 'Nama Pegawai' || profil.nama === 'Admin' ||
                             !profil.nip || profil.nip === '-' || 
                             !profil.jabatan || 
-                            !profil.namaKepsek;
+                            !profil.namaKepsek || profil.namaKepsek === '-';
 
       if (isLackingData) {
         // Delay slightly so it doesn't flash immediately on very fast loads
