@@ -60,14 +60,30 @@ export default function Dashboard() {
   // Date Detail Modal State
   const [viewDateDetails, setViewDateDetails] = useState<{ date: string, type: 'lkh' | 'holiday', info?: string } | null>(null);
 
+  // Onboarding State
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
   useEffect(() => {
-    if (isProfileOpen || isEditModalOpen || viewDateDetails) {
+    if (profil !== undefined) {
+      // If profile is loaded but empty/default
+      if (!profil || !profil.nama || profil.nama === 'Nama Pegawai' || !profil.nip || profil.nip === '-') {
+        // Delay slightly so it doesn't flash immediately on very fast loads
+        const timer = setTimeout(() => setShowOnboarding(true), 500);
+        return () => clearTimeout(timer);
+      } else {
+        setShowOnboarding(false);
+      }
+    }
+  }, [profil]);
+
+  useEffect(() => {
+    if (isProfileOpen || isEditModalOpen || viewDateDetails || showOnboarding) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [isProfileOpen, isEditModalOpen, viewDateDetails]);
+  }, [isProfileOpen, isEditModalOpen, viewDateDetails, showOnboarding]);
 
   const handleEditOpen = (item: any) => {
     setEditId(item.id);
@@ -528,6 +544,30 @@ export default function Dashboard() {
                 </>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden animate-scale-up text-center p-6 border border-slate-100 dark:border-slate-800">
+            <div className="w-16 h-16 bg-teal-100 dark:bg-teal-900/40 rounded-full flex items-center justify-center mx-auto mb-4 text-teal-600 dark:text-teal-400">
+              <span className="material-symbols-outlined text-[32px]">manage_accounts</span>
+            </div>
+            <h2 className="font-headline font-bold text-[18px] text-slate-800 dark:text-slate-100 mb-2">Selamat Datang di LKD!</h2>
+            <p className="text-[13px] text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+              Sebelum mulai mengisi laporan kinerja harian, Anda wajib melengkapi <strong>Data Profil</strong> (Nama dan NIP).
+            </p>
+            <button 
+              onClick={() => {
+                setShowOnboarding(false);
+                navigate('/profil', { state: { openEdit: 'profil' } });
+              }}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-[14px] py-3.5 rounded-xl shadow-lg shadow-teal-600/30 transition-all active:scale-95"
+            >
+              Lengkapi Profil Sekarang
+            </button>
           </div>
         </div>
       )}

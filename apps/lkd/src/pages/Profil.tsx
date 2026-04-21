@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import {
   fullSync, syncLogin, syncRegister,
   isSyncConfigured, getSyncUser, getLastSyncDate, clearSyncAuth,
@@ -61,6 +61,16 @@ export default function Profil() {
   
   // Ambil data profil dari Dexie (id = 1)
   const profil = useLiveQuery(() => db.profil.get(1));
+
+  const location = useLocation();
+  useEffect(() => {
+    // If navigated from Dashboard onboarding
+    if (location.state?.openEdit && profil !== undefined) {
+      handleOpenEdit(location.state.openEdit);
+      // Clear the state so it doesn't reopen on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, profil]);
 
   // --- Sync Logic ---
   const handleSyncClick = async () => {

@@ -3,6 +3,7 @@ import BottomNav from '../components/BottomNav';
 import Toast from '../components/Toast';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useAppStore } from '../store/useAppStore';
+import OfflineIndicator from '../components/OfflineIndicator';
 
 import Sidebar from '../components/Sidebar';
 import BantuanModal from '../components/BantuanModal';
@@ -20,6 +21,7 @@ export default function MainLayout() {
 
   return (
     <ErrorBoundary>
+      <OfflineIndicator />
       <Sidebar />
       <BantuanModal />
       <Outlet />

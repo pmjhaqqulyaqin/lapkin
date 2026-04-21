@@ -69,7 +69,8 @@ export default {
           },
           animation: {
               "slide-up": "slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-              "fade-in": "fade-in 0.4s ease-out forwards"
+              "fade-in": "fade-in 0.4s ease-out forwards",
+              "slide-in-top": "slide-in-top 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards"
           },
           keyframes: {
               "slide-up": {
@@ -79,6 +80,10 @@ export default {
               "fade-in": {
                   "0%": { opacity: 0 },
                   "100%": { opacity: 1 }
+              },
+              "slide-in-top": {
+                  "0%": { transform: "translateY(-100%)" },
+                  "100%": { transform: "translateY(0)" }
               }
           }
       },
