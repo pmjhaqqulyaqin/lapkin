@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
@@ -19,6 +19,19 @@ export default function InputLkh() {
   
   const [manualKegiatan, setManualKegiatan] = useState('');
   const [manualUraian, setManualUraian] = useState('');
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Menentukan nama hari dari tanggal yang dipilih
   const dateObj = new Date(tanggal);
@@ -395,20 +408,46 @@ export default function InputLkh() {
                   <span className="material-symbols-outlined text-[14px]">edit</span> Kelola Opsi
                 </button>
               </div>
-              <div className="relative">
-                <select 
-                  value={manualKegiatan}
-                  onChange={(e) => setManualKegiatan(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3.5 text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm appearance-none"
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3.5 text-left flex items-center justify-between shadow-sm focus:ring-2 focus:ring-teal-500/50 outline-none transition-all"
                 >
-                  <option value="" disabled>— Pilih Kegiatan —</option>
-                  {kegiatanManual.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                  <span className="material-symbols-outlined">expand_more</span>
-                </div>
+                  <span className={`block truncate text-[13px] font-semibold ${manualKegiatan ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400 dark:text-slate-500'}`}>
+                    {manualKegiatan || '— Pilih Kegiatan —'}
+                  </span>
+                  <span className={`material-symbols-outlined text-slate-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}>
+                    expand_more
+                  </span>
+                </button>
+                
+                {isDropdownOpen && (
+                  <div className="absolute z-10 w-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-none py-1.5 max-h-52 overflow-y-auto transform origin-top transition-all animate-in fade-in zoom-in-95 duration-100">
+                    {kegiatanManual.length === 0 ? (
+                      <div className="px-4 py-3 text-[12px] text-slate-500 italic text-center">Belum ada opsi kegiatan</div>
+                    ) : (
+                      kegiatanManual.map(opt => (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => {
+                            setManualKegiatan(opt);
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-4 py-2.5 text-[12px] transition-colors flex items-center gap-2 ${
+                            manualKegiatan === opt 
+                              ? 'bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 font-bold' 
+                              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium'
+                          }`}
+                        >
+                          {manualKegiatan === opt && <span className="material-symbols-outlined text-[14px]">check</span>}
+                          <span className={manualKegiatan === opt ? '' : 'pl-5'}>{opt}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
