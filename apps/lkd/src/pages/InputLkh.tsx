@@ -237,7 +237,7 @@ export default function InputLkh() {
     } else {
       // Tetap di halaman input, reset form manual saja
       setManualUraian('');
-      setManualKegiatan(kegiatanManual[0] || '');
+      setManualKegiatan('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
