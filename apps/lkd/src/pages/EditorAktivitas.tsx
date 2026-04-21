@@ -5,6 +5,9 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
 import CategoryManagerModal from '../components/CategoryManagerModal';
+import BottomSheetSelect from '../components/BottomSheetSelect';
+
+const HARI_OPTIONS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Tiap Hari'];
 
 export default function EditorAktivitas() {
   const { showToast, kategoriTugas, setKategoriTugas } = useAppStore();
@@ -235,18 +238,17 @@ export default function EditorAktivitas() {
                     <span className="material-symbols-outlined text-[14px]">edit</span> Kelola Kategori
                   </button>
                 </div>
-                <div className="relative">
-                  <select 
-                    value={kategori}
-                    onChange={e => setKategori(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none appearance-none"
-                  >
-                    {kategoriTugas.map(kat => (
-                      <option key={kat} value={kat}>{kat}</option>
-                    ))}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-4 top-3 text-slate-400 pointer-events-none">expand_more</span>
-                </div>
+                <BottomSheetSelect 
+                  value={kategori}
+                  onChange={setKategori}
+                  options={kategoriTugas}
+                  title="Pilih Kategori"
+                  placeholder="— Pilih Kategori —"
+                  enableSearch={false}
+                  enableRecent={true}
+                  recentStorageKey="recent_kategori_tugas"
+                  triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                />
               </div>
 
               {/* Nama Tugas */}
@@ -277,19 +279,13 @@ export default function EditorAktivitas() {
                     )}
                     
                     <div className="mb-3">
-                      <select 
+                      <BottomSheetSelect 
                         value={templateItem.hari}
-                        onChange={e => updateHari(hIdx, e.target.value)}
-                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-teal-500/50 outline-none"
-                      >
-                        <option value="Senin">Senin</option>
-                        <option value="Selasa">Selasa</option>
-                        <option value="Rabu">Rabu</option>
-                        <option value="Kamis">Kamis</option>
-                        <option value="Jumat">Jumat</option>
-                        <option value="Sabtu">Sabtu</option>
-                        <option value="Tiap Hari">Tiap Hari Kerja</option>
-                      </select>
+                        onChange={val => updateHari(hIdx, val)}
+                        options={HARI_OPTIONS}
+                        title="Pilih Hari"
+                        triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                      />
                     </div>
 
                     <div className="space-y-2 pl-2 border-l-2 border-teal-200 dark:border-teal-900/50">

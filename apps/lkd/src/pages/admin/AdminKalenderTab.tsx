@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
+import BottomSheetSelect from '../../components/BottomSheetSelect';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 function getToken() { return localStorage.getItem('lkd_admin_token'); }
@@ -328,18 +329,15 @@ export default function AdminKalenderTab() {
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Status / Kategori</label>
-                <div className="relative">
-                  <select 
-                    required value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none appearance-none"
-                  >
-                    {statusOptions.length === 0 && <option value="">Belum ada master status</option>}
-                    {statusOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                    <span className="material-symbols-outlined text-[18px]">expand_more</span>
-                  </div>
-                </div>
+                <BottomSheetSelect 
+                  value={formData.status}
+                  onChange={(val) => setFormData({...formData, status: val})}
+                  options={statusOptions}
+                  title="Pilih Status/Kategori"
+                  placeholder="— Pilih Status —"
+                  enableSearch={false}
+                  triggerClassName="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                />
               </div>
 
               <div>

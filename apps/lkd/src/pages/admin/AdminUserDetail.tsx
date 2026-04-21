@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
+import BottomSheetSelect from '../../components/BottomSheetSelect';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
+const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const YEARS = ['2025', '2026', '2027'];
 
 interface UserProfil {
   id: number; nip: string; nama: string; jabatan: string;
@@ -133,16 +136,24 @@ export default function AdminUserDetail() {
               <span className="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-lg ml-2">{lkh.length} kegiatan • {uniqueDays.size} hari</span>
             </h3>
             <div className="flex items-center gap-2">
-              <select value={month} onChange={e => setMonth(Number(e.target.value))}
-                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold outline-none">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <option key={i} value={i}>{fmtBulan.format(new Date(2026, i))}</option>
-                ))}
-              </select>
-              <select value={year} onChange={e => setYear(Number(e.target.value))}
-                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold outline-none">
-                {[2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
-              </select>
+              <div className="w-32">
+                <BottomSheetSelect 
+                  value={MONTHS[month]}
+                  onChange={(val) => setMonth(MONTHS.indexOf(val))}
+                  options={MONTHS}
+                  title="Pilih Bulan"
+                  triggerClassName="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold outline-none text-left flex items-center justify-between"
+                />
+              </div>
+              <div className="w-24">
+                <BottomSheetSelect 
+                  value={year.toString()}
+                  onChange={(val) => setYear(Number(val))}
+                  options={YEARS}
+                  title="Pilih Tahun"
+                  triggerClassName="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold outline-none text-left flex items-center justify-between"
+                />
+              </div>
             </div>
           </div>
 

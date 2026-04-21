@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
+import BottomSheetSelect from '../components/BottomSheetSelect';
 
 export default function KalenderAkademik() {
   const { showToast, statusKalender, setStatusKalender } = useAppStore();
@@ -343,17 +344,17 @@ export default function KalenderAkademik() {
 
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Status / Kategori</label>
-                <div className="relative">
-                  <select 
-                    required value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none appearance-none"
-                  >
-                    {statusKalender.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-400">
-                    <span className="material-symbols-outlined text-[16px]">expand_more</span>
-                  </div>
-                </div>
+                <BottomSheetSelect 
+                  value={formData.status}
+                  onChange={(val) => setFormData({...formData, status: val})}
+                  options={statusKalender}
+                  title="Pilih Status/Kategori"
+                  placeholder="— Pilih Status —"
+                  enableSearch={false}
+                  enableRecent={true}
+                  recentStorageKey="recent_status_kalender"
+                  triggerClassName="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                />
               </div>
 
               <div>

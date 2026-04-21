@@ -3,6 +3,10 @@ import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
+import BottomSheetSelect from '../components/BottomSheetSelect';
+
+const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const YEARS = ['2025', '2026', '2027'];
 
 export default function LaporanBulanan() {
   const { activeMonthIndex, activeYear, setActiveMonthYear } = useAppStore();
@@ -206,24 +210,32 @@ export default function LaporanBulanan() {
           <div>
             <h1 className="font-manrope font-bold text-lg md:text-xl tracking-tight leading-none">Preview Laporan</h1>
             <div className="flex items-center gap-2 mt-1">
-              <select 
-                value={activeMonthIndex}
-                onChange={(e) => setActiveMonthYear(Number(e.target.value), activeYear)}
-                className="text-xs font-semibold bg-transparent border-none p-0 outline-none cursor-pointer hover:opacity-80"
-              >
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <option key={i} value={i}>{formatterBulan.format(new Date(2026, i))}</option>
-                ))}
-              </select>
-              <select 
-                value={activeYear}
-                onChange={(e) => setActiveMonthYear(activeMonthIndex, Number(e.target.value))}
-                className="text-xs font-semibold bg-transparent border-none p-0 outline-none cursor-pointer hover:opacity-80"
-              >
-                <option value={2025}>2025</option>
-                <option value={2026}>2026</option>
-                <option value={2027}>2027</option>
-              </select>
+              <BottomSheetSelect 
+                value={MONTHS[activeMonthIndex]}
+                onChange={(val) => setActiveMonthYear(MONTHS.indexOf(val), activeYear)}
+                options={MONTHS}
+                title="Pilih Bulan"
+                triggerClassName="text-xs font-semibold bg-transparent border-none p-0 outline-none cursor-pointer hover:opacity-80 flex items-center gap-0.5"
+                triggerContent={
+                  <>
+                    <span>{MONTHS[activeMonthIndex]}</span>
+                    <span className="material-symbols-outlined text-[14px] text-cyan-700/50 dark:text-cyan-300/50">expand_more</span>
+                  </>
+                }
+              />
+              <BottomSheetSelect 
+                value={activeYear.toString()}
+                onChange={(val) => setActiveMonthYear(activeMonthIndex, Number(val))}
+                options={YEARS}
+                title="Pilih Tahun"
+                triggerClassName="text-xs font-semibold bg-transparent border-none p-0 outline-none cursor-pointer hover:opacity-80 flex items-center gap-0.5"
+                triggerContent={
+                  <>
+                    <span>{activeYear}</span>
+                    <span className="material-symbols-outlined text-[14px] text-cyan-700/50 dark:text-cyan-300/50">expand_more</span>
+                  </>
+                }
+              />
             </div>
           </div>
         </div>

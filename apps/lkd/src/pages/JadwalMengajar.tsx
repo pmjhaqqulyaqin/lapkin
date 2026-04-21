@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
 import { NavLink } from 'react-router-dom';
+import BottomSheetSelect from '../components/BottomSheetSelect';
 
 const HARI_LIST = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as const;
 type Hari = typeof HARI_LIST[number];
@@ -263,13 +264,13 @@ export default function JadwalMengajar() {
             <form onSubmit={handleSimpanJadwal} className="p-6 space-y-4 bg-white dark:bg-slate-900">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Hari</label>
-                <select 
+                <BottomSheetSelect 
                   value={formHari}
-                  onChange={(e) => setFormHari(e.target.value as Hari)}
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
-                >
-                  {HARI_LIST.map(h => <option key={h} value={h}>{h}</option>)}
-                </select>
+                  onChange={(val) => setFormHari(val as Hari)}
+                  options={[...HARI_LIST]}
+                  title="Pilih Hari"
+                  triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">

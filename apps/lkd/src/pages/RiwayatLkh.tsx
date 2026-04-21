@@ -4,6 +4,10 @@ import { NavLink } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
+import BottomSheetSelect from '../components/BottomSheetSelect';
+
+const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const YEARS = ['2025', '2026', '2027'];
 
 export default function RiwayatLkh() {
   const { activeMonthIndex, activeYear, setActiveMonthYear, showToast } = useAppStore();
@@ -78,24 +82,22 @@ export default function RiwayatLkh() {
         {/* Month & Year Filter */}
         <section className="mb-5">
           <div className="flex gap-3 items-center">
-            <select 
-              value={activeMonthIndex}
-              onChange={(e) => setActiveMonthYear(Number(e.target.value), activeYear)}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-[13px] text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none flex-1"
-            >
-              {Array.from({ length: 12 }).map((_, i) => (
-                <option key={i} value={i}>{formatterBulan.format(new Date(2026, i))}</option>
-              ))}
-            </select>
-            <select 
-              value={activeYear}
-              onChange={(e) => setActiveMonthYear(activeMonthIndex, Number(e.target.value))}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-[13px] text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none w-28"
-            >
-              <option value={2025}>2025</option>
-              <option value={2026}>2026</option>
-              <option value={2027}>2027</option>
-            </select>
+            <div className="flex-1">
+              <BottomSheetSelect 
+                value={MONTHS[activeMonthIndex]}
+                onChange={(val) => setActiveMonthYear(MONTHS.indexOf(val), activeYear)}
+                options={MONTHS}
+                title="Pilih Bulan"
+              />
+            </div>
+            <div className="w-28">
+              <BottomSheetSelect 
+                value={activeYear.toString()}
+                onChange={(val) => setActiveMonthYear(activeMonthIndex, Number(val))}
+                options={YEARS}
+                title="Pilih Tahun"
+              />
+            </div>
           </div>
         </section>
 
