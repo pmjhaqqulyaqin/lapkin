@@ -63,19 +63,21 @@ export default function Profil() {
   const profil = useLiveQuery(() => db.profil.get(1));
 
   const [isOnboarding, setIsOnboarding] = useState(false);
+  const hasAutoOpened = useRef(false);
 
   const location = useLocation();
   useEffect(() => {
-    // If navigated from Dashboard onboarding
-    if (location.state?.openEdit && profil !== undefined) {
+    // If navigated from Dashboard onboarding, open only ONCE
+    if (location.state?.openEdit && profil !== undefined && !hasAutoOpened.current) {
+      hasAutoOpened.current = true;
       handleOpenEdit(location.state.openEdit);
       if (location.state.onboarding) {
         setIsOnboarding(true);
       }
-      // Clear the state so it doesn't reopen on refresh
-      window.history.replaceState({}, document.title);
+      // Clear the state via React Router so it doesn't trigger again
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state, profil]);
+  }, [location.state, profil, navigate]);
 
   // --- Sync Logic ---
   const handleSyncClick = async () => {
