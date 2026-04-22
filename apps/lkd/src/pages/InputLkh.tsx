@@ -94,27 +94,45 @@ export default function InputLkh() {
     }));
   }) || [];
 
+  // Ambil LKH yang sudah ada untuk tanggal ini
+  const existingLkhForDate = useLiveQuery(
+    () => db.lkh.where('tanggal').equals(tanggal).toArray().then(arr => arr.filter(l => !l.isDeleted)),
+    [tanggal]
+  );
+
   // Menyimpan checked status untuk sumber otomatis (gabungan jadwal, tugas, dan kalender)
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    // Check all automatically
+    // Tunggu sampai data referensi dimuat
+    if (!jadwalHariIni || !existingLkhForDate) return;
+
     const initialChecked: Record<string, boolean> = {};
-    if (jadwalHariIni) {
-      jadwalHariIni.forEach(j => {
-        if (j.id) initialChecked[`jadwal-${j.id}`] = true;
-      });
-    }
+    
+    // Helper untuk mengecek apakah item sudah tersimpan
+    const isJadwalSaved = (id: number) => existingLkhForDate.some(l => l.tipeSumber === 'jadwal' && l.sumberId === id);
+    const isKalenderSaved = (id: number) => existingLkhForDate.some(l => l.tipeSumber === 'kalender' && l.sumberId === id);
+    const isTugasSaved = (id: number, uraian: string) => existingLkhForDate.some(l => l.tipeSumber === 'tugas_tambahan' && l.sumberId === id && l.uraian === uraian);
+
+    jadwalHariIni.forEach(j => {
+      if (j.id) initialChecked[`jadwal-${j.id}`] = !isJadwalSaved(j.id);
+    });
+    
     tugasTemplates.forEach(t => {
-      initialChecked[t.uniqueId] = true;
+      // Jika sudah ada (berdasarkan id & uraian), atau jumlah LKH untuk tugas ini sudah memenuhi kuota template
+      const countExisting = existingLkhForDate.filter(l => l.tipeSumber === 'tugas_tambahan' && l.sumberId === t.id).length;
+      const countTemplates = tugasTemplates.filter(temp => temp.id === t.id).length;
+      const isSaved = isTugasSaved(t.id!, t.deskripsiCurrent) || (countExisting >= countTemplates);
+      initialChecked[t.uniqueId] = !isSaved;
     });
-    // Auto-check kegiatan kalender (non-libur)
+
     kegiatanKalenderEntries.forEach(k => {
-      if (k.id) initialChecked[`kalender-${k.id}`] = true;
+      if (k.id) initialChecked[`kalender-${k.id}`] = !isKalenderSaved(k.id);
     });
+    
     setCheckedItems(initialChecked);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jadwalHariIni, tugasHariIni, kalenderHariIni]);
+  }, [jadwalHariIni, tugasHariIni, kalenderHariIni, existingLkhForDate]);
 
   const toggleCheck = (key: string) => {
     setCheckedItems(prev => ({ ...prev, [key]: !prev[key] }));
@@ -308,48 +326,63 @@ export default function InputLkh() {
             ) : (
               <>
                 {/* Jadwal Mengajar */}
-                {jadwalHariIni?.map((j) => (
-                  <label key={`jadwal-${j.id}`} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-800">
+                {jadwalHariIni?.map((j) => {
+                  const isSaved = existingLkhForDate?.some(l => l.tipeSumber === 'jadwal' && l.sumberId === j.id);
+                  return (
+                  <label key={`jadwal-${j.id}`} className={`flex items-start gap-3 p-3 rounded-xl transition-colors border ${isSaved ? 'opacity-60 bg-slate-50 dark:bg-slate-800/30 border-slate-100 dark:border-slate-800 cursor-default' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer border-transparent hover:border-slate-100 dark:hover:border-slate-800'}`}>
                     <input 
                       type="checkbox" 
+                      disabled={isSaved}
                       checked={!!(j.id && checkedItems[`jadwal-${j.id}`])} 
                       onChange={() => toggleCheck(`jadwal-${j.id}`)}
-                      className="mt-1 w-5 h-5 rounded text-teal-600 border-slate-300 focus:ring-teal-500" 
+                      className="mt-1 w-5 h-5 rounded text-teal-600 border-slate-300 focus:ring-teal-500 disabled:opacity-50" 
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200">KBM - {j.mataPelajaran} ({j.kelas})</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200">KBM - {j.mataPelajaran} ({j.kelas})</h3>
+                        {isSaved && <span className="bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Tersimpan</span>}
+                      </div>
                       <p className="text-xs text-slate-500 mt-0.5">{j.jamMulai} - {j.jamSelesai} • {j.ruangan}</p>
                     </div>
                   </label>
-                ))}
+                )})}
 
                 {/* Tugas Tambahan */}
-                {tugasTemplates?.map((t) => (
-                  <label key={t.uniqueId} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-800">
+                {tugasTemplates?.map((t) => {
+                  const countExisting = existingLkhForDate?.filter(l => l.tipeSumber === 'tugas_tambahan' && l.sumberId === t.id).length || 0;
+                  const countTemplates = tugasTemplates.filter(temp => temp.id === t.id).length;
+                  const isSaved = existingLkhForDate?.some(l => l.tipeSumber === 'tugas_tambahan' && l.sumberId === t.id && l.uraian === t.deskripsiCurrent) || (countExisting >= countTemplates);
+                  return (
+                  <label key={t.uniqueId} className={`flex items-start gap-3 p-3 rounded-xl transition-colors border ${isSaved ? 'opacity-60 bg-slate-50 dark:bg-slate-800/30 border-slate-100 dark:border-slate-800 cursor-default' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer border-transparent hover:border-slate-100 dark:hover:border-slate-800'}`}>
                     <input 
                       type="checkbox" 
+                      disabled={isSaved}
                       checked={!!checkedItems[t.uniqueId]} 
                       onChange={() => toggleCheck(t.uniqueId)}
-                      className="mt-1 w-5 h-5 rounded text-orange-500 border-slate-300 focus:ring-orange-500" 
+                      className="mt-1 w-5 h-5 rounded text-orange-500 border-slate-300 focus:ring-orange-500 disabled:opacity-50" 
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
                         <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200">{t.namaTugas} {tugasTemplates.filter(x => x.id === t.id).length > 1 ? `(${t.templateIndex + 1})` : ''}</h3>
                         <span className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Tugas</span>
+                        {isSaved && <span className="bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Tersimpan</span>}
                       </div>
                       <p className="text-xs text-slate-500 line-clamp-2">{t.deskripsiCurrent}</p>
                     </div>
                   </label>
-                ))}
+                )})}
 
                 {/* Kegiatan Kalender Akademik (non-libur) */}
-                {kegiatanKalenderEntries.map((k) => (
-                  <label key={`kalender-${k.id}`} className="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-slate-100 dark:hover:border-slate-800">
+                {kegiatanKalenderEntries.map((k) => {
+                  const isSaved = existingLkhForDate?.some(l => l.tipeSumber === 'kalender' && l.sumberId === k.id);
+                  return (
+                  <label key={`kalender-${k.id}`} className={`flex items-start gap-3 p-3 rounded-xl transition-colors border ${isSaved ? 'opacity-60 bg-slate-50 dark:bg-slate-800/30 border-slate-100 dark:border-slate-800 cursor-default' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer border-transparent hover:border-slate-100 dark:hover:border-slate-800'}`}>
                     <input 
                       type="checkbox" 
+                      disabled={isSaved}
                       checked={!!(k.id && checkedItems[`kalender-${k.id}`])} 
                       onChange={() => toggleCheck(`kalender-${k.id}`)}
-                      className="mt-1 w-5 h-5 rounded text-cyan-600 border-slate-300 focus:ring-cyan-500" 
+                      className="mt-1 w-5 h-5 rounded text-cyan-600 border-slate-300 focus:ring-cyan-500 disabled:opacity-50" 
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
@@ -361,11 +394,12 @@ export default function InputLkh() {
                             'Kalender'
                           )}
                         </span>
+                        {isSaved && <span className="bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Tersimpan</span>}
                       </div>
                       <p className="text-xs text-slate-500 line-clamp-2">{k.keterangan || `Kegiatan ${k.status}`}</p>
                     </div>
                   </label>
-                ))}
+                )})}
               </>
             )}
           </div>
