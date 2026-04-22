@@ -155,36 +155,36 @@ export default function RiwayatLkh() {
       {/* Edit Modal */}
       {isEditModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100">Edit Aktivitas</h2>
-              <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
-                <span className="material-symbols-outlined text-[20px]">close</span>
+          <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
+              <h2 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">Edit Aktivitas</h2>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-1.5 transition-colors flex items-center justify-center w-6 h-6">
+                <span className="material-symbols-outlined text-[14px]">close</span>
               </button>
             </div>
-            <form onSubmit={handleSaveEdit} className="p-6 space-y-4 bg-white dark:bg-slate-900">
+            <form onSubmit={handleSaveEdit} className="p-3 space-y-2.5 bg-white dark:bg-slate-900">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Kegiatan</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Kegiatan</label>
                 <input 
                   type="text" 
                   value={editKegiatan} 
                   onChange={e => setEditKegiatan(e.target.value)}
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 font-semibold text-[12px] focus:ring-2 focus:ring-teal-500/50 outline-none"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Uraian / Deskripsi</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Uraian / Deskripsi</label>
                 <textarea 
                   value={editUraian} 
                   onChange={e => setEditUraian(e.target.value)}
-                  rows={4}
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500/50 outline-none resize-none"
+                  rows={3}
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] focus:ring-2 focus:ring-teal-500/50 outline-none resize-none"
                   required
                 ></textarea>
               </div>
-              <div className="pt-4">
-                <button type="submit" className="w-full bg-teal-800 text-white font-bold py-3.5 rounded-xl hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button type="submit" className="w-full bg-teal-800 text-white font-bold text-[12px] py-2 rounded-lg hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
                   Simpan Perubahan
                 </button>
               </div>

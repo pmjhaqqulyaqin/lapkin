@@ -253,85 +253,85 @@ export default function JadwalMengajar() {
       {/* Modal Tambah Jadwal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
-              <h2 className="font-manrope font-bold text-lg text-slate-800 dark:text-slate-100">Tambah Jadwal Baru</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-2 transition-colors">
-                <span className="material-symbols-outlined text-[20px]">close</span>
+          <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-white dark:bg-slate-900">
+              <h2 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">Tambah Jadwal Baru</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-1.5 transition-colors flex items-center justify-center w-6 h-6">
+                <span className="material-symbols-outlined text-[14px]">close</span>
               </button>
             </div>
             
-            <form onSubmit={handleSimpanJadwal} className="p-6 space-y-4 bg-white dark:bg-slate-900">
+            <form onSubmit={handleSimpanJadwal} className="p-3 space-y-2.5 bg-white dark:bg-slate-900">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Hari</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Hari</label>
                 <BottomSheetSelect 
                   value={formHari}
                   onChange={(val) => setFormHari(val as Hari)}
                   options={[...HARI_LIST]}
                   title="Pilih Hari"
-                  triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                  triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Jam Mulai</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Jam Mulai</label>
                   <input 
                     type="time" 
                     value={jamMulai}
                     onChange={(e) => setJamMulai(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Jam Selesai</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Jam Selesai</label>
                   <input 
                     type="time" 
                     value={jamSelesai}
                     onChange={(e) => setJamSelesai(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Mata Pelajaran</label>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Mata Pelajaran</label>
                 <input 
                   type="text" 
                   value={mapel}
                   onChange={(e) => setMapel(e.target.value)}
                   placeholder="Contoh: Matematika"
                   required
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none placeholder:font-normal"
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none placeholder:font-normal"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Kelas</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Kelas</label>
                   <input 
                     type="text" 
                     value={kelas}
                     onChange={(e) => setKelas(e.target.value)}
                     placeholder="Contoh: X IPA 1"
                     required
-                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none placeholder:font-normal"
+                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none placeholder:font-normal"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Ruangan</label>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Ruangan</label>
                   <input 
                     type="text" 
                     value={ruangan}
                     onChange={(e) => setRuangan(e.target.value)}
                     placeholder="Opsional"
-                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none placeholder:font-normal"
+                    className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none placeholder:font-normal"
                   />
                 </div>
               </div>
 
-              <div className="pt-4">
-                <button type="submit" className="w-full bg-teal-800 text-white font-bold py-3.5 rounded-xl hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button type="submit" className="w-full bg-teal-800 text-white text-[12px] font-bold py-2 rounded-lg hover:bg-teal-900 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
                   Simpan Jadwal
                 </button>
               </div>

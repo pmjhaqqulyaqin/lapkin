@@ -218,14 +218,14 @@ export default function EditorAktivitas() {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto pt-20 pb-10">
           <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden my-auto">
-            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 z-10 bg-white dark:bg-slate-900">
-              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">{editId ? 'Edit Tugas' : 'Tambah Tugas'}</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors">
-                <span className="material-symbols-outlined text-[18px]">close</span>
+            <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 z-10 bg-white dark:bg-slate-900">
+              <h2 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">{editId ? 'Edit Tugas' : 'Tambah Tugas'}</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors flex items-center justify-center w-6 h-6">
+                <span className="material-symbols-outlined text-[14px]">close</span>
               </button>
             </div>
             
-            <form onSubmit={handleSimpanTugas} className="p-4 space-y-3 bg-white dark:bg-slate-900">
+            <form onSubmit={handleSimpanTugas} className="p-3 space-y-2.5 bg-white dark:bg-slate-900">
               {/* Kategori */}
               <div>
                 <div className="flex justify-between items-center mb-1">
@@ -233,9 +233,9 @@ export default function EditorAktivitas() {
                   <button 
                     type="button" 
                     onClick={() => setIsManageKategoriOpen(true)}
-                    className="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded uppercase tracking-wider transition-colors flex items-center gap-1"
+                    className="text-[9px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded uppercase tracking-wider transition-colors flex items-center gap-1"
                   >
-                    <span className="material-symbols-outlined text-[14px]">edit</span> Kelola Kategori
+                    <span className="material-symbols-outlined text-[12px]">edit</span> Kelola Kategori
                   </button>
                 </div>
                 <BottomSheetSelect 
@@ -247,7 +247,7 @@ export default function EditorAktivitas() {
                   enableSearch={false}
                   enableRecent={true}
                   recentStorageKey="recent_kategori_tugas"
-                  triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                  triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
                 />
               </div>
 
@@ -257,56 +257,56 @@ export default function EditorAktivitas() {
                 <input 
                   type="text" value={namaTugas} onChange={e => setNamaTugas(e.target.value)}
                   placeholder="Contoh: Wali Kelas X-IPA 1" required
-                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                  className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                 />
               </div>
 
               {/* Jadwal & Template Uraian */}
-              <div className="space-y-3 pt-1">
+              <div className="space-y-2.5 pt-1">
                 <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-1.5">
                   <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Jadwal & Uraian</label>
-                  <button type="button" onClick={addHari} className="text-[10px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded uppercase tracking-wider hover:bg-teal-100 transition-colors">
+                  <button type="button" onClick={addHari} className="text-[9px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded uppercase tracking-wider hover:bg-teal-100 transition-colors">
                     + Tambah Hari
                   </button>
                 </div>
                 
                 {templates.map((templateItem, hIdx) => (
-                  <div key={hIdx} className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-3 border border-slate-100 dark:border-slate-800 relative">
+                  <div key={hIdx} className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-2.5 border border-slate-100 dark:border-slate-800 relative">
                     {templates.length > 1 && (
-                      <button type="button" onClick={() => removeHari(hIdx)} className="absolute -top-2 -right-2 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center hover:bg-red-200">
-                        <span className="material-symbols-outlined text-[14px]">close</span>
+                      <button type="button" onClick={() => removeHari(hIdx)} className="absolute -top-2 -right-2 w-5 h-5 bg-red-100 text-red-600 rounded-full flex items-center justify-center hover:bg-red-200">
+                        <span className="material-symbols-outlined text-[12px]">close</span>
                       </button>
                     )}
                     
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <BottomSheetSelect 
                         value={templateItem.hari}
                         onChange={val => updateHari(hIdx, val)}
                         options={HARI_OPTIONS}
                         title="Pilih Hari"
-                        triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm font-bold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                        triggerClassName="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-1.5 text-[12px] font-bold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
                       />
                     </div>
 
                     <div className="space-y-2 pl-2 border-l-2 border-teal-200 dark:border-teal-900/50">
                       {templateItem.uraian && Array.isArray(templateItem.uraian) && templateItem.uraian.map((desc, uIdx) => (
-                        <div key={uIdx} className="relative group flex gap-2">
+                        <div key={uIdx} className="relative group flex gap-1.5">
                           <textarea 
                             value={desc}
                             onChange={e => updateUraian(hIdx, uIdx, e.target.value)}
                             placeholder={`Uraian kegiatan ${templateItem.hari}...`}
                             rows={2}
-                            className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-teal-500/50 outline-none resize-none"
+                            className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-[12px] font-medium focus:ring-2 focus:ring-teal-500/50 outline-none resize-none"
                           ></textarea>
                           {templateItem.uraian.length > 1 && (
                             <button type="button" onClick={() => removeUraian(hIdx, uIdx)} className="text-slate-400 hover:text-red-500 p-1 flex-shrink-0">
-                              <span className="material-symbols-outlined text-[18px]">delete</span>
+                              <span className="material-symbols-outlined text-[16px]">delete</span>
                             </button>
                           )}
                         </div>
                       ))}
-                      <button type="button" onClick={() => addUraian(hIdx)} className="text-[11px] font-bold text-slate-500 hover:text-teal-600 flex items-center gap-1 mt-1">
-                        <span className="material-symbols-outlined text-[14px]">add</span> Tambah Uraian
+                      <button type="button" onClick={() => addUraian(hIdx)} className="text-[10px] font-bold text-slate-500 hover:text-teal-600 flex items-center gap-1 mt-1">
+                        <span className="material-symbols-outlined text-[12px]">add</span> Tambah Uraian
                       </button>
                     </div>
                   </div>
@@ -314,8 +314,8 @@ export default function EditorAktivitas() {
               </div>
 
               <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                <button type="submit" className={`w-full text-white font-bold text-[13px] py-2.5 rounded-lg active:scale-95 transition-all shadow-lg flex justify-center gap-1.5 items-center ${editId ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-900/20' : 'bg-teal-800 hover:bg-teal-900 shadow-teal-900/20'}`}>
-                  <span className="material-symbols-outlined text-[18px]">save</span>
+                <button type="submit" className={`w-full text-white font-bold text-[12px] py-2 rounded-lg active:scale-95 transition-all shadow-lg flex justify-center gap-1.5 items-center ${editId ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-900/20' : 'bg-teal-800 hover:bg-teal-900 shadow-teal-900/20'}`}>
+                  <span className="material-symbols-outlined text-[16px]">save</span>
                   {editId ? 'Simpan Perubahan' : 'Simpan Tugas'}
                 </button>
               </div>

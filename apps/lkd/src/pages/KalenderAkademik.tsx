@@ -324,21 +324,21 @@ export default function KalenderAkademik() {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
-              <h2 className="font-manrope font-bold text-[14px] text-slate-800 dark:text-slate-100">
+            <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+              <h2 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">
                 {editId ? 'Edit Agenda Pribadi' : 'Tambah Agenda Pribadi'}
               </h2>
-              <button onClick={() => { setIsModalOpen(false); setEditId(null); }} className="text-slate-400 hover:text-slate-600 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full p-1.5 transition-colors">
-                <span className="material-symbols-outlined text-[16px]">close</span>
+              <button onClick={() => { setIsModalOpen(false); setEditId(null); }} className="text-slate-400 hover:text-slate-600 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-full p-1.5 transition-colors flex items-center justify-center w-6 h-6">
+                <span className="material-symbols-outlined text-[14px]">close</span>
               </button>
             </div>
             
-            <form onSubmit={handleSave} className="p-4 space-y-3">
+            <form onSubmit={handleSave} className="p-3 space-y-2.5">
               <div>
                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Tanggal</label>
                 <input 
                   type="date" required value={formData.tanggal} onChange={e => setFormData({...formData, tanggal: e.target.value})}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                 />
               </div>
 
@@ -353,7 +353,7 @@ export default function KalenderAkademik() {
                   enableSearch={false}
                   enableRecent={true}
                   recentStorageKey="recent_status_kalender"
-                  triggerClassName="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
+                  triggerClassName="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none text-left flex items-center justify-between"
                 />
               </div>
 
@@ -362,15 +362,15 @@ export default function KalenderAkademik() {
                 <input 
                   type="text" required value={formData.keterangan} onChange={e => setFormData({...formData, keterangan: e.target.value})}
                   placeholder="Misal: Rapat Guru"
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                 />
               </div>
 
               <div className="pt-2 flex gap-2">
-                <button type="button" onClick={() => { setIsModalOpen(false); setEditId(null); }} className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-[13px] py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <button type="button" onClick={() => { setIsModalOpen(false); setEditId(null); }} className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-[12px] py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                   Batal
                 </button>
-                <button type="submit" className="flex-[2] bg-teal-600 text-white font-bold text-[13px] py-2.5 rounded-xl hover:bg-teal-700 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
+                <button type="submit" className="flex-[2] bg-teal-600 text-white font-bold text-[12px] py-2 rounded-lg hover:bg-teal-700 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
                   {editId ? 'Simpan Perubahan' : 'Simpan'}
                 </button>
               </div>

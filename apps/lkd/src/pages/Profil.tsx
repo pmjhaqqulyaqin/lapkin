@@ -588,53 +588,52 @@ export default function Profil() {
       {/* Modal Edit */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <h2 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">
                 {editMode === 'profil' ? 'Edit Profil' : 'Data Kepala Sekolah'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-1.5 transition-colors">
-                <span className="material-symbols-outlined text-[18px]">close</span>
+              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-1.5 transition-colors flex items-center justify-center w-6 h-6">
+                <span className="material-symbols-outlined text-[14px]">close</span>
               </button>
             </div>
             
-            <form onSubmit={handleSaveProfil} className="p-4 space-y-3 bg-white dark:bg-slate-900">
+            <form onSubmit={handleSaveProfil} className="p-3 space-y-2.5 bg-white dark:bg-slate-900">
               {editMode === 'profil' ? (
-                <>
                   <div>
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nama Lengkap</label>
                     <input 
                       type="text" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">NIP</label>
                     <input 
                       type="text" value={formData.nip} onChange={e => setFormData({...formData, nip: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Jabatan</label>
                     <input 
                       type="text" value={formData.jabatan} onChange={e => setFormData({...formData, jabatan: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2.5">
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Pangkat</label>
                       <input 
                         type="text" value={formData.pangkat} onChange={e => setFormData({...formData, pangkat: e.target.value})}
-                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                       />
                     </div>
                     <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Golongan</label>
                       <input 
                         type="text" value={formData.golongan} onChange={e => setFormData({...formData, golongan: e.target.value})}
-                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                        className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                       />
                     </div>
                   </div>
@@ -645,21 +644,21 @@ export default function Profil() {
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nama Kepala Sekolah</label>
                     <input 
                       type="text" value={formData.namaKepsek} onChange={e => setFormData({...formData, namaKepsek: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">NIP Kepala Sekolah</label>
                     <input 
                       type="text" value={formData.nipKepsek} onChange={e => setFormData({...formData, nipKepsek: e.target.value})}
-                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-[13px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
+                      className="w-full bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg px-2.5 py-2 text-[12px] font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none"
                     />
                   </div>
                 </>
               )}
 
               <div className="pt-2">
-                <button type="submit" className="w-full bg-cyan-600 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-cyan-700 active:scale-95 transition-all shadow-lg shadow-cyan-900/20">
+                <button type="submit" className="w-full bg-cyan-600 text-white font-bold text-[12px] py-2 rounded-lg hover:bg-cyan-700 active:scale-95 transition-all shadow-lg shadow-cyan-900/20">
                   Simpan Perubahan
                 </button>
               </div>
@@ -671,21 +670,21 @@ export default function Profil() {
       {/* Modal Signature */}
       {isSignatureModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-              <h2 className="font-manrope font-bold text-[15px] text-slate-800 dark:text-slate-100">Tanda Tangan Digital</h2>
-              <button onClick={() => setIsSignatureModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors">
-                <span className="material-symbols-outlined text-[18px]">close</span>
+          <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <h2 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">Tanda Tangan Digital</h2>
+              <button onClick={() => setIsSignatureModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors flex items-center justify-center w-6 h-6">
+                <span className="material-symbols-outlined text-[14px]">close</span>
               </button>
             </div>
-            <div className="p-4 bg-slate-50 dark:bg-slate-950">
+            <div className="p-3 bg-slate-50 dark:bg-slate-950">
               <p className="text-[10px] text-slate-500 mb-2 font-semibold uppercase tracking-widest text-center">Goreskan Tanda Tangan</p>
               <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl overflow-hidden touch-none relative">
                 <canvas ref={canvasRef} width={350} height={180} className="w-full h-[180px] cursor-crosshair" onMouseDown={startDrawing} onMouseUp={endDrawing} onMouseOut={endDrawing} onMouseMove={draw} onTouchStart={startDrawing} onTouchEnd={endDrawing} onTouchMove={draw} />
               </div>
-              <div className="flex gap-2 mt-3">
-                <button onClick={clearSignature} type="button" className="flex-1 bg-red-50 text-red-600 font-bold text-[13px] py-2.5 rounded-lg hover:bg-red-100 active:scale-95 transition-all">Hapus</button>
-                <button onClick={saveSignature} type="button" className="flex-[2] bg-emerald-600 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-900/20">Simpan Tanda Tangan</button>
+              <div className="flex gap-2 mt-2.5">
+                <button onClick={clearSignature} type="button" className="flex-1 bg-red-50 text-red-600 font-bold text-[12px] py-2 rounded-lg hover:bg-red-100 active:scale-95 transition-all">Hapus</button>
+                <button onClick={saveSignature} type="button" className="flex-[2] bg-emerald-600 text-white font-bold text-[12px] py-2 rounded-lg hover:bg-emerald-700 active:scale-95 transition-all shadow-lg shadow-emerald-900/20">Simpan Tanda Tangan</button>
               </div>
             </div>
           </div>
