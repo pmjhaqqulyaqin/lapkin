@@ -281,16 +281,16 @@ export default function KalenderAkademik() {
             </button>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {uniqueEventsInMonth.length === 0 ? (
-              <div className="text-center py-6 text-slate-400 italic text-[12px] bg-slate-50 dark:bg-slate-800/50 rounded-xl">Belum ada agenda di bulan ini.</div>
+              <div className="text-center py-5 text-slate-400 italic text-[11px] bg-slate-50 dark:bg-slate-800/50 rounded-xl">Belum ada agenda di bulan ini.</div>
             ) : (
               uniqueEventsInMonth.map(item => {
                 const isLibur = item.status.toLowerCase().includes('libur') || item.status.toLowerCase().includes('cuti');
                 const isGlobal = item.isGlobal === 1;
                 return (
-                  <div key={item.id} className="p-3 border border-slate-100 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                    <div className="flex justify-between items-start mb-1">
+                  <div key={item.id} className="p-2.5 border border-slate-100 dark:border-slate-800 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                    <div className="flex justify-between items-start mb-0.5">
                       <div className="flex items-center gap-1.5">
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${isLibur ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' : 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300'}`}>
                           {item.status}
@@ -303,13 +303,13 @@ export default function KalenderAkademik() {
                       </div>
                       {!isGlobal && (
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => handleEdit(item)} className="text-slate-400 hover:text-cyan-600"><span className="material-symbols-outlined text-[14px]">edit</span></button>
-                          <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.keterangan })} className="text-slate-400 hover:text-red-500"><span className="material-symbols-outlined text-[14px]">delete</span></button>
+                          <button onClick={() => handleEdit(item)} className="text-slate-400 hover:text-cyan-600"><span className="material-symbols-outlined text-[13px]">edit</span></button>
+                          <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.keterangan })} className="text-slate-400 hover:text-red-500"><span className="material-symbols-outlined text-[13px]">delete</span></button>
                         </div>
                       )}
                     </div>
-                    <h4 className="font-bold text-[13px] text-slate-800 dark:text-slate-200">{item.keterangan}</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
+                    <h4 className="font-bold text-[12px] text-slate-800 dark:text-slate-200">{item.keterangan}</h4>
+                    <p className="text-[10px] text-slate-500">
                       {new Date(item.tanggal).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
                     </p>
                   </div>

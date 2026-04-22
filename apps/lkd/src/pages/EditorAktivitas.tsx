@@ -171,12 +171,12 @@ export default function EditorAktivitas() {
         </div>
 
         {/* List of Tugas */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {tugasData && tugasData.length > 0 ? (
             tugasData.map(item => (
-              <div key={item.id} className="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-3 justify-between items-start">
+              <div key={item.id} className="bg-white dark:bg-slate-900 rounded-xl p-3 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-2 justify-between items-start">
                 <div>
-                  <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                     <span className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">
                       {item.kategori}
                     </span>
@@ -185,15 +185,15 @@ export default function EditorAktivitas() {
                       {item.templates && Array.isArray(item.templates) ? item.templates.map(t => t?.hari).filter(Boolean).join(', ') : Array.isArray(item.hariRutin) ? item.hariRutin.join(', ') : (item.hariRutin || 'Tiap Hari')}
                     </span>
                   </div>
-                  <h3 className="font-manrope font-bold text-[14px] text-slate-800 dark:text-slate-100 mb-0.5">{item.namaTugas}</h3>
-                  <p className="text-[12px] text-slate-500 line-clamp-2">Template LKH: {item.templates && Array.isArray(item.templates) ? `${item.templates.reduce((acc, t) => acc + (t?.uraian?.length || 0), 0)} uraian kegiatan` : Array.isArray(item.deskripsiLkh) ? `${item.deskripsiLkh.length} uraian kegiatan` : (item.deskripsiLkh || '-')}</p>
+                  <h3 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100 mb-0.5">{item.namaTugas}</h3>
+                  <p className="text-[11px] text-slate-500 line-clamp-2">Template LKH: {item.templates && Array.isArray(item.templates) ? `${item.templates.reduce((acc, t) => acc + (t?.uraian?.length || 0), 0)} uraian kegiatan` : Array.isArray(item.deskripsiLkh) ? `${item.deskripsiLkh.length} uraian kegiatan` : (item.deskripsiLkh || '-')}</p>
                 </div>
                 <div className="flex gap-1.5 w-full md:w-auto justify-end">
-                  <button onClick={() => handleEdit(item)} className="w-8 h-8 rounded-full bg-slate-50 hover:bg-cyan-50 text-slate-400 hover:text-cyan-600 transition-colors flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[18px]">edit</span>
+                  <button onClick={() => handleEdit(item)} className="w-7 h-7 rounded-full bg-slate-50 hover:bg-cyan-50 text-slate-400 hover:text-cyan-600 transition-colors flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[16px]">edit</span>
                   </button>
-                  <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.namaTugas })} className="w-8 h-8 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                  <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.namaTugas })} className="w-7 h-7 rounded-full bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[16px]">delete</span>
                   </button>
                 </div>
               </div>
