@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
+import SyncActionBadge from '../components/SyncActionBadge';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -161,13 +162,16 @@ export default function Dashboard() {
               )}
             </div>
           </div>
-          <button onClick={() => setIsProfileOpen(true)} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform relative z-10 shrink-0 shadow-sm animate-fade-in">
-            <img
-              alt="Profil"
-              className="w-full h-full object-cover pointer-events-none"
-              src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=64`}
-            />
-          </button>
+          <div className="flex items-center gap-3">
+            <SyncActionBadge />
+            <button onClick={() => setIsProfileOpen(true)} className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform relative z-10 shrink-0 shadow-sm animate-fade-in">
+              <img
+                alt="Profil"
+                className="w-full h-full object-cover pointer-events-none"
+                src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=64`}
+              />
+            </button>
+          </div>
         </div>
       </header>
 

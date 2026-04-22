@@ -5,6 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
 import BottomSheetSelect from '../components/BottomSheetSelect';
+import SyncActionBadge from '../components/SyncActionBadge';
 
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 const YEARS = ['2025', '2026', '2027'];
@@ -76,6 +77,7 @@ export default function RiwayatLkh() {
             <p className="text-[11px] font-semibold text-slate-500">Kelola dan Filter Laporan</p>
           </div>
         </div>
+        <SyncActionBadge />
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-4 pb-24">
