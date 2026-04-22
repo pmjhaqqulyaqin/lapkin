@@ -129,7 +129,7 @@ export default function LaporanBulanan() {
         </tr>
         <tr>
           <td colspan="3">Kepala Sekolah / Madrasah</td>
-          <td>Pegawai yang</td>
+          <td>Guru/Pegawai</td>
         </tr>
         <tr><td colspan="4"></td></tr>
         <tr><td colspan="4"></td></tr>
@@ -422,7 +422,7 @@ export default function LaporanBulanan() {
             <div>
               <p className="mb-2">{tempat}, {formattedTglPengesahan}</p>
               <p className="mb-2 text-transparent select-none">Spacer</p> {/* Vertical balancer */}
-              <p className="font-bold mb-4">Pegawai yang dinilai</p>
+              <p className="font-bold mb-4">Guru/Pegawai</p>
             </div>
             <div className="h-20 w-full flex items-center justify-center">
               {profil?.ttdUrl && profil.ttdUrl.startsWith('data:image') && (
