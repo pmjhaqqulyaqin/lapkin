@@ -112,32 +112,32 @@ export default function RiwayatLkh() {
             </span>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {lkhFiltered && lkhFiltered.length > 0 ? (
               lkhFiltered.map((item) => (
-                <div key={item.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                <div key={item.id} className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
                         {new Date(item.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'short' })}
                       </span>
-                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider ${item.tipeSumber === 'jadwal' ? 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300' : item.tipeSumber === 'kalender' ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'}`}>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${item.tipeSumber === 'jadwal' ? 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300' : item.tipeSumber === 'kalender' ? 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300' : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'}`}>
                         {item.tipeSumber}
                       </span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5">
                       <button onClick={() => handleEditOpen(item)} className="text-slate-400 hover:text-teal-600 transition-colors">
-                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                        <span className="material-symbols-outlined text-[16px]">edit</span>
                       </button>
                       <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.kegiatan })} className="text-slate-400 hover:text-red-600 transition-colors">
-                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                        <span className="material-symbols-outlined text-[16px]">delete</span>
                       </button>
                     </div>
                   </div>
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1.5">{item.kegiatan}</h3>
-                  <p className="text-sm text-slate-500 mb-4">{item.uraian}</p>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                    <span className="material-symbols-outlined text-[14px]">file_copy</span>
+                  <h3 className="font-semibold text-[13px] text-slate-800 dark:text-slate-100 mb-1">{item.kegiatan}</h3>
+                  <p className="text-[12px] text-slate-500 mb-3 leading-relaxed">{item.uraian}</p>
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-400">
+                    <span className="material-symbols-outlined text-[12px]">file_copy</span>
                     {item.keteranganOutput}
                   </div>
                 </div>

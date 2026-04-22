@@ -126,7 +126,7 @@ export default function JadwalMengajar() {
               <button 
                 key={hari}
                 onClick={() => setActiveHari(hari)}
-                className={`flex-shrink-0 px-5 py-2.5 rounded-full font-inter font-bold text-sm transition-all ${
+                className={`flex-shrink-0 px-4 py-2 rounded-full font-inter font-bold text-[13px] transition-all ${
                   activeHari === hari 
                     ? 'bg-teal-950 text-white shadow-md shadow-teal-950/20' 
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
@@ -146,32 +146,32 @@ export default function JadwalMengajar() {
                   {/* Timeline Dot */}
                   <div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-4 border-white dark:border-slate-950 shadow-sm ${item.warna === 'orange' ? 'bg-orange-500' : 'bg-teal-500'}`}></div>
                   
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="font-manrope font-extrabold text-slate-800 dark:text-slate-100 text-lg">
+                  <div className="mb-1.5 flex items-center gap-2">
+                    <span className="font-manrope font-extrabold text-slate-800 dark:text-slate-100 text-[14px]">
                       {item.jamMulai} - {item.jamSelesai}
                     </span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase ${item.warna === 'orange' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300'}`}>
+                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${item.warna === 'orange' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300'}`}>
                       Kelas
                     </span>
                   </div>
                   
-                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow group">
-                    <div className="flex justify-between items-start mb-3">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow group">
+                    <div className="flex justify-between items-start mb-2">
                       <div>
-                        <h3 className="font-manrope font-bold text-slate-800 dark:text-slate-100 text-base">{item.mataPelajaran}</h3>
-                        <p className="text-sm font-medium text-slate-500 mt-1">Kelas {item.kelas}</p>
+                        <h3 className="font-manrope font-bold text-slate-800 dark:text-slate-100 text-[13px]">{item.mataPelajaran}</h3>
+                        <p className="text-[11px] font-semibold text-slate-500 mt-0.5">Kelas {item.kelas}</p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-1.5">
                         <button onClick={() => handleEdit(item)} className="text-slate-400 hover:text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="material-symbols-outlined">edit</span>
+                          <span className="material-symbols-outlined text-[16px]">edit</span>
                         </button>
                         <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: `${item.mataPelajaran} (${item.kelas})` })} className="text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="material-symbols-outlined">delete</span>
+                          <span className="material-symbols-outlined text-[16px]">delete</span>
                         </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-4 text-xs font-semibold text-slate-500 bg-slate-50 dark:bg-slate-800/50 inline-flex px-3 py-1.5 rounded-lg">
-                      <span className="material-symbols-outlined text-[16px]">meeting_room</span>
+                    <div className="flex items-center gap-1.5 mt-2 text-[10px] font-bold text-slate-500 bg-slate-50 dark:bg-slate-800/50 inline-flex px-2 py-1 rounded-md">
+                      <span className="material-symbols-outlined text-[14px]">meeting_room</span>
                       {item.ruangan || 'Ruang Kelas'}
                     </div>
                   </div>
@@ -189,12 +189,12 @@ export default function JadwalMengajar() {
               <div className="absolute -left-[9px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-slate-950"></div>
               <button 
                 onClick={handleOpenModal}
-                className="w-full border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-500 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-teal-50 dark:hover:bg-teal-900/10 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all group"
+                className="w-full border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-500 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-teal-50 dark:hover:bg-teal-900/10 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 transition-all group"
               >
-                <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 group-hover:bg-teal-100 dark:group-hover:bg-teal-900/50 flex items-center justify-center text-slate-500 group-hover:text-teal-600 transition-colors">
-                  <span className="material-symbols-outlined">add</span>
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 group-hover:bg-teal-100 dark:group-hover:bg-teal-900/50 flex items-center justify-center text-slate-500 group-hover:text-teal-600 transition-colors">
+                  <span className="material-symbols-outlined text-[16px]">add</span>
                 </div>
-                <span className="font-semibold text-sm text-slate-500 group-hover:text-teal-700">Tambah Jadwal Baru</span>
+                <span className="font-semibold text-[11px] text-slate-500 group-hover:text-teal-700">Tambah Jadwal Baru</span>
               </button>
             </div>
 
