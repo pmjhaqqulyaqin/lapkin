@@ -413,21 +413,21 @@ export default function InputLkh() {
         </div>
 
         {/* Manual Input Form */}
-        <section className="mb-10">
-          <h2 className="font-manrope font-bold text-slate-800 dark:text-slate-100 text-base mb-5 flex items-center gap-2">
-            <span className="material-symbols-outlined text-slate-400">add_circle</span> Tambah Manual
+        <section className="mb-8">
+          <h2 className="font-manrope font-bold text-slate-800 dark:text-slate-100 text-[14px] mb-3 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-slate-400 text-[18px]">add_circle</span> Tambah Manual
           </h2>
 
-          <div className="space-y-5">
+          <div className="space-y-3.5">
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Pilih Kegiatan</label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pilih Kegiatan</label>
                 <button 
                   type="button" 
                   onClick={() => setIsManageKegiatanOpen(true)}
-                  className="text-[10px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded uppercase tracking-wider transition-colors flex items-center gap-1"
+                  className="text-[9px] font-bold text-teal-600 hover:bg-teal-50 px-2 py-1 rounded uppercase tracking-wider transition-colors flex items-center gap-1"
                 >
-                  <span className="material-symbols-outlined text-[14px]">edit</span> Kelola Opsi
+                  <span className="material-symbols-outlined text-[12px]">edit</span> Kelola Opsi
                 </button>
               </div>
               <BottomSheetSelect
@@ -439,29 +439,30 @@ export default function InputLkh() {
                 enableSearch={true}
                 enableRecent={true}
                 recentStorageKey="recent_kegiatan_manual"
+                triggerClassName="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-left flex items-center justify-between shadow-sm focus:ring-2 focus:ring-teal-500/50 outline-none transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Uraian Pekerjaan</label>
+              <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Uraian Pekerjaan</label>
               <textarea 
-                rows={4} 
+                rows={3} 
                 value={manualUraian}
                 onChange={(e) => setManualUraian(e.target.value)}
                 placeholder="Deskripsikan pekerjaan yang dilakukan..."
-                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3.5 text-slate-700 dark:text-slate-200 text-sm focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm resize-none"
+                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-slate-700 dark:text-slate-200 text-[12px] focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm resize-none"
               ></textarea>
             </div>
           </div>
         </section>
 
         {/* Save Buttons */}
-        <div className="flex gap-2 mt-5">
+        <div className="flex gap-2 mt-4">
           <button 
             type="button" 
             disabled={isLibur}
             onClick={(e) => handleSimpan(e as any, false)}
-            className={`flex-1 font-bold text-[13px] py-3 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 ${isLibur ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-800 text-white hover:bg-teal-900 active:scale-95 shadow-teal-900/20'}`}
+            className={`flex-1 font-bold text-[12px] py-2.5 rounded-lg transition-all shadow-lg flex justify-center items-center gap-1.5 ${isLibur ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-800 text-white hover:bg-teal-900 active:scale-95 shadow-teal-900/20'}`}
           >
             Simpan LKH
           </button>
@@ -469,7 +470,7 @@ export default function InputLkh() {
             type="button" 
             disabled={isLibur}
             onClick={(e) => handleSimpan(e as any, true)}
-            className={`flex-[1.5] font-bold text-[13px] py-3 rounded-xl transition-all shadow-lg flex justify-center items-center gap-1.5 ${isLibur ? 'bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:opacity-90 active:scale-95 shadow-emerald-900/20'}`}
+            className={`flex-1 font-bold text-[12px] py-2.5 rounded-lg transition-all shadow-lg flex justify-center items-center gap-1.5 ${isLibur ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-600 text-white hover:bg-teal-700 active:scale-95 shadow-teal-600/20'}`}
           >
             Simpan & Lanjut <span className="material-symbols-outlined text-[16px]">skip_next</span>
           </button>
