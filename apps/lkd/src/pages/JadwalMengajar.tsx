@@ -204,23 +204,23 @@ export default function JadwalMengajar() {
         {/* Right Section: Summary & Agenda */}
         <aside className="w-full md:w-80 space-y-6">
           {/* Summary Card */}
-          <div className="bg-gradient-to-br from-teal-900 to-teal-950 rounded-3xl p-6 text-white shadow-xl shadow-teal-950/20 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-teal-900 to-teal-950 rounded-2xl p-4 text-white shadow-xl shadow-teal-950/20 relative overflow-hidden">
             <div className="relative z-10">
-              <div className="flex items-center gap-2 text-teal-200/80 mb-4">
-                <span className="material-symbols-outlined text-sm">bar_chart</span>
-                <span className="font-semibold text-xs uppercase tracking-widest">Beban Mengajar</span>
+              <div className="flex items-center gap-1.5 text-teal-200/80 mb-2.5">
+                <span className="material-symbols-outlined text-[16px]">bar_chart</span>
+                <span className="font-semibold text-[10px] uppercase tracking-widest">Beban Mengajar</span>
               </div>
-              <div className="mb-1">
-                <span className="text-4xl font-manrope font-black">
+              <div className="mb-0.5">
+                <span className="text-2xl font-manrope font-black">
                   {jadwalHariIni ? jadwalHariIni.length * 2 : 0} 
                 </span>
-                <span className="text-teal-200 font-medium ml-2">Jam (Hari Ini)</span>
+                <span className="text-[11px] text-teal-200 font-medium ml-1.5 uppercase tracking-widest">Jam (Hari Ini)</span>
               </div>
-              <p className="text-sm text-teal-100/80 mb-6">Mengajar di hari {activeHari}.</p>
+              <p className="text-[11px] text-teal-100/80 mb-4">Mengajar di hari {activeHari}.</p>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 flex justify-between items-center">
-                <span className="text-sm font-semibold">Tugas Tambahan</span>
-                <span className="bg-teal-400 text-teal-950 text-xs font-bold px-2 py-1 rounded-md">Wakakur</span>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 flex justify-between items-center">
+                <span className="text-[11px] font-semibold">Tugas Tambahan</span>
+                <span className="bg-teal-400 text-teal-950 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">Wakakur</span>
               </div>
             </div>
             
@@ -231,18 +231,18 @@ export default function JadwalMengajar() {
           </div>
 
           {/* Mini Calendar / Agenda */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6">
-            <h3 className="font-manrope font-bold text-slate-800 dark:text-slate-100 mb-4">Informasi Kalender</h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
-                <span className="material-symbols-outlined text-teal-600 dark:text-teal-400">calendar_month</span>
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-4">
+            <h3 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100 mb-3">Informasi Kalender</h3>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2.5 p-2.5 bg-teal-50 dark:bg-teal-900/20 rounded-xl">
+                <span className="material-symbols-outlined text-[20px] text-teal-600 dark:text-teal-400">calendar_month</span>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Kalender Akademik</h4>
-                  <p className="text-xs text-slate-500 mt-0.5">Atur hari libur & kegiatan khusus di menu Kalender.</p>
+                  <h4 className="text-[12px] font-bold text-slate-800 dark:text-slate-200">Kalender Akademik</h4>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Atur hari libur & kegiatan khusus di menu Kalender.</p>
                 </div>
               </div>
             </div>
-            <NavLink to="/kalender" className="w-full mt-6 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-400 font-semibold text-sm rounded-xl transition-colors block text-center">
+            <NavLink to="/kalender" className="w-full mt-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-teal-700 dark:text-teal-400 font-semibold text-[11px] rounded-xl transition-colors block text-center">
               Lihat Kalender Akademik
             </NavLink>
           </div>
