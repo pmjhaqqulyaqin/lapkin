@@ -600,6 +600,7 @@ export default function Profil() {
             
             <form onSubmit={handleSaveProfil} className="p-3 space-y-2.5 bg-white dark:bg-slate-900">
               {editMode === 'profil' ? (
+                <>
                   <div>
                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nama Lengkap</label>
                     <input 
