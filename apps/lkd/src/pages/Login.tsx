@@ -18,10 +18,18 @@ export default function Login() {
   const [isSyncLogin, setIsSyncLogin] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  // Hilangkan sisa putih body di bawah gradient pada mobile
+  // Hilangkan ruang kosong body di bawah gradient pada mobile
   React.useEffect(() => {
-    document.body.style.backgroundColor = '#003847';
-    return () => { document.body.style.backgroundColor = ''; };
+    const { style: bodyStyle } = document.body;
+    const { style: htmlStyle } = document.documentElement;
+    bodyStyle.backgroundColor = '#003847';
+    bodyStyle.minHeight = 'auto';
+    htmlStyle.backgroundColor = '#003847';
+    return () => {
+      bodyStyle.backgroundColor = '';
+      bodyStyle.minHeight = '';
+      htmlStyle.backgroundColor = '';
+    };
   }, []);
 
   const isLoggedIn = useAppStore(state => state.isLoggedIn);
