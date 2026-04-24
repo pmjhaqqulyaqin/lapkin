@@ -95,6 +95,17 @@ export const useAppStore = create<AppState>((set) => ({
     localStorage.setItem('lkd_status_kalender', JSON.stringify(list));
     set({ statusKalender: list });
   },
+  // Sync dark mode class on store creation (belt-and-suspenders with index.html script)
+  ...((() => {
+    const isDark = localStorage.getItem('lkd_dark_mode') === 'true';
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    return {};
+  })()),
+
   pullReferensiData: async () => {
     try {
       const API_BASE = import.meta.env.VITE_API_URL || '';

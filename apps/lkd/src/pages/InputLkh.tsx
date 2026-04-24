@@ -475,6 +475,62 @@ export default function InputLkh() {
             Simpan & Lanjut <span className="material-symbols-outlined text-[16px]">skip_next</span>
           </button>
         </div>
+
+        {/* Daftar LKH Tersimpan untuk tanggal ini */}
+        {existingLkhForDate && existingLkhForDate.length > 0 && (
+          <section className="mt-5 bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-manrope font-bold text-slate-800 dark:text-slate-100 text-[13px] flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+                Tersimpan ({existingLkhForDate.length})
+              </h2>
+              <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                {new Date(tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+              </span>
+            </div>
+            <div className="space-y-2">
+              {existingLkhForDate.map((item) => {
+                const iconMap: Record<string, { icon: string; bg: string; text: string; label: string }> = {
+                  jadwal: { icon: 'school', bg: 'bg-teal-50 dark:bg-teal-900/20', text: 'text-teal-600', label: 'KBM' },
+                  tugas_tambahan: { icon: 'assignment_ind', bg: 'bg-orange-50 dark:bg-orange-900/20', text: 'text-orange-600', label: 'Tugas' },
+                  kalender: { icon: 'event_note', bg: 'bg-cyan-50 dark:bg-cyan-900/20', text: 'text-cyan-600', label: 'Kalender' },
+                  manual: { icon: 'edit_note', bg: 'bg-indigo-50 dark:bg-indigo-900/20', text: 'text-indigo-600', label: 'Manual' },
+                };
+                const style = iconMap[item.tipeSumber || ''] || iconMap.manual;
+                return (
+                  <div key={item.id} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800 group">
+                    <div className={`w-8 h-8 rounded-lg ${style.bg} ${style.text} flex items-center justify-center shrink-0`}>
+                      <span className="material-symbols-outlined text-[16px]">{style.icon}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h3 className="font-semibold text-[12px] text-slate-800 dark:text-slate-200 truncate">{item.kegiatan}</h3>
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase shrink-0 ${
+                          item.tipeSumber === 'manual' 
+                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300' 
+                            : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
+                        }`}>{style.label}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 line-clamp-2">{item.uraian}</p>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        if (window.confirm('Hapus aktivitas ini?')) {
+                          await db.lkh.update(item.id!, { isDeleted: true, updatedAt: Date.now() });
+                          showToast('Aktivitas dihapus.', 'info');
+                        }
+                      }}
+                      className="text-slate-300 hover:text-red-500 dark:text-slate-600 dark:hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0 mt-1"
+                      title="Hapus"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">delete</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </main>
 
       {isManageKegiatanOpen && (

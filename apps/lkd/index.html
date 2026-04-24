@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id" class="light">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo-man2.svg" />
@@ -80,6 +80,15 @@
       /* Sembunyikan loader setelah React mount */
       #root:not(:empty) #app-loader { display: none !important; }
     </style>
+
+    <!-- Apply dark mode SEBELUM paint — mencegah flash putih saat refresh -->
+    <script>
+      (function(){
+        if (localStorage.getItem('lkd_dark_mode') === 'true') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
 
     <!-- Deteksi font icon loaded, tampilkan icon -->
     <script>

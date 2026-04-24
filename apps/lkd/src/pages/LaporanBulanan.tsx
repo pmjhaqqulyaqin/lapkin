@@ -16,6 +16,7 @@ export default function LaporanBulanan() {
   const lkhData = useLiveQuery(() => 
     db.lkh.orderBy('tanggal').toArray().then(arr => 
       arr.filter((l) => {
+        if (l.isDeleted) return false;
         const d = new Date(l.tanggal);
         return d.getMonth() === activeMonthIndex && d.getFullYear() === activeYear;
       })
