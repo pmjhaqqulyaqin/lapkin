@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 
     <!-- Critical inline CSS — mencegah FOUC (Flash of Unstyled Content) -->
     <style>
@@ -22,6 +22,15 @@
       html { background: #f8fafc; }
       html.dark { background: #0f172a; }
       body { margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+      /* Sembunyikan ikon Material Symbols sampai font dimuat (cegah FOUT) */
+      .material-symbols-outlined {
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
+      }
+      html.icons-ready .material-symbols-outlined {
+        opacity: 1;
+      }
 
       /* Loading spinner */
       #app-loader {
@@ -53,6 +62,17 @@
       /* Sembunyikan loader setelah React mount */
       #root:not(:empty) #app-loader { display: none !important; }
     </style>
+
+    <!-- Deteksi font icon loaded, tampilkan icon -->
+    <script>
+      (function(){
+        var show = function(){ document.documentElement.classList.add('icons-ready'); };
+        if (document.fonts) {
+          document.fonts.load('24px "Material Symbols Outlined"').then(show);
+        }
+        setTimeout(show, 4000); // Safety: tampilkan setelah 4 detik walau gagal
+      })();
+    </script>
   </head>
   <body class="bg-surface font-body text-on-surface antialiased">
     <div id="root">
