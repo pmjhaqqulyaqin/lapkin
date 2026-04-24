@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo-man2.svg', 'favicon.svg'],
+      includeAssets: ['logo-man2.svg', 'favicon.svg', 'fonts/*.ttf', 'logo login.png'],
       manifest: {
         name: 'Laporan Kinerja Digital',
         short_name: 'LKD',

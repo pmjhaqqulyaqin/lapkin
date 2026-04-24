@@ -14,23 +14,41 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet"/>
 
     <!-- Critical inline CSS — mencegah FOUC (Flash of Unstyled Content) -->
     <style>
-      /* Warna dasar agar body tidak pernah terlihat putih polos dengan kode-kode */
-      html { background: #f8fafc; }
-      html.dark { background: #0f172a; }
-      body { margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-
-      /* Sembunyikan ikon Material Symbols sampai font dimuat (cegah FOUT) */
+      /* Self-hosted Material Symbols — tidak perlu download dari Google CDN */
+      @font-face {
+        font-family: 'Material Symbols Outlined';
+        font-style: normal;
+        font-weight: 100 700;
+        font-display: block;
+        src: url(/fonts/material-symbols-outlined.ttf) format('truetype');
+      }
       .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
         opacity: 0;
-        transition: opacity 0.15s ease-out;
       }
       html.icons-ready .material-symbols-outlined {
         opacity: 1;
+        transition: opacity 0.12s ease-out;
       }
+
+      /* Warna dasar agar body tidak pernah terlihat putih polos */
+      html { background: #f8fafc; }
+      html.dark { background: #0f172a; }
+      body { margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 
       /* Loading spinner */
       #app-loader {
@@ -70,7 +88,7 @@
         if (document.fonts) {
           document.fonts.load('24px "Material Symbols Outlined"').then(show);
         }
-        setTimeout(show, 4000); // Safety: tampilkan setelah 4 detik walau gagal
+        setTimeout(show, 3000);
       })();
     </script>
   </head>
