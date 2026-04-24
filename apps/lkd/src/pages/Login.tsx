@@ -105,7 +105,7 @@ export default function Login() {
   };
 
   return (
-    <main className="relative min-h-screen flex flex-col md:flex-row overflow-hidden bg-primary-gradient md:bg-slate-50 md:dark:bg-slate-900">
+    <main className="relative md:min-h-screen flex flex-col md:flex-row overflow-hidden bg-primary-gradient md:bg-slate-50 md:dark:bg-slate-900">
       {/* Left Section: Visual & Brand Identity */}
       <section className="relative w-full md:w-1/2 md:min-h-screen flex flex-col justify-start md:justify-between p-6 pb-3 md:p-8 lg:p-16 md:bg-primary-gradient text-white overflow-hidden">
         
@@ -152,7 +152,7 @@ export default function Login() {
       </section>
 
       {/* Right Section: Login Form Canvas */}
-      <section className="relative w-full md:w-1/2 flex flex-col md:flex-row items-center justify-center flex-1 md:flex-none px-5 py-4 md:p-8 lg:p-16 md:bg-white md:dark:bg-slate-900 md:rounded-none z-10">
+      <section className="relative w-full md:w-1/2 flex flex-col md:flex-row items-center justify-center px-5 py-4 md:p-8 lg:p-16 md:bg-white md:dark:bg-slate-900 md:rounded-none z-10">
         <div className="w-full max-w-sm md:max-w-md bg-white dark:bg-slate-800 md:bg-transparent md:dark:bg-transparent rounded-2xl md:rounded-none shadow-2xl md:shadow-none p-6 md:p-0">
           <div className="mb-6 md:mb-10 text-center md:text-left">
             <h3 className="font-manrope font-extrabold text-2xl lg:text-3xl text-slate-800 dark:text-slate-100 mb-2">
@@ -318,7 +318,7 @@ export default function Login() {
         </div>
 
         {/* Copyright — mobile only */}
-        <p className="mt-auto pt-4 pb-2 text-center text-[11px] text-white/40 md:hidden">
+        <p className="pt-4 pb-2 text-center text-[11px] text-white/40 md:hidden">
           &copy; 2026 MAN 2 Lombok Timur. Hak Cipta Dilindungi.
         </p>
       </section>
