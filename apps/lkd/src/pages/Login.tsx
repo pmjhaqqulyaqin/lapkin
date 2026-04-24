@@ -22,12 +22,13 @@ export default function Login() {
   React.useEffect(() => {
     const { style: bodyStyle } = document.body;
     const { style: htmlStyle } = document.documentElement;
-    bodyStyle.backgroundColor = '#003847';
-    bodyStyle.minHeight = 'auto';
-    htmlStyle.backgroundColor = '#003847';
+    const bg = '#003847';
+    bodyStyle.cssText += '; background-color:' + bg + '!important; min-height:auto!important; padding-bottom:0!important;';
+    htmlStyle.backgroundColor = bg;
     return () => {
       bodyStyle.backgroundColor = '';
       bodyStyle.minHeight = '';
+      bodyStyle.paddingBottom = '';
       htmlStyle.backgroundColor = '';
     };
   }, []);
