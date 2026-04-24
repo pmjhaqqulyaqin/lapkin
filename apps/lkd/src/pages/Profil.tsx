@@ -307,7 +307,7 @@ export default function Profil() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-3xl mx-auto px-4 py-5 pb-24">
+      <main className="max-w-3xl mx-auto px-4 py-5">
         
         {/* Profile Card Header (Bento Style) */}
         {profil && (

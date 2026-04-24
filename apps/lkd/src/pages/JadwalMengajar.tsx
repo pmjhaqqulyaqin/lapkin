@@ -116,7 +116,7 @@ export default function JadwalMengajar() {
         </div>
       </header>
 
-      <main className="pt-16 pb-24 px-4 md:px-6 max-w-3xl mx-auto space-y-4">
+      <main className="pt-16 px-4 md:px-6 max-w-3xl mx-auto space-y-4">
         
         {/* Left Section: Timeline & Schedule Grid */}
         <section className="flex-1">

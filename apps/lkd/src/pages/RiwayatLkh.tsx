@@ -80,7 +80,7 @@ export default function RiwayatLkh() {
         <SyncActionBadge />
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-4 pb-24">
+      <main className="max-w-3xl mx-auto px-4 py-4">
         {/* Month & Year Filter */}
         <section className="mb-5">
           <div className="flex gap-3 items-center">

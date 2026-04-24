@@ -284,7 +284,7 @@ export default function InputLkh() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-md mx-auto px-4 py-4 pb-24">
+      <main className="max-w-md mx-auto px-4 py-4">
         {/* Date Picker Native Input (Styled) */}
         <div className="mb-4">
           <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Tanggal LKH</label>

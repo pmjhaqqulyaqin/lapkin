@@ -175,7 +175,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-5 pb-28">
+      <main className="max-w-3xl mx-auto px-4 py-5">
         {/* Month Selector */}
         <div className="flex items-center justify-between mb-5 bg-surface-container-lowest rounded-xl p-1.5 shadow-sm border border-outline-variant/20">
           <button onClick={handlePrevMonth} className="p-1.5 hover:bg-surface-container transition-colors rounded-lg text-on-surface-variant">

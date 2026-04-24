@@ -174,7 +174,7 @@ export default function KalenderAkademik() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-4 pb-28">
+      <main className="max-w-3xl mx-auto px-4 py-4">
         
         {/* Month Navigator */}
         <div className="flex items-center justify-center gap-4 mb-4">

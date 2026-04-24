@@ -158,7 +158,7 @@ export default function EditorAktivitas() {
         </div>
       </header>
 
-      <main className="pt-14 pb-24 px-4 md:px-6 max-w-3xl mx-auto space-y-3">
+      <main className="pt-14 px-4 md:px-6 max-w-3xl mx-auto space-y-3">
         
         {/* Editorial Header */}
         <div className="mb-3">
