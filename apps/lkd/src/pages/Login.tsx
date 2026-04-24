@@ -18,6 +18,12 @@ export default function Login() {
   const [isSyncLogin, setIsSyncLogin] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
+  // Hilangkan sisa putih body di bawah gradient pada mobile
+  React.useEffect(() => {
+    document.body.style.backgroundColor = '#003847';
+    return () => { document.body.style.backgroundColor = ''; };
+  }, []);
+
   const isLoggedIn = useAppStore(state => state.isLoggedIn);
   if (isLoggedIn) {
     return <Navigate to="/dashboard" replace />;
