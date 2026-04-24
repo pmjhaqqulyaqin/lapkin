@@ -99,9 +99,9 @@ export default function Login() {
   };
 
   return (
-    <main className="relative min-h-screen flex flex-col md:flex-row overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <main className="relative min-h-screen flex flex-col md:flex-row overflow-hidden bg-primary-gradient md:bg-slate-50 md:dark:bg-slate-900">
       {/* Left Section: Visual & Brand Identity */}
-      <section className="relative w-full md:w-1/2 min-h-[40vh] md:min-h-screen flex flex-col justify-between p-8 lg:p-16 bg-primary-gradient text-white overflow-hidden">
+      <section className="relative w-full md:w-1/2 md:min-h-screen flex flex-col justify-start md:justify-between p-6 pb-3 md:p-8 lg:p-16 md:bg-primary-gradient text-white overflow-hidden">
         
         {/* Background Patterns */}
         <div className="absolute inset-0 z-0 opacity-20">
@@ -127,14 +127,14 @@ export default function Login() {
         </div>
 
         {/* Hero Copy */}
-        <div className="relative z-10 mt-12 md:mt-0">
+        <div className="relative z-10 mt-4 md:mt-0">
           <span className="inline-block px-3 py-1 bg-cyan-500/20 border border-cyan-400/30 rounded-full text-xs font-semibold text-cyan-300 tracking-widest uppercase mb-6">
             Versi 2.0 (PWA)
           </span>
-          <h2 className="font-manrope font-extrabold text-4xl lg:text-5xl leading-tight mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white to-cyan-200">
+          <h2 className="font-manrope font-extrabold text-2xl md:text-4xl lg:text-5xl leading-tight mb-3 md:mb-4 text-transparent bg-clip-text bg-gradient-to-br from-white to-cyan-200">
             Laporan Kinerja Digital
           </h2>
-          <p className="text-cyan-100/80 max-w-md text-sm lg:text-base leading-relaxed">
+          <p className="text-cyan-100/80 max-w-md text-xs md:text-sm lg:text-base leading-relaxed">
             Platform pintar untuk mengelola aktivitas harian, jadwal mengajar, dan mencetak laporan kinerja bulanan dengan format standar secara otomatis.
           </p>
         </div>
@@ -146,9 +146,9 @@ export default function Login() {
       </section>
 
       {/* Right Section: Login Form Canvas */}
-      <section className="relative w-full md:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white dark:bg-slate-900 rounded-t-[2.5rem] md:rounded-none -mt-8 md:mt-0 z-10 shadow-[0_-20px_40px_rgba(0,0,0,0.1)] md:shadow-none">
-        <div className="w-full max-w-md">
-          <div className="mb-10 text-center md:text-left">
+      <section className="relative w-full md:w-1/2 flex items-start md:items-center justify-center px-5 py-4 md:p-8 lg:p-16 md:bg-white md:dark:bg-slate-900 md:rounded-none z-10">
+        <div className="w-full max-w-sm md:max-w-md bg-white dark:bg-slate-800 md:bg-transparent md:dark:bg-transparent rounded-2xl md:rounded-none shadow-2xl md:shadow-none p-6 md:p-0">
+          <div className="mb-6 md:mb-10 text-center md:text-left">
             <h3 className="font-manrope font-extrabold text-2xl lg:text-3xl text-slate-800 dark:text-slate-100 mb-2">
               {getTitle()}
             </h3>
