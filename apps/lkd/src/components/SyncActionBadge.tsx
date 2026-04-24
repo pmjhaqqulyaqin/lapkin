@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { isSyncConfigured, fullSync, getLastSyncTimestamp } from '../db/syncEngine';
@@ -7,6 +7,8 @@ import { useAppStore } from '../store/useAppStore';
 export default function SyncActionBadge() {
   const showToast = useAppStore(state => state.showToast);
   const [isSyncing, setIsSyncing] = useState(false);
+  // Generation counter — incremented after each sync to force useLiveQuery re-evaluation
+  const [syncGen, setSyncGen] = useState(0);
 
   // Periksa apakah sinkronisasi sudah diatur
   const isConfigured = isSyncConfigured();
@@ -42,9 +44,9 @@ export default function SyncActionBadge() {
     if (kalenderBaru.some(k => !k.isGlobal)) return true;
 
     return false;
-  }, [isConfigured]);
+  }, [isConfigured, syncGen]);
 
-  const handleSync = async () => {
+  const handleSync = useCallback(async () => {
     if (isSyncing || !navigator.onLine) {
       if (!navigator.onLine) showToast('Koneksi internet terputus.', 'error');
       return;
@@ -57,6 +59,16 @@ export default function SyncActionBadge() {
       const result = await fullSync();
       // Tarik juga referensi data jika diperlukan
       await useAppStore.getState().pullReferensiData();
+
+      // Re-update lastSync timestamp SETELAH pullReferensiData
+      // agar data global kalender yang baru ditulis tidak dianggap "unsynced"
+      const currentLastSync = getLastSyncTimestamp();
+      if (currentLastSync > 0) {
+        localStorage.setItem('lkd_last_sync', String(Date.now()));
+      }
+
+      // Increment generation agar useLiveQuery membaca ulang lastSync terbaru
+      setSyncGen(g => g + 1);
       
       showToast(`Sinkronisasi berhasil! (↑${result.pushed} ↓${result.pulled})`, 'success');
     } catch (err: any) {
@@ -65,7 +77,7 @@ export default function SyncActionBadge() {
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [isSyncing, showToast]);
 
   // Sembunyikan jika user belum mengaktifkan sync
   if (!isConfigured) return null;
