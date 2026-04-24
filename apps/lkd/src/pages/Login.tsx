@@ -18,21 +18,6 @@ export default function Login() {
   const [isSyncLogin, setIsSyncLogin] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  // Hilangkan ruang kosong body di bawah gradient pada mobile
-  React.useEffect(() => {
-    const { style: bodyStyle } = document.body;
-    const { style: htmlStyle } = document.documentElement;
-    const bg = '#003847';
-    bodyStyle.cssText += '; background-color:' + bg + '!important; min-height:auto!important; padding-bottom:0!important;';
-    htmlStyle.backgroundColor = bg;
-    return () => {
-      bodyStyle.backgroundColor = '';
-      bodyStyle.minHeight = '';
-      bodyStyle.paddingBottom = '';
-      htmlStyle.backgroundColor = '';
-    };
-  }, []);
-
   const isLoggedIn = useAppStore(state => state.isLoggedIn);
   if (isLoggedIn) {
     return <Navigate to="/dashboard" replace />;

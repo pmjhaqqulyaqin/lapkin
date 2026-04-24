@@ -24,7 +24,9 @@ export default function MainLayout() {
       <OfflineIndicator />
       <Sidebar />
       <BantuanModal />
-      <Outlet />
+      <div className="pb-20 md:pb-0">
+        <Outlet />
+      </div>
       {!isPrintPage && <BottomNav isEditorPage={isEditorPage} />}
       <Toast />
     </ErrorBoundary>
