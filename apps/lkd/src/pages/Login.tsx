@@ -146,7 +146,7 @@ export default function Login() {
       </section>
 
       {/* Right Section: Login Form Canvas */}
-      <section className="relative w-full md:w-1/2 flex items-start md:items-center justify-center px-5 py-4 md:p-8 lg:p-16 md:bg-white md:dark:bg-slate-900 md:rounded-none z-10">
+      <section className="relative w-full md:w-1/2 flex flex-col md:flex-row items-center justify-center flex-1 md:flex-none px-5 py-4 md:p-8 lg:p-16 md:bg-white md:dark:bg-slate-900 md:rounded-none z-10">
         <div className="w-full max-w-sm md:max-w-md bg-white dark:bg-slate-800 md:bg-transparent md:dark:bg-transparent rounded-2xl md:rounded-none shadow-2xl md:shadow-none p-6 md:p-0">
           <div className="mb-6 md:mb-10 text-center md:text-left">
             <h3 className="font-manrope font-extrabold text-2xl lg:text-3xl text-slate-800 dark:text-slate-100 mb-2">
@@ -298,17 +298,23 @@ export default function Login() {
             </button>
           </div>
 
-          {/* Quick Setup for PWA */}
-          <div className="mt-12 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200/50 dark:border-amber-700/50 hidden md:flex items-start gap-3">
-            <span className="material-symbols-outlined text-amber-500 shrink-0">install_mobile</span>
-            <div>
-              <h4 className="text-sm font-bold text-amber-800 dark:text-amber-400">Install Aplikasi</h4>
-              <p className="text-xs text-amber-700/80 dark:text-amber-500/80 mt-1 leading-relaxed">
-                Aplikasi ini mendukung mode Offline. Install ke layar utama HP Anda melalui menu browser (Tambahkan ke Layar Utama).
-              </p>
-            </div>
+        </div>
+
+        {/* PWA Install Banner — di atas gradient (mobile) / di dalam card area (desktop) */}
+        <div className="w-full max-w-sm md:max-w-md mt-4 p-3 md:p-4 md:mt-8 rounded-xl flex items-start gap-3 bg-white/10 border border-white/20 md:bg-amber-50 md:dark:bg-amber-900/20 md:border-amber-200/50 md:dark:border-amber-700/50">
+          <span className="material-symbols-outlined text-cyan-300 md:text-amber-500 shrink-0">install_mobile</span>
+          <div>
+            <h4 className="text-sm font-bold text-white/90 md:text-amber-800 md:dark:text-amber-400">Install Aplikasi</h4>
+            <p className="text-xs text-white/60 md:text-amber-700/80 md:dark:text-amber-500/80 mt-1 leading-relaxed">
+              Aplikasi ini mendukung mode Offline. Install ke layar utama HP Anda melalui menu browser (Tambahkan ke Layar Utama).
+            </p>
           </div>
         </div>
+
+        {/* Copyright — mobile only */}
+        <p className="mt-auto pt-4 pb-2 text-center text-[11px] text-white/40 md:hidden">
+          &copy; 2026 MAN 2 Lombok Timur. Hak Cipta Dilindungi.
+        </p>
       </section>
     </main>
   );
