@@ -115,9 +115,11 @@ export default function Login() {
 
         {/* School Logo/Branding */}
         <div className="relative z-10 flex items-center gap-4">
-          <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20">
-            <span className="material-symbols-outlined text-3xl text-cyan-400">school</span>
-          </div>
+          <img
+            src="/logo login.png"
+            alt="Logo MAN 2 Lombok Timur"
+            className="w-12 h-12 object-contain drop-shadow-lg"
+          />
           <div>
             <h1 className="font-manrope font-bold text-xl tracking-wide">MAN 2 Lombok Timur</h1>
             <p className="text-sm text-cyan-200 opacity-80">Kementerian Agama RI</p>
@@ -297,7 +299,7 @@ export default function Login() {
           </div>
 
           {/* Quick Setup for PWA */}
-          <div className="mt-12 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200/50 dark:border-amber-700/50 flex items-start gap-3">
+          <div className="mt-12 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200/50 dark:border-amber-700/50 hidden md:flex items-start gap-3">
             <span className="material-symbols-outlined text-amber-500 shrink-0">install_mobile</span>
             <div>
               <h4 className="text-sm font-bold text-amber-800 dark:text-amber-400">Install Aplikasi</h4>
