@@ -4,6 +4,7 @@ import Toast from '../components/Toast';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useAppStore } from '../store/useAppStore';
 import OfflineIndicator from '../components/OfflineIndicator';
+import NotificationBanner from '../components/NotificationBanner';
 
 import Sidebar from '../components/Sidebar';
 import BantuanModal from '../components/BantuanModal';
@@ -28,7 +29,9 @@ export default function MainLayout() {
         <Outlet />
       </div>
       {!isPrintPage && <BottomNav isEditorPage={isEditorPage} />}
+      {!isPrintPage && <NotificationBanner />}
       <Toast />
     </ErrorBoundary>
   );
 }
+

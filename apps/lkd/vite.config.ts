@@ -8,7 +8,11 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
+      injectRegister: false,
       includeAssets: ['logo-man2.svg', 'favicon.svg', 'fonts/*.ttf', 'logo login.png'],
       manifest: {
         name: 'Laporan Kinerja Digital',
@@ -36,7 +40,11 @@ export default defineConfig({
             purpose: 'any maskable'
           }
         ]
-      }
+      },
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
     })
   ],
 })

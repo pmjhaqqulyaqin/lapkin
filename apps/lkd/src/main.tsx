@@ -4,7 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { registerSW } from 'virtual:pwa-register'
 
-// Register Service Worker for PWA
+// Register Service Worker for PWA (injectManifest mode)
 const updateSW = registerSW({
   onNeedRefresh() {
     // Simpan referensi updateSW ke window agar bisa dipanggil dari UI
@@ -39,3 +39,4 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
+
