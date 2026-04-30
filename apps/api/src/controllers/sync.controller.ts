@@ -45,7 +45,7 @@ export async function pushData(req: Request, res: Response): Promise<void> {
         profil.pangkat || null, profil.golongan || null,
         profil.namaKepsek || null, profil.nipKepsek || null,
         profil.ttdUrl || null, profil.avatarUrl || null,
-        profil.updatedAt || Date.now()
+        Date.now()
       ]);
     }
 
@@ -70,7 +70,7 @@ export async function pushData(req: Request, res: Response): Promise<void> {
           item.hari || null, item.jamMulai || null, item.jamSelesai || null,
           item.mataPelajaran || null, item.kelas || null,
           item.ruangan || null, item.warna || null,
-          item.updatedAt || Date.now(),
+          Date.now(),
           item.isDeleted || false
         ]);
       }
@@ -94,7 +94,7 @@ export async function pushData(req: Request, res: Response): Promise<void> {
           item.namaTugas || null, item.kategori || null,
           JSON.stringify(item.templates || []),
           item.isDraft || false,
-          item.updatedAt || Date.now(),
+          Date.now(),
           item.isDeleted || false
         ]);
       }
@@ -121,7 +121,7 @@ export async function pushData(req: Request, res: Response): Promise<void> {
           item.keteranganOutput || null,
           item.sumberId || null, item.tipeSumber || null,
           item.createdAt || Date.now(),
-          item.updatedAt || Date.now(),
+          Date.now(),
           item.isDeleted || false
         ]);
       }
@@ -142,7 +142,7 @@ export async function pushData(req: Request, res: Response): Promise<void> {
         `, [
           item.id, userId,
           item.tanggal || null, item.status || null, item.keterangan || null,
-          item.updatedAt || Date.now(),
+          Date.now(),
           item.isDeleted || false
         ]);
       }
