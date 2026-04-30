@@ -91,12 +91,12 @@
   }
 
   /* Bottom Sheet Slide Up */
-  @keyframes slideUp {
+  @keyframes slideUpSheet {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
   }
-  .animate-slide-up {
-    animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  .animate-slide-up-sheet {
+    animation: slideUpSheet 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Notification Banner Animations */
