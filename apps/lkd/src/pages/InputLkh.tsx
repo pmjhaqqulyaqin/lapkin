@@ -331,17 +331,107 @@ export default function InputLkh() {
 
       {/* Main Content Area */}
       <main className="max-w-md mx-auto px-4 py-4">
-        {/* Date Picker Trigger Field */}
-        <div className="mb-4">
+        {/* Date Picker with Dropdown Calendar */}
+        <div className="mb-4 relative">
           <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Tanggal LKH</label>
           <button
             type="button"
-            onClick={() => { setIsCalendarOpen(true); setCalMonth(dateObj.getMonth()); setCalYear(dateObj.getFullYear()); }}
+            onClick={() => { setIsCalendarOpen(!isCalendarOpen); setCalMonth(dateObj.getMonth()); setCalYear(dateObj.getFullYear()); }}
             className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-[13px] text-slate-700 dark:text-slate-200 font-semibold focus:ring-2 focus:ring-teal-500/50 outline-none transition-all shadow-sm text-left flex items-center justify-between"
           >
             <span>{dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
             <span className="material-symbols-outlined text-[18px] text-slate-400">calendar_month</span>
           </button>
+
+          {/* Calendar Dropdown Popover */}
+          {isCalendarOpen && (
+            <>
+              {/* Invisible overlay to close on outside click */}
+              <div className="fixed inset-0 z-[90]" onClick={() => setIsCalendarOpen(false)}></div>
+
+              {/* Dropdown */}
+              <div className="absolute left-0 right-0 top-full mt-1 z-[95] bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-900/10 dark:shadow-slate-950/30 animate-scale-up overflow-hidden">
+                {/* Month Navigator */}
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-slate-100 dark:border-slate-800">
+                  <button type="button" onClick={handleCalPrev} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors text-slate-500">
+                    <span className="material-symbols-outlined text-[16px]">chevron_left</span>
+                  </button>
+                  <span className="font-manrope font-bold text-[12px] text-slate-800 dark:text-slate-100">
+                    {new Date(calYear, calMonth).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+                  </span>
+                  <button type="button" onClick={handleCalNext} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors text-slate-500">
+                    <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+                  </button>
+                </div>
+
+                {/* Calendar Grid */}
+                <div className="p-2.5">
+                  {/* Day headers */}
+                  <div className="grid grid-cols-7 gap-0.5 text-center mb-1">
+                    {['Se', 'Sl', 'Ra', 'Ka', 'Ju', 'Sa', 'Mi'].map(day => (
+                      <span key={day} className="text-[8px] font-bold text-slate-400 uppercase">{day}</span>
+                    ))}
+                  </div>
+
+                  {/* Days grid */}
+                  <div className="grid grid-cols-7 gap-0.5">
+                    {/* Empty padding */}
+                    {Array.from({ length: (new Date(calYear, calMonth, 1).getDay() + 6) % 7 }).map((_, i) => (
+                      <div key={`empty-${i}`} className="w-full aspect-square"></div>
+                    ))}
+
+                    {/* Day cells */}
+                    {Array.from({ length: new Date(calYear, calMonth + 1, 0).getDate() }).map((_, i) => {
+                      const dayNum = i + 1;
+                      const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                      const dayOfWeek = new Date(calYear, calMonth, dayNum).getDay();
+                      const isSunday = dayOfWeek === 0;
+                      const isToday = dateStr === todayStr;
+                      const isSelected = dateStr === tanggal;
+                      const hasLkh = lkhDatesInCalMonth.has(dateStr);
+
+                      const kalEvent = kalenderForCalMonth?.find(k => k.tanggal === dateStr);
+                      const isHoliday = isSunday || (kalEvent && (kalEvent.status.toLowerCase().includes('libur') || kalEvent.status.toLowerCase().includes('cuti')));
+                      const hasKegiatanKalender = kalEvent && !kalEvent.status.toLowerCase().includes('libur') && !kalEvent.status.toLowerCase().includes('cuti');
+
+                      let cls = "w-full aspect-square rounded-md flex items-center justify-center text-[10px] font-bold cursor-pointer transition-all active:scale-90 relative ";
+
+                      if (isSelected) {
+                        cls += "bg-teal-600 text-white shadow shadow-teal-600/30";
+                      } else if (hasLkh) {
+                        cls += "bg-teal-500 text-white";
+                      } else if (isHoliday) {
+                        cls += "bg-red-50 dark:bg-red-900/20 text-red-400";
+                      } else if (hasKegiatanKalender) {
+                        cls += "bg-cyan-50 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400";
+                      } else if (isToday) {
+                        cls += "text-teal-600 border border-teal-500 bg-white dark:bg-slate-800";
+                      } else {
+                        const isPast = new Date(calYear, calMonth, dayNum) < new Date(new Date().setHours(0,0,0,0));
+                        cls += isPast && !isSunday
+                          ? "text-slate-300 dark:text-slate-600"
+                          : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800";
+                      }
+
+                      return (
+                        <button key={dayNum} type="button" onClick={() => handleCalDateClick(dateStr)} className={cls}>
+                          {dayNum}
+                          {hasKegiatanKalender && !isSelected && !hasLkh && <div className="w-0.5 h-0.5 rounded-full bg-cyan-500 absolute bottom-0.5"></div>}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Compact Legend */}
+                  <div className="flex items-center gap-2.5 mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm bg-teal-500"></div><span className="text-[8px] text-slate-400 font-semibold">Terisi</span></div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm bg-red-100 border border-red-200"></div><span className="text-[8px] text-slate-400 font-semibold">Libur</span></div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-sm border border-teal-500"></div><span className="text-[8px] text-slate-400 font-semibold">Hari Ini</span></div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Kalender Akademik Info — Libur */}
@@ -593,135 +683,6 @@ export default function InputLkh() {
           }}
           onClose={() => setIsManageKegiatanOpen(false)}
         />
-      )}
-
-      {/* Calendar Bottom Sheet Modal */}
-      {isCalendarOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsCalendarOpen(false)}>
-          <div 
-            className="bg-white dark:bg-slate-900 rounded-t-2xl w-full max-w-md shadow-2xl overflow-hidden animate-slide-up"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Handle Bar */}
-            <div className="flex justify-center pt-2.5 pb-1">
-              <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
-            </div>
-
-            {/* Header */}
-            <div className="px-4 pb-2 flex justify-between items-center">
-              <h2 className="font-manrope font-bold text-[14px] text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[18px] text-teal-600">calendar_month</span>
-                Pilih Tanggal
-              </h2>
-              <button onClick={() => setIsCalendarOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-100 dark:bg-slate-800 rounded-full p-1.5 transition-colors">
-                <span className="material-symbols-outlined text-[16px]">close</span>
-              </button>
-            </div>
-
-            {/* Month Navigator */}
-            <div className="flex items-center justify-between px-4 py-2 bg-slate-50/50 dark:bg-slate-950/50">
-              <button type="button" onClick={handleCalPrev} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-600 dark:text-slate-400">
-                <span className="material-symbols-outlined text-[20px]">chevron_left</span>
-              </button>
-              <span className="font-manrope font-bold text-[14px] text-slate-800 dark:text-slate-100 min-w-[140px] text-center">
-                {new Date(calYear, calMonth).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
-              </span>
-              <button type="button" onClick={handleCalNext} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors text-slate-600 dark:text-slate-400">
-                <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-              </button>
-            </div>
-
-            {/* Calendar Grid */}
-            <div className="px-4 py-3">
-              {/* Day headers */}
-              <div className="grid grid-cols-7 gap-1.5 text-center mb-2">
-                {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(day => (
-                  <span key={day} className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{day}</span>
-                ))}
-              </div>
-
-              {/* Days grid */}
-              <div className="grid grid-cols-7 gap-1.5">
-                {/* Empty padding slots */}
-                {Array.from({ length: (new Date(calYear, calMonth, 1).getDay() + 6) % 7 }).map((_, i) => (
-                  <div key={`empty-${i}`} className="aspect-square"></div>
-                ))}
-
-                {/* Day cells */}
-                {Array.from({ length: new Date(calYear, calMonth + 1, 0).getDate() }).map((_, i) => {
-                  const dayNum = i + 1;
-                  const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
-                  const dayOfWeek = new Date(calYear, calMonth, dayNum).getDay();
-                  const isSunday = dayOfWeek === 0;
-                  const isToday = dateStr === todayStr;
-                  const isSelected = dateStr === tanggal;
-                  const hasLkh = lkhDatesInCalMonth.has(dateStr);
-
-                  const kalEvent = kalenderForCalMonth?.find(k => k.tanggal === dateStr);
-                  const isHoliday = isSunday || (kalEvent && (kalEvent.status.toLowerCase().includes('libur') || kalEvent.status.toLowerCase().includes('cuti')));
-                  const hasKegiatanKalender = kalEvent && !kalEvent.status.toLowerCase().includes('libur') && !kalEvent.status.toLowerCase().includes('cuti');
-
-                  let boxClasses = "aspect-square rounded-xl flex flex-col items-center justify-center text-[12px] font-bold transition-all active:scale-95 cursor-pointer relative ";
-
-                  if (isSelected) {
-                    boxClasses += "bg-teal-600 text-white shadow-md shadow-teal-600/30 ring-2 ring-teal-400 ring-offset-1";
-                  } else if (hasLkh) {
-                    boxClasses += "bg-teal-500 text-white shadow-sm shadow-teal-500/20";
-                  } else if (isHoliday) {
-                    boxClasses += "bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 border border-red-100 dark:border-red-800";
-                  } else if (hasKegiatanKalender) {
-                    boxClasses += "bg-cyan-50 dark:bg-cyan-900/20 text-cyan-700 dark:text-cyan-400 border border-cyan-200 dark:border-cyan-800";
-                  } else if (isToday) {
-                    boxClasses += "bg-white dark:bg-slate-800 text-teal-600 border-2 border-teal-500";
-                  } else {
-                    const isPast = new Date(calYear, calMonth, dayNum) < new Date(new Date().setHours(0,0,0,0));
-                    if (isPast && !isSunday) {
-                      boxClasses += "bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 border border-slate-200/50 dark:border-slate-700";
-                    } else {
-                      boxClasses += "bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 border border-slate-100 dark:border-slate-800 hover:border-slate-300";
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={dayNum}
-                      type="button"
-                      title={kalEvent ? kalEvent.keterangan : (hasLkh ? 'LKH Terisi' : isToday ? 'Hari Ini' : '')}
-                      onClick={() => handleCalDateClick(dateStr)}
-                      className={boxClasses}
-                    >
-                      {dayNum}
-                      {hasKegiatanKalender && !isSelected && !hasLkh && <div className="w-1 h-1 rounded-full bg-cyan-500 absolute bottom-1"></div>}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Legend */}
-              <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded bg-teal-500"></div>
-                  <span className="text-[10px] text-slate-500 font-semibold">Terisi</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded bg-red-50 border border-red-200"></div>
-                  <span className="text-[10px] text-slate-500 font-semibold">Libur</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded border-2 border-teal-500"></div>
-                  <span className="text-[10px] text-slate-500 font-semibold">Hari Ini</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded bg-teal-600 ring-2 ring-teal-400 ring-offset-1"></div>
-                  <span className="text-[10px] text-slate-500 font-semibold">Dipilih</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Safe area spacing for mobile */}
-            <div className="h-4"></div>
-          </div>
-        </div>
       )}
     </>
   );
