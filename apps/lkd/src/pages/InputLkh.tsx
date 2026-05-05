@@ -71,6 +71,8 @@ export default function InputLkh() {
   }) || [];
 
   const isLibur = liburEntries.length > 0;
+  const isMinggu = hariIni === 'Minggu';
+  const isDisabled = isLibur || isMinggu;
 
 
 
@@ -137,25 +139,17 @@ export default function InputLkh() {
 
     const initialChecked: Record<string, boolean> = {};
     
-    // Helper untuk mengecek apakah item sudah tersimpan
-    const isJadwalSaved = (id: number) => existingLkhForDate.some(l => l.tipeSumber === 'jadwal' && l.sumberId === id);
-    const isKalenderSaved = (id: number) => existingLkhForDate.some(l => l.tipeSumber === 'kalender' && l.sumberId === id);
-    const isTugasSaved = (id: number, uraian: string) => existingLkhForDate.some(l => l.tipeSumber === 'tugas_tambahan' && l.sumberId === id && l.uraian === uraian);
-
+    // Semua item default unchecked (false). Item yang sudah tersimpan tetap false dan akan di-disable.
     jadwalHariIni.forEach(j => {
-      if (j.id) initialChecked[`jadwal-${j.id}`] = !isJadwalSaved(j.id);
+      if (j.id) initialChecked[`jadwal-${j.id}`] = false;
     });
     
     tugasTemplates.forEach(t => {
-      // Jika sudah ada (berdasarkan id & uraian), atau jumlah LKH untuk tugas ini sudah memenuhi kuota template
-      const countExisting = existingLkhForDate.filter(l => l.tipeSumber === 'tugas_tambahan' && l.sumberId === t.id).length;
-      const countTemplates = tugasTemplates.filter(temp => temp.id === t.id).length;
-      const isSaved = isTugasSaved(t.id!, t.deskripsiCurrent) || (countExisting >= countTemplates);
-      initialChecked[t.uniqueId] = !isSaved;
+      initialChecked[t.uniqueId] = false;
     });
 
     kegiatanKalenderEntries.forEach(k => {
-      if (k.id) initialChecked[`kalender-${k.id}`] = !isKalenderSaved(k.id);
+      if (k.id) initialChecked[`kalender-${k.id}`] = false;
     });
     
     setCheckedItems(initialChecked);
@@ -168,7 +162,7 @@ export default function InputLkh() {
 
   const handleSimpan = async (e: React.FormEvent, andLanjut: boolean = false) => {
     e.preventDefault();
-    if (isLibur) return;
+    if (isDisabled) return;
 
     // Ambil LKH yang sudah ada untuk tanggal ini (untuk cegah duplikasi)
     const existingLkh = await db.lkh.where('tanggal').equals(tanggal).toArray();
@@ -598,17 +592,17 @@ export default function InputLkh() {
         <div className="flex gap-2 mt-4">
           <button 
             type="button" 
-            disabled={isLibur}
+            disabled={isDisabled}
             onClick={(e) => handleSimpan(e as any, false)}
-            className={`flex-1 font-bold text-[12px] py-2.5 rounded-lg transition-all shadow-lg flex justify-center items-center gap-1.5 ${isLibur ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-800 text-white hover:bg-teal-900 active:scale-95 shadow-teal-900/20'}`}
+            className={`flex-1 font-bold text-[12px] py-2.5 rounded-lg transition-all shadow-lg flex justify-center items-center gap-1.5 ${isDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-800 text-white hover:bg-teal-900 active:scale-95 shadow-teal-900/20'}`}
           >
             Simpan LKH
           </button>
           <button 
             type="button" 
-            disabled={isLibur}
+            disabled={isDisabled}
             onClick={(e) => handleSimpan(e as any, true)}
-            className={`flex-1 font-bold text-[12px] py-2.5 rounded-lg transition-all shadow-lg flex justify-center items-center gap-1.5 ${isLibur ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-600 text-white hover:bg-teal-700 active:scale-95 shadow-teal-600/20'}`}
+            className={`flex-1 font-bold text-[12px] py-2.5 rounded-lg transition-all shadow-lg flex justify-center items-center gap-1.5 ${isDisabled ? 'bg-slate-300 text-slate-500 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600' : 'bg-teal-600 text-white hover:bg-teal-700 active:scale-95 shadow-teal-600/20'}`}
           >
             Simpan & Lanjut <span className="material-symbols-outlined text-[16px]">skip_next</span>
           </button>
