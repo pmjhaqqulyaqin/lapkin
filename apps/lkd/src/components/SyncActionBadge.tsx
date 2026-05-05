@@ -7,19 +7,21 @@ import { useAppStore } from '../store/useAppStore';
 export default function SyncActionBadge() {
   const showToast = useAppStore(state => state.showToast);
   const [isSyncing, setIsSyncing] = useState(false);
-  // Generation counter — incremented after each sync to force useLiveQuery re-evaluation
-  const [syncGen, setSyncGen] = useState(0);
 
-  // Periksa apakah sinkronisasi sudah diatur
+  // Simpan lastSync di React state (bukan baca dari localStorage setiap kali)
+  // Ini mencegah race condition: LiveQuery hanya re-eval dengan nilai lastSync
+  // yang benar-benar final, bukan nilai sementara di tengah proses sync.
+  const [lastSyncTs, setLastSyncTs] = useState(() => getLastSyncTimestamp());
+
   const isConfigured = isSyncConfigured();
 
-  // Gunakan LiveQuery untuk memantau perubahan data
+  // LiveQuery: bergantung pada lastSyncTs (state), bukan localStorage
   const hasUnsyncedChanges = useLiveQuery(async () => {
     if (!isConfigured) return false;
     
-    const lastSync = getLastSyncTimestamp();
+    const lastSync = lastSyncTs;
     
-    // Jika belum pernah sync, tapi ada data
+    // Jika belum pernah sync, tapi sudah ada data lokal
     if (lastSync === 0) {
       const profil = await db.profil.get(1);
       if (profil && profil.updatedAt && profil.updatedAt > 0) return true;
@@ -39,12 +41,12 @@ export default function SyncActionBadge() {
     if (await db.jadwal.where('updatedAt').above(lastSync).count() > 0) return true;
     if (await db.tugasTambahan.where('updatedAt').above(lastSync).count() > 0) return true;
     
-    // Untuk kalender, kita abaikan perubahan yang sifatnya global (isGlobal=1)
+    // Untuk kalender, abaikan perubahan global (isGlobal=1)
     const kalenderBaru = await db.kalender.where('updatedAt').above(lastSync).toArray();
     if (kalenderBaru.some(k => !k.isGlobal)) return true;
 
     return false;
-  }, [isConfigured, syncGen]);
+  }, [isConfigured, lastSyncTs]);
 
   const handleSync = useCallback(async () => {
     if (isSyncing || !navigator.onLine) {
@@ -57,18 +59,19 @@ export default function SyncActionBadge() {
 
     try {
       const result = await fullSync();
-      // Tarik juga referensi data jika diperlukan
+
+      // Tarik juga referensi data (kegiatan, tugas, kalender global)
       await useAppStore.getState().pullReferensiData();
 
-      // Re-update lastSync timestamp SETELAH pullReferensiData
-      // agar data global kalender yang baru ditulis tidak dianggap "unsynced"
-      const currentLastSync = getLastSyncTimestamp();
-      if (currentLastSync > 0) {
-        localStorage.setItem('lkd_last_sync', String(Date.now()));
-      }
+      // KUNCI FIX: Set lastSync ke Date.now() SETELAH semua operasi selesai,
+      // termasuk pullReferensiData yang menulis ke Dexie.
+      // Ini menjamin semua updatedAt dari data yang baru ditulis < finalTs.
+      const finalTs = Date.now();
+      localStorage.setItem('lkd_last_sync', String(finalTs));
+      localStorage.setItem('lkd_last_sync_date', new Date().toISOString());
 
-      // Increment generation agar useLiveQuery membaca ulang lastSync terbaru
-      setSyncGen(g => g + 1);
+      // Update React state — ini memicu useLiveQuery re-eval dengan lastSync final
+      setLastSyncTs(finalTs);
       
       showToast(`Sinkronisasi berhasil! (↑${result.pushed} ↓${result.pulled})`, 'success');
     } catch (err: any) {
