@@ -4,7 +4,7 @@ import Toast from '../components/Toast';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useAppStore } from '../store/useAppStore';
 import OfflineIndicator from '../components/OfflineIndicator';
-import NotificationBanner from '../components/NotificationBanner';
+import { useLkhNotification } from '../hooks/useLkhNotification';
 
 import Sidebar from '../components/Sidebar';
 import BantuanModal from '../components/BantuanModal';
@@ -15,6 +15,9 @@ export default function MainLayout() {
   
   const isPrintPage = location.pathname === '/lkh/laporan'; // Hide nav on print page
   const isEditorPage = location.pathname === '/tugas/editor'; // Hidden on desktop, visible on mobile
+
+  // Headless: mengelola system notification tanpa menampilkan UI apapun
+  useLkhNotification();
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace state={{ from: location }} />;
@@ -29,9 +32,7 @@ export default function MainLayout() {
         <Outlet />
       </div>
       {!isPrintPage && <BottomNav isEditorPage={isEditorPage} />}
-      {!isPrintPage && <NotificationBanner />}
       <Toast />
     </ErrorBoundary>
   );
 }
-
