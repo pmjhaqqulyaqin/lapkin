@@ -177,18 +177,6 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-5">
-        {/* Month Selector */}
-        <div className="flex items-center justify-between mb-5 bg-surface-container-lowest rounded-xl p-1.5 shadow-sm border border-outline-variant/20">
-          <button onClick={handlePrevMonth} className="p-1.5 hover:bg-surface-container transition-colors rounded-lg text-on-surface-variant">
-            <span className="material-symbols-outlined text-[20px]">chevron_left</span>
-          </button>
-          <span className="font-headline font-bold text-[15px] text-primary">
-            {displayBulan}
-          </span>
-          <button onClick={handleNextMonth} className="p-1.5 hover:bg-surface-container transition-colors rounded-lg text-on-surface-variant">
-            <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-          </button>
-        </div>
 
         {/* Status Card & Progress */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 opacity-0 animate-slide-up" style={{ animationDelay: '0.1s' }}>
@@ -240,10 +228,18 @@ export default function Dashboard() {
 
         {/* Calendar Widget */}
         <section className="mb-5 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-4 opacity-0 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <h3 className="font-headline font-bold text-[13px] text-primary mb-3 flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[18px]">calendar_month</span>
-            Kalender LKH
-          </h3>
+          {/* Month Selector */}
+          <div className="flex items-center justify-between mb-3 bg-surface-container-lowest rounded-xl p-1.5 shadow-sm border border-outline-variant/20">
+            <button onClick={handlePrevMonth} className="p-1.5 hover:bg-surface-container transition-colors rounded-lg text-on-surface-variant">
+              <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+            </button>
+            <span className="font-headline font-bold text-[15px] text-primary">
+              {displayBulan}
+            </span>
+            <button onClick={handleNextMonth} className="p-1.5 hover:bg-surface-container transition-colors rounded-lg text-on-surface-variant">
+              <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+            </button>
+          </div>
           <div className="grid grid-cols-7 gap-1.5 text-center mb-2">
             {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(day => (
               <span key={day} className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">{day}</span>
