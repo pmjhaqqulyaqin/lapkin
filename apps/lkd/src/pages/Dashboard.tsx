@@ -34,7 +34,7 @@ export default function Dashboard() {
     [activeMonthIndex, activeYear]
   );
 
-  // Hitung target hari efektif (tanpa hari minggu)
+  // Hitung target hari efektif (tanpa hari minggu & hari libur)
   const getWorkingDays = (month: number, year: number) => {
     let days = 0;
     const date = new Date(year, month, 1);
@@ -45,7 +45,16 @@ export default function Dashboard() {
     return days;
   };
 
-  const targetHari = getWorkingDays(activeMonthIndex, activeYear);
+  // Hitung hari libur (dari kalender) yang jatuh di hari kerja (bukan Minggu)
+  const holidaysOnWeekdays = (kalenderBulanIni || []).filter(k => {
+    const status = k.status.toLowerCase();
+    const isLibur = status.includes('libur') || status.includes('cuti');
+    if (!isLibur) return false;
+    const d = new Date(k.tanggal + 'T00:00:00');
+    return d.getDay() !== 0; // exclude Sundays (already excluded)
+  }).length;
+
+  const targetHari = getWorkingDays(activeMonthIndex, activeYear) - holidaysOnWeekdays;
   const uniqueDates = new Set(lkhBulanIni?.map(l => l.tanggal));
   const hariTerisi = uniqueDates.size;
   const progressPercent = targetHari > 0 ? Math.min(100, Math.round((hariTerisi / targetHari) * 100)) : 0;
