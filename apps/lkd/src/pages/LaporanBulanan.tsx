@@ -5,6 +5,7 @@ import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
 import BottomSheetSelect from '../components/BottomSheetSelect';
 import SyncActionBadge from '../components/SyncActionBadge';
+import { normalizeGelar, smartUpperCase } from '../lib/normalizeGelar';
 
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 const YEARS = ['2025', '2026', '2027'];
@@ -64,7 +65,7 @@ export default function LaporanBulanan() {
     const html = preHtml + printContent + postHtml;
 
     const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
-    const filename = `LKH_${profil?.nama || 'Pegawai'}_${namaBulanThn.replace(' ', '_')}.doc`;
+    const filename = `LKH_${normalizeGelar(profil?.nama || 'Pegawai')}_${namaBulanThn.replace(' ', '_')}.doc`;
     
     const downloadLink = document.createElement("a");
     document.body.appendChild(downloadLink);
@@ -84,7 +85,7 @@ export default function LaporanBulanan() {
         <tr><td colspan="4"></td></tr>
         <tr>
           <td style="${tdBorder}">Nama</td>
-          <td colspan="3" style="${tdBorder}">${profil?.nama || '-'}</td>
+          <td colspan="3" style="${tdBorder}">${normalizeGelar(profil?.nama || '-')}</td>
         </tr>
         <tr>
           <td style="${tdBorder}">NIP</td>
@@ -137,8 +138,8 @@ export default function LaporanBulanan() {
         <tr><td colspan="4"></td></tr>
         <tr><td colspan="4"></td></tr>
         <tr>
-          <td colspan="3">${profil?.namaKepsek || '-'}</td>
-          <td>${profil?.nama || '-'}</td>
+          <td colspan="3">${normalizeGelar(profil?.namaKepsek || '-')}</td>
+          <td>${normalizeGelar(profil?.nama || '-')}</td>
         </tr>
         <tr>
           <td colspan="3" style='mso-number-format:"\\@"'>NIP. ${profil?.nipKepsek || '-'}</td>
@@ -168,7 +169,7 @@ export default function LaporanBulanan() {
     const html = preHtml + excelHtml + postHtml;
 
     const url = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(html);
-    const filename = `LKH_${profil?.nama || 'Pegawai'}_${namaBulanThn.replace(' ', '_')}.xls`;
+    const filename = `LKH_${normalizeGelar(profil?.nama || 'Pegawai')}_${namaBulanThn.replace(' ', '_')}.xls`;
     
     const downloadLink = document.createElement("a");
     document.body.appendChild(downloadLink);
@@ -335,7 +336,7 @@ export default function LaporanBulanan() {
               <tr>
                 <td className="py-1.5 w-32 uppercase tracking-wide">Nama</td>
                 <td className="py-1.5 px-2">:</td>
-                <td className="py-1.5 font-bold text-base">{profil?.nama || '-'}</td>
+                <td className="py-1.5 font-bold text-base">{normalizeGelar(profil?.nama || '-')}</td>
               </tr>
               <tr>
                 <td className="py-1.5 uppercase tracking-wide">NIP</td>
@@ -415,7 +416,7 @@ export default function LaporanBulanan() {
               {/* Empty area for manual signature / future kepsek signature */}
             </div>
             <div className="w-full">
-              <p className="font-bold border-b border-black pb-1 inline-block uppercase">{profil?.namaKepsek || '-'}</p>
+              <p className="font-bold border-b border-black pb-1 inline-block">{smartUpperCase(profil?.namaKepsek || '-')}</p>
               <p className="mt-1">NIP. {profil?.nipKepsek || '-'}</p>
             </div>
           </div>
@@ -433,7 +434,7 @@ export default function LaporanBulanan() {
               )}
             </div>
             <div className="w-full">
-              <p className="font-bold border-b border-black pb-1 inline-block uppercase">{profil?.nama || '-'}</p>
+              <p className="font-bold border-b border-black pb-1 inline-block">{smartUpperCase(profil?.nama || '-')}</p>
               <p className="mt-1">NIP. {profil?.nip || '-'}</p>
             </div>
           </div>

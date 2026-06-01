@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import BottomSheetSelect from '../../components/BottomSheetSelect';
+import { normalizeGelar } from '../../lib/normalizeGelar';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
@@ -81,7 +82,7 @@ export default function AdminUserDetail() {
             <span className="material-symbols-outlined text-slate-600 dark:text-slate-300">arrow_back</span>
           </NavLink>
           <div className="flex-1">
-            <h1 className="font-manrope font-extrabold text-lg text-slate-800 dark:text-slate-100">{profil?.nama || '-'}</h1>
+            <h1 className="font-manrope font-extrabold text-lg text-slate-800 dark:text-slate-100">{normalizeGelar(profil?.nama || '-')}</h1>
             <p className="text-xs text-slate-500">NIP: {profil?.nip} • {profil?.jabatan}</p>
           </div>
         </div>
@@ -95,9 +96,9 @@ export default function AdminUserDetail() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             {[
-              ['Nama', profil?.nama], ['NIP', profil?.nip], ['Jabatan', profil?.jabatan],
+              ['Nama', normalizeGelar(profil?.nama || '-')], ['NIP', profil?.nip], ['Jabatan', profil?.jabatan],
               ['Pangkat', profil?.pangkat], ['Golongan', profil?.golongan],
-              ['Kepala Sekolah', profil?.namaKepsek], ['NIP Kepsek', profil?.nipKepsek],
+              ['Kepala Sekolah', normalizeGelar(profil?.namaKepsek || '-')], ['NIP Kepsek', profil?.nipKepsek],
             ].map(([label, val]) => (
               <div key={label as string}>
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{label}</span>

@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useAppStore } from '../store/useAppStore';
 import SyncActionBadge from '../components/SyncActionBadge';
+import { normalizeGelar } from '../lib/normalizeGelar';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -152,7 +153,7 @@ export default function Dashboard() {
               {profil ? (
                 <>
                   <span className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">{getGreeting()}</span>
-                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight truncate max-w-[200px]">{profil.nama.split(' ')[0]}</h1>
+                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight truncate max-w-[200px]">{normalizeGelar(profil.nama).split(' ')[0]}</h1>
                 </>
               ) : (
                 <>
@@ -168,7 +169,7 @@ export default function Dashboard() {
               <img
                 alt="Profil"
                 className="w-full h-full object-cover pointer-events-none"
-                src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=64`}
+                src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${normalizeGelar(profil?.nama || 'G')}&background=0D9488&color=fff&size=64`}
               />
             </button>
           </div>
@@ -424,7 +425,7 @@ export default function Dashboard() {
               </button>
               <div className="relative group">
                 <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-white/30 shadow-lg">
-                  <img src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=128`} alt="Profil" className="w-full h-full object-cover" />
+                  <img src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${normalizeGelar(profil?.nama || 'G')}&background=0D9488&color=fff&size=128`} alt="Profil" className="w-full h-full object-cover" />
                 </div>
                 <label className="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-slate-100 transition-colors">
                   <span className="material-symbols-outlined text-[14px] text-teal-700">photo_camera</span>
@@ -445,7 +446,7 @@ export default function Dashboard() {
                   }} />
                 </label>
               </div>
-              <h2 className="text-white font-bold text-[16px] mt-3 text-center">{profil?.nama || 'Pengguna'}</h2>
+              <h2 className="text-white font-bold text-[16px] mt-3 text-center">{normalizeGelar(profil?.nama || 'Pengguna')}</h2>
               <p className="text-cyan-200 text-[12px] font-medium">NIP. {profil?.nip || '-'}</p>
             </div>
 

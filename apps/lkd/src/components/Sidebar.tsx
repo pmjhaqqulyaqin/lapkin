@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/database';
 import { useEffect } from 'react';
+import { normalizeGelar } from '../lib/normalizeGelar';
 
 export default function Sidebar() {
   const { isSidebarOpen, setSidebarOpen, logout } = useAppStore();
@@ -31,12 +32,12 @@ export default function Sidebar() {
         <div className="px-4 py-4 bg-teal-50 dark:bg-teal-900/20 border-b border-teal-100 dark:border-teal-900/30">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center overflow-hidden shrink-0">
-              <img alt="Avatar" className="w-full h-full object-cover" src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'G'}&background=0D9488&color=fff&size=64`} />
+              <img alt="Avatar" className="w-full h-full object-cover" src={profil?.avatarUrl || `https://ui-avatars.com/api/?name=${normalizeGelar(profil?.nama || 'G')}&background=0D9488&color=fff&size=64`} />
             </div>
             <div className="min-w-0">
               {profil ? (
                 <>
-                  <h2 className="font-manrope font-bold text-[14px] text-slate-800 dark:text-slate-100 truncate">{profil.nama}</h2>
+                  <h2 className="font-manrope font-bold text-[14px] text-slate-800 dark:text-slate-100 truncate">{normalizeGelar(profil.nama)}</h2>
                   <p className="text-[11px] font-semibold text-slate-500 truncate">{profil.jabatan || 'Guru'}</p>
                 </>
               ) : (

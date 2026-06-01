@@ -8,6 +8,7 @@ import {
   isSyncConfigured, getSyncUser, getLastSyncDate, clearSyncAuth,
   type SyncStatus
 } from '../db/syncEngine';
+import { normalizeGelar } from '../lib/normalizeGelar';
 
 export default function Profil() {
   const navigate = useNavigate();
@@ -314,7 +315,7 @@ export default function Profil() {
           <section className="bg-cyan-950 dark:bg-slate-900 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left shadow-lg shadow-cyan-950/20 relative overflow-hidden mb-4">
             <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-3 border-white/20 relative z-10 shrink-0">
               <img 
-                src={profil.avatarUrl || `https://ui-avatars.com/api/?name=${profil?.nama || 'Guru'}&background=0D9488&color=fff`} 
+                src={profil.avatarUrl || `https://ui-avatars.com/api/?name=${normalizeGelar(profil?.nama || 'Guru')}&background=0D9488&color=fff`} 
                 alt="Teacher Profile Picture" 
                 className="w-full h-full object-cover"
               />
@@ -323,7 +324,7 @@ export default function Profil() {
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
                 <div>
                   <h2 className="font-manrope font-extrabold text-xl md:text-2xl tracking-tight mb-0.5">
-                    {profil.nama}
+                    {normalizeGelar(profil.nama)}
                   </h2>
                   <p className="text-cyan-100 font-medium text-[13px]">NIP. {profil.nip}</p>
                 </div>
@@ -391,7 +392,7 @@ export default function Profil() {
                 </div>
                 <h3 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100">Kepala Sekolah</h3>
               </div>
-              <p className="font-semibold text-[13px] text-slate-700 dark:text-slate-300">{profil?.namaKepsek || 'Belum diatur'}</p>
+              <p className="font-semibold text-[13px] text-slate-700 dark:text-slate-300">{normalizeGelar(profil?.namaKepsek || 'Belum diatur')}</p>
               <p className="text-[12px] text-slate-500 mt-0.5">NIP. {profil?.nipKepsek || '-'}</p>
             </div>
             <div className="mt-3 flex items-center text-[10px] font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest gap-1 group-hover:translate-x-1 transition-transform" onClick={() => handleOpenEdit('atasan')}>
