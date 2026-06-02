@@ -33,13 +33,49 @@ export default function LaporanBulanan() {
   const [tglPengesahan, setTglPengesahan] = useState('');
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
 
-  // Sync default date when month/year changes
+  // Sync default date when month/year changes, avoiding weekends and holidays
   useEffect(() => {
-    const lastDay = new Date(activeYear, activeMonthIndex + 1, 0);
-    const y = lastDay.getFullYear();
-    const m = (lastDay.getMonth() + 1).toString().padStart(2, '0');
-    const d = lastDay.getDate().toString().padStart(2, '0');
-    setTglPengesahan(`${y}-${m}-${d}`);
+    const findValidDate = async () => {
+      let currentDay = new Date(activeYear, activeMonthIndex + 1, 0);
+      const yStr = activeYear.toString();
+      const mStr = (activeMonthIndex + 1).toString().padStart(2, '0');
+      const startStr = `${yStr}-${mStr}-01`;
+      const endStr = `${yStr}-${mStr}-31`;
+
+      // Ambil data kalender bulan ini untuk cek libur
+      const kalenderBulanIni = await db.kalender
+        .where('tanggal').between(startStr, endStr, true, true)
+        .toArray();
+      
+      const liburDates = kalenderBulanIni
+        .filter(k => !k.isDeleted && (k.status.toLowerCase().includes('libur') || k.status.toLowerCase().includes('cuti')))
+        .map(k => k.tanggal);
+
+      while (true) {
+        const isSunday = currentDay.getDay() === 0; // 0 is Sunday
+        const dStr = currentDay.getDate().toString().padStart(2, '0');
+        const dateStr = `${yStr}-${mStr}-${dStr}`;
+        
+        const isLibur = liburDates.includes(dateStr);
+        
+        if (!isSunday && !isLibur) {
+          setTglPengesahan(dateStr);
+          break;
+        }
+        
+        // Mundur 1 hari
+        currentDay.setDate(currentDay.getDate() - 1);
+        
+        // Safety check: jika mundur sampai bulan sebelumnya (semua hari libur)
+        if (currentDay.getMonth() !== activeMonthIndex) {
+          const lastDayFallback = new Date(activeYear, activeMonthIndex + 1, 0);
+          setTglPengesahan(`${yStr}-${mStr}-${lastDayFallback.getDate().toString().padStart(2, '0')}`);
+          break;
+        }
+      }
+    };
+    
+    findValidDate();
   }, [activeMonthIndex, activeYear]);
 
   const formattedTglPengesahan = tglPengesahan 
