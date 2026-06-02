@@ -365,10 +365,10 @@ export default function LaporanBulanan() {
         <table className="w-full border-collapse border border-black text-[11pt] mb-12 table-fixed print:w-full">
           <thead>
             <tr className="bg-gray-100 print:bg-transparent">
-              <th className="border border-black px-2 py-3 w-[8%] text-center font-bold">No.</th>
-              <th className="border border-black px-2 py-3 w-[25%] font-bold text-left">Kegiatan</th>
-              <th className="border border-black px-2 py-3 w-[47%] font-bold text-left">Pekerjaan</th>
-              <th className="border border-black px-2 py-3 w-[20%] font-bold text-center">Tanggal</th>
+              <th className="border border-black px-2 py-1.5 w-[8%] text-center font-bold">No.</th>
+              <th className="border border-black px-2 py-1.5 w-[25%] font-bold text-left">Kegiatan</th>
+              <th className="border border-black px-2 py-1.5 w-[47%] font-bold text-left">Pekerjaan</th>
+              <th className="border border-black px-2 py-1.5 w-[20%] font-bold text-center">Tanggal</th>
             </tr>
           </thead>
           <tbody>
@@ -377,16 +377,16 @@ export default function LaporanBulanan() {
                 group.items.map((item, itemIndex) => (
                   <tr key={item.id}>
                     {itemIndex === 0 && (
-                      <td rowSpan={group.items.length} className="border border-black px-2 py-3 text-center align-top">{groupIndex + 1}</td>
+                      <td rowSpan={group.items.length} className="border border-black px-2 py-1.5 text-center align-top">{groupIndex + 1}</td>
                     )}
-                    <td className="border border-black px-2 py-3 align-top break-words">
+                    <td className="border border-black px-2 py-1.5 align-top break-words">
                       {item.kegiatan}
                     </td>
-                    <td className="border border-black px-2 py-3 align-top break-words">
+                    <td className="border border-black px-2 py-1.5 align-top break-words">
                       {item.uraian}
                     </td>
                     {itemIndex === 0 && (
-                      <td rowSpan={group.items.length} className="border border-black px-2 py-3 text-center align-top break-words">
+                      <td rowSpan={group.items.length} className="border border-black px-2 py-1.5 text-center align-top break-words">
                         {group.formattedDate}
                       </td>
                     )}
