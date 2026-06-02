@@ -53,9 +53,10 @@ export default function LaporanBulanan() {
     const preHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head><meta charset='utf-8'><title>Laporan Kinerja</title>
     <style>
+      body { font-family: Arial, sans-serif; font-size: 11pt; }
       table { border-collapse: collapse; width: 100%; table-layout: fixed; }
       table, th, td { border: 1px solid black; }
-      th, td { padding: 6px; text-align: left; word-wrap: break-word; }
+      th, td { padding: 6px; text-align: left; word-wrap: break-word; font-size: 11pt; }
       th { background-color: transparent; font-weight: bold; }
       .text-center { text-align: center; }
       .font-bold { font-weight: bold; }
@@ -321,7 +322,7 @@ export default function LaporanBulanan() {
       </header>
 
       {/* A4 Paper Container for Printing */}
-      <main id="print-area" className="max-w-[210mm] mx-auto bg-white my-8 md:my-12 shadow-2xl p-4 sm:p-8 md:p-12 min-h-[297mm] text-black print-area print:max-w-none print:w-full print:m-0 print:p-0 print:shadow-none">
+      <main id="print-area" className="max-w-[210mm] mx-auto bg-white my-8 md:my-12 shadow-2xl p-4 sm:p-8 md:p-12 min-h-[297mm] text-black text-[11pt] print-area print:max-w-none print:w-full print:m-0 print:p-0 print:shadow-none">
         
         {/* Report Header / Kop Identitas */}
         <div className="text-center mb-8 border-b-2 border-black pb-6">
@@ -331,12 +332,12 @@ export default function LaporanBulanan() {
 
         {/* User Identity Info */}
         <div className="mb-8">
-          <table className="text-sm font-medium w-full max-w-2xl">
+          <table className="text-[11pt] font-medium w-full max-w-2xl">
             <tbody>
               <tr>
                 <td className="py-1.5 w-32 uppercase tracking-wide">Nama</td>
                 <td className="py-1.5 px-2">:</td>
-                <td className="py-1.5 font-bold text-base">{normalizeGelar(profil?.nama || '-')}</td>
+                <td className="py-1.5 font-bold text-[11pt]">{normalizeGelar(profil?.nama || '-')}</td>
               </tr>
               <tr>
                 <td className="py-1.5 uppercase tracking-wide">NIP</td>
@@ -362,7 +363,7 @@ export default function LaporanBulanan() {
           </table>
         </div>
 
-        <table className="w-full border-collapse border border-black text-sm mb-12 table-fixed print:w-full">
+        <table className="w-full border-collapse border border-black text-[11pt] mb-12 table-fixed print:w-full">
           <thead>
             <tr className="bg-gray-100 print:bg-transparent">
               <th className="border border-black px-2 py-3 w-[8%] text-center font-bold">No.</th>
