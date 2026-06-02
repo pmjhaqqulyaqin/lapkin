@@ -63,10 +63,10 @@ export default function SyncActionBadge() {
       // Tarik juga referensi data (kegiatan, tugas, kalender global)
       await useAppStore.getState().pullReferensiData();
 
-      // KUNCI FIX: Set lastSync ke Date.now() SETELAH semua operasi selesai,
-      // termasuk pullReferensiData yang menulis ke Dexie.
-      // Ini menjamin semua updatedAt dari data yang baru ditulis < finalTs.
-      const finalTs = Date.now();
+      // FIX clock-skew: gunakan Math.max agar lastSync mencakup KEDUA arah:
+      // - Server timestamp: menutupi record dari pullFromServer yang punya updatedAt server
+      // - Date.now(): menutupi record dari pullReferensiData yang punya updatedAt client
+      const finalTs = Math.max(result.serverTimestamp || 0, Date.now());
       localStorage.setItem('lkd_last_sync', String(finalTs));
       localStorage.setItem('lkd_last_sync_date', new Date().toISOString());
 

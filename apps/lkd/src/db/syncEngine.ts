@@ -50,6 +50,7 @@ export interface SyncResult {
   message: string;
   pushed: number;
   pulled: number;
+  serverTimestamp: number;
 }
 
 // =============================================
@@ -144,6 +145,7 @@ export async function fullSync(): Promise<SyncResult> {
     message: 'Sinkronisasi berhasil!',
     pushed: pushResult.count,
     pulled: pullResult.count,
+    serverTimestamp,
   };
 }
 
