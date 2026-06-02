@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
+import { db } from './db/database';
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -88,6 +89,16 @@ async function handlePeriodicReminder() {
 
   // Hanya kirim di jam 12-20, bukan hari Minggu
   if (hour < 12 || hour > 20 || day === 0) return;
+
+  // Cek libur nasional/cuti bersama di database kalender
+  const todayStr = now.toISOString().split('T')[0];
+  try {
+    const kalenderHariIni = await db.kalender.where('tanggal').equals(todayStr).toArray();
+    const isLibur = kalenderHariIni.some(k => !k.isDeleted && (k.status.toLowerCase().includes('libur') || k.status.toLowerCase().includes('cuti')));
+    if (isLibur) return;
+  } catch (err) {
+    console.error('[SW] Error checking holiday status:', err);
+  }
 
   // Throttle: max 1 notifikasi per hari (gunakan Cache API)
   const cache = await caches.open('lkh-notif-meta');

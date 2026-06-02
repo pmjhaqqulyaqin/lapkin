@@ -109,8 +109,11 @@ export function useLkhNotification() {
     const isHoliday = holidayDates.has(todayStr);
     const hasLkhToday = filledDates.has(todayStr);
 
+    // Jangan munculkan notifikasi apapun jika hari ini adalah hari libur atau Minggu
+    if (isSunday || isHoliday) return null;
+
     // 1. Reminder hari ini (setelah jam 12)
-    const needsTodayReminder = currentHour >= 12 && !isSunday && !isHoliday && !hasLkhToday;
+    const needsTodayReminder = currentHour >= 12 && !hasLkhToday;
 
     // 2. Hari terlewat
     const workingDays = getWorkingDaysBetween(new Date(thirtyDaysAgoStr), today);
