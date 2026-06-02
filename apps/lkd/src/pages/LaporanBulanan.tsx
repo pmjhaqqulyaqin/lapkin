@@ -132,10 +132,9 @@ export default function LaporanBulanan() {
           <td>${tempat}, ${formattedTglPengesahan}</td>
         </tr>
         <tr>
-          <td colspan="3">Kepala Sekolah / Madrasah</td>
+          <td colspan="3">Kepala Madrasah</td>
           <td>Guru/Pegawai</td>
         </tr>
-        <tr><td colspan="4"></td></tr>
         <tr><td colspan="4"></td></tr>
         <tr><td colspan="4"></td></tr>
         <tr>
@@ -405,19 +404,19 @@ export default function LaporanBulanan() {
         </table>
 
         {/* Signature Area */}
-        <div className="flex justify-between mt-12 page-break-inside-avoid">
+        <div className="flex justify-between mt-8 page-break-inside-avoid text-[11pt]">
           {/* Left Signature: Kepala Sekolah */}
           <div className="text-center flex flex-col items-center justify-between w-64">
             <div>
-              <p className="mb-2 text-transparent select-none">Spacer</p> {/* Invisible spacer to align vertically with date on the right */}
-              <p className="mb-2">Mengetahui,</p>
-              <p className="font-bold mb-4">Kepala Sekolah / Madrasah</p>
+              <p className="mb-1 text-transparent select-none">Spacer</p> {/* Invisible spacer to align vertically with date on the right */}
+              <p className="mb-1">Mengetahui,</p>
+              <p className="font-bold mb-1">Kepala Madrasah</p>
             </div>
-            <div className="h-20 w-full flex items-center justify-center">
+            <div className="h-16 w-full flex items-center justify-center">
               {/* Empty area for manual signature / future kepsek signature */}
             </div>
             <div className="w-full">
-              <p className="font-bold border-b border-black pb-1 inline-block">{smartUpperCase(profil?.namaKepsek || '-')}</p>
+              <p className="font-bold border-b border-black pb-0.5 inline-block">{smartUpperCase(profil?.namaKepsek || '-')}</p>
               <p className="mt-1">NIP. {profil?.nipKepsek || '-'}</p>
             </div>
           </div>
@@ -425,17 +424,17 @@ export default function LaporanBulanan() {
           {/* Right Signature: Pegawai */}
           <div className="text-center flex flex-col items-center justify-between w-64">
             <div>
-              <p className="mb-2">{tempat}, {formattedTglPengesahan}</p>
-              <p className="mb-2 text-transparent select-none">Spacer</p> {/* Vertical balancer */}
-              <p className="font-bold mb-4">Guru/Pegawai</p>
+              <p className="mb-1">{tempat}, {formattedTglPengesahan}</p>
+              <p className="mb-1 text-transparent select-none">Spacer</p> {/* Vertical balancer */}
+              <p className="font-bold mb-1">Guru/Pegawai</p>
             </div>
-            <div className="h-20 w-full flex items-center justify-center">
+            <div className="h-16 w-full flex items-center justify-center">
               {profil?.ttdUrl && profil.ttdUrl.startsWith('data:image') && (
-                <img src={profil.ttdUrl} alt="Tanda Tangan" className="h-16 object-contain mix-blend-multiply" />
+                <img src={profil.ttdUrl} alt="Tanda Tangan" className="h-14 object-contain mix-blend-multiply" />
               )}
             </div>
             <div className="w-full">
-              <p className="font-bold border-b border-black pb-1 inline-block">{smartUpperCase(profil?.nama || '-')}</p>
+              <p className="font-bold border-b border-black pb-0.5 inline-block">{smartUpperCase(profil?.nama || '-')}</p>
               <p className="mt-1">NIP. {profil?.nip || '-'}</p>
             </div>
           </div>
