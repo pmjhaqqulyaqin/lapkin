@@ -178,6 +178,27 @@ export function useLkhNotification() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [permissionState, todayStr, computeNotificationData]);
 
+  // --- Hapus notifikasi yang sudah tidak relevan (otomatis saat LKH diisi) ---
+  useEffect(() => {
+    if (permissionState !== 'granted') return;
+    if (!('serviceWorker' in navigator)) return;
+
+    const data = computeNotificationData();
+    const needsToday = data?.needsTodayReminder ?? false;
+    const hasMissed = (data?.missedDates.length ?? 0) > 0;
+
+    navigator.serviceWorker.ready.then(reg => {
+      reg.getNotifications().then(notifs => {
+        notifs.forEach(n => {
+          if (n.tag === 'lkh-today' && !needsToday) n.close();
+          if (n.tag === 'lkh-combined' && (!needsToday || !hasMissed)) n.close();
+          if (n.tag === 'lkh-missed' && !hasMissed) n.close();
+          if (n.tag === 'lkh-periodic-reminder' && !needsToday) n.close();
+        });
+      });
+    });
+  }, [computeNotificationData, permissionState]);
+
   // --- Register Periodic Background Sync ---
   useEffect(() => {
     if (permissionState !== 'granted') return;

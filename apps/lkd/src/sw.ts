@@ -96,8 +96,13 @@ async function handlePeriodicReminder() {
     const kalenderHariIni = await db.kalender.where('tanggal').equals(todayStr).toArray();
     const isLibur = kalenderHariIni.some(k => !k.isDeleted && (k.status.toLowerCase().includes('libur') || k.status.toLowerCase().includes('cuti')));
     if (isLibur) return;
+
+    // Cek apakah LKH hari ini sudah diisi
+    const lkhHariIni = await db.lkh.where('tanggal').equals(todayStr).toArray();
+    const sudahDiisi = lkhHariIni.some(l => !l.isDeleted);
+    if (sudahDiisi) return;
   } catch (err) {
-    console.error('[SW] Error checking holiday status:', err);
+    console.error('[SW] Error checking holiday or LKH status:', err);
   }
 
   // Throttle: max 1 notifikasi per hari (gunakan Cache API)
