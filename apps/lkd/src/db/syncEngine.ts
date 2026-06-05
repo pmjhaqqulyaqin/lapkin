@@ -166,6 +166,7 @@ async function pushToServer(token: string): Promise<{ serverTimestamp: number; c
   };
 
   const jadwal = await db.jadwal.toArray().then(arr => arr.filter(j => filterChanged(j.updatedAt)));
+  const jadwalPegawai = await db.jadwalPegawai.toArray().then(arr => arr.filter(j => filterChanged(j.updatedAt)));
   const tugasTambahan = await db.tugasTambahan.toArray().then(arr => arr.filter(t => filterChanged(t.updatedAt)));
   const lkh = await db.lkh.toArray().then(arr => arr.filter(l => filterChanged(l.updatedAt)));
   // Exclude global kalender entries (isGlobal=1) — these are admin-managed and should not be pushed
@@ -174,7 +175,7 @@ async function pushToServer(token: string): Promise<{ serverTimestamp: number; c
   // Only push profil if it changed (or first sync)
   const profilPayload = profil && filterChanged(profil.updatedAt) ? profil : undefined;
 
-  const totalItems = (profilPayload ? 1 : 0) + jadwal.length + tugasTambahan.length + lkh.length + kalender.length;
+  const totalItems = (profilPayload ? 1 : 0) + jadwal.length + jadwalPegawai.length + tugasTambahan.length + lkh.length + kalender.length;
 
   if (totalItems === 0) {
     // Return serverTimestamp as 0 — don't use client time to avoid clock skew
@@ -190,6 +191,7 @@ async function pushToServer(token: string): Promise<{ serverTimestamp: number; c
     body: JSON.stringify({
       profil: profilPayload,
       jadwal,
+      jadwalPegawai,
       tugasTambahan,
       lkh,
       kalender,
@@ -224,7 +226,7 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
   let totalMerged = 0;
 
   // Merge into Dexie using a transaction
-  await db.transaction('rw', [db.profil, db.jadwal, db.lkh, db.tugasTambahan, db.kalender], async () => {
+  await db.transaction('rw', [db.profil, db.jadwal, db.jadwalPegawai, db.lkh, db.tugasTambahan, db.kalender], async () => {
 
     // 1. Merge Profil
     if (serverData.profil) {
@@ -253,6 +255,34 @@ async function pullFromServer(token: string): Promise<{ serverTimestamp: number;
           mataPelajaran: item.mataPelajaran,
           kelas: item.kelas,
           ruangan: item.ruangan,
+          warna: item.warna,
+          updatedAt: item.updatedAt,
+          isDeleted: false,
+        });
+      }
+      totalMerged++;
+    }
+
+    // 2b. Merge Jadwal Pegawai
+    for (const item of serverData.jadwalPegawai || []) {
+      const localId = item.clientId;
+      const local = localId ? await db.jadwalPegawai.get(localId) : null;
+
+      if (item.isDeleted) {
+        if (local) {
+          await db.jadwalPegawai.update(localId, { isDeleted: true, updatedAt: item.updatedAt });
+        }
+      } else if (!local || (item.updatedAt || 0) >= (local.updatedAt || 0)) {
+        await db.jadwalPegawai.put({
+          id: localId,
+          hari: item.hari,
+          jamMulai: item.jamMulai,
+          jamSelesai: item.jamSelesai,
+          uraianKegiatan: item.uraianKegiatan,
+          tipe: item.tipe,
+          unitKerja: item.unitKerja,
+          lokasi: item.lokasi,
+          namaShift: item.namaShift,
           warna: item.warna,
           updatedAt: item.updatedAt,
           isDeleted: false,

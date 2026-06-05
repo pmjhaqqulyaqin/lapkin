@@ -8,6 +8,13 @@ import BottomSheetSelect from '../components/BottomSheetSelect';
 
 const HARI_LIST = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as const;
 
+// Helper: detect if user is guru based on jabatan
+const TIPE_PEGAWAI_STYLE: Record<string, { badge: string; checkColor: string; label: string }> = {
+  rutin: { badge: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300', checkColor: 'text-teal-600', label: 'Rutin' },
+  piket: { badge: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300', checkColor: 'text-amber-500', label: 'Piket' },
+  shift: { badge: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300', checkColor: 'text-indigo-600', label: 'Shift' },
+};
+
 export default function InputLkh() {
   const location = useLocation();
   const { showToast, kegiatanManual, setKegiatanManual } = useAppStore();
@@ -76,9 +83,21 @@ export default function InputLkh() {
 
 
 
-  // Fetch jadwal berdasarkan hari
+  // Detect role from profil
+  const profil = useLiveQuery(() => db.profil.get(1));
+  const isGuru = profil?.jabatan?.toLowerCase().includes('guru');
+
+  // Fetch jadwal mengajar (guru) berdasarkan hari
   const jadwalHariIni = useLiveQuery(
     () => db.jadwal.where('hari').equals(hariIni).toArray().then(arr => arr.filter(j => !j.isDeleted)),
+    [hariIni]
+  );
+
+  // Fetch jadwal pegawai berdasarkan hari
+  const jadwalPegawaiHariIni = useLiveQuery(
+    () => db.jadwalPegawai.where('hari').equals(hariIni).toArray().then(arr => 
+      arr.filter(j => !j.isDeleted).sort((a, b) => a.jamMulai.localeCompare(b.jamMulai))
+    ),
     [hariIni]
   );
 
@@ -143,6 +162,11 @@ export default function InputLkh() {
     jadwalHariIni.forEach(j => {
       if (j.id) initialChecked[`jadwal-${j.id}`] = false;
     });
+
+    // Jadwal Pegawai
+    jadwalPegawaiHariIni?.forEach(jp => {
+      if (jp.id) initialChecked[`jadwal-pegawai-${jp.id}`] = false;
+    });
     
     tugasTemplates.forEach(t => {
       initialChecked[t.uniqueId] = false;
@@ -154,7 +178,7 @@ export default function InputLkh() {
     
     setCheckedItems(initialChecked);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jadwalHariIni, tugasHariIni, kalenderHariIni, existingLkhForDate]);
+  }, [jadwalHariIni, jadwalPegawaiHariIni, tugasHariIni, kalenderHariIni, existingLkhForDate]);
 
   const toggleCheck = (key: string) => {
     setCheckedItems(prev => ({ ...prev, [key]: !prev[key] }));
@@ -170,11 +194,10 @@ export default function InputLkh() {
     let savedCount = 0;
     let skippedCount = 0;
 
-    // 1. Simpan Jadwal Otomatis yang dicentang
+    // 1. Simpan Jadwal Otomatis yang dicentang (Guru: jadwal mengajar)
     if (jadwalHariIni) {
       const jadwalToSave = jadwalHariIni.filter(j => j.id && checkedItems[`jadwal-${j.id}`]);
       for (const j of jadwalToSave) {
-        // Cek duplikasi: apakah sudah ada LKH dengan sumberId & tipeSumber yang sama
         const isDuplicate = existingLkh.some(
           lkh => lkh.tipeSumber === 'jadwal' && lkh.sumberId === j.id && !lkh.isDeleted
         );
@@ -186,6 +209,43 @@ export default function InputLkh() {
           uraian: `Melaksanakan KBM ${j.mataPelajaran} di Kelas ${j.kelas} pada jam ${j.jamMulai} - ${j.jamSelesai}.`,
           keteranganOutput: 'Jurnal Mengajar',
           sumberId: j.id,
+          tipeSumber: 'jadwal',
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        });
+        savedCount++;
+      }
+    }
+
+    // 1b. Simpan Jadwal Pegawai yang dicentang
+    if (jadwalPegawaiHariIni) {
+      const pegawaiToSave = jadwalPegawaiHariIni.filter(jp => jp.id && checkedItems[`jadwal-pegawai-${jp.id}`]);
+      for (const jp of pegawaiToSave) {
+        const isDuplicate = existingLkh.some(
+          lkh => lkh.tipeSumber === 'jadwal' && lkh.sumberId === jp.id && !lkh.isDeleted
+        );
+        if (isDuplicate) { skippedCount++; continue; }
+
+        let kegiatan = jp.uraianKegiatan;
+        let uraian = `Melaksanakan ${jp.uraianKegiatan} di ${jp.unitKerja || 'kantor'} pada jam ${jp.jamMulai} - ${jp.jamSelesai}.`;
+        let output = 'Dokumentasi/Laporan';
+
+        if (jp.tipe === 'piket') {
+          kegiatan = `Piket - ${jp.uraianKegiatan}`;
+          uraian = `Melaksanakan tugas piket ${jp.uraianKegiatan} jam ${jp.jamMulai} - ${jp.jamSelesai}.`;
+          output = 'Laporan Piket';
+        } else if (jp.tipe === 'shift') {
+          kegiatan = jp.namaShift || jp.uraianKegiatan;
+          uraian = `Melaksanakan tugas ${jp.namaShift || 'shift'} (${jp.uraianKegiatan}) jam ${jp.jamMulai} - ${jp.jamSelesai}.`;
+          output = 'Laporan Shift';
+        }
+
+        await db.lkh.add({
+          tanggal: tanggal,
+          kegiatan,
+          uraian,
+          keteranganOutput: output,
+          sumberId: jp.id,
           tipeSumber: 'jadwal',
           createdAt: Date.now(),
           updatedAt: Date.now()
@@ -303,8 +363,9 @@ export default function InputLkh() {
   // Format header display
   const displayDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' });
 
-  // Count total auto items
-  const totalAutoItems = (jadwalHariIni?.length || 0) + tugasTemplates.length + kegiatanKalenderEntries.length;
+  // Count total auto items (guru uses jadwal, pegawai uses jadwalPegawai)
+  const jadwalCount = isGuru ? (jadwalHariIni?.length || 0) : (jadwalPegawaiHariIni?.length || 0);
+  const totalAutoItems = jadwalCount + tugasTemplates.length + kegiatanKalenderEntries.length;
 
   return (
     <>
@@ -457,8 +518,8 @@ export default function InputLkh() {
               <p className="text-sm text-slate-500 italic">Tidak ada jadwal, tugas, atau kegiatan tersimpan untuk hari {hariIni}.</p>
             ) : (
               <>
-                {/* Jadwal Mengajar */}
-                {jadwalHariIni?.map((j) => {
+                {/* Jadwal Mengajar (Guru) */}
+                {isGuru && jadwalHariIni?.map((j) => {
                   const isSaved = existingLkhForDate?.some(l => l.tipeSumber === 'jadwal' && l.sumberId === j.id);
                   return (
                   <label key={`jadwal-${j.id}`} className={`flex items-start gap-3 p-3 rounded-xl transition-colors border ${isSaved ? 'opacity-60 bg-slate-50 dark:bg-slate-800/30 border-slate-100 dark:border-slate-800 cursor-default' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer border-transparent hover:border-slate-100 dark:hover:border-slate-800'}`}>
@@ -478,6 +539,33 @@ export default function InputLkh() {
                     </div>
                   </label>
                 )})}
+
+                {/* Jadwal Pegawai */}
+                {!isGuru && jadwalPegawaiHariIni?.map((jp) => {
+                  const isSaved = existingLkhForDate?.some(l => l.tipeSumber === 'jadwal' && l.sumberId === jp.id);
+                  const tipeStyle = TIPE_PEGAWAI_STYLE[jp.tipe] || TIPE_PEGAWAI_STYLE.rutin;
+                  return (
+                  <label key={`jadwal-pegawai-${jp.id}`} className={`flex items-start gap-3 p-3 rounded-xl transition-colors border ${isSaved ? 'opacity-60 bg-slate-50 dark:bg-slate-800/30 border-slate-100 dark:border-slate-800 cursor-default' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer border-transparent hover:border-slate-100 dark:hover:border-slate-800'}`}>
+                    <input 
+                      type="checkbox" 
+                      disabled={isSaved}
+                      checked={!!(jp.id && checkedItems[`jadwal-pegawai-${jp.id}`])} 
+                      onChange={() => toggleCheck(`jadwal-pegawai-${jp.id}`)}
+                      className={`mt-1 w-5 h-5 rounded ${tipeStyle.checkColor} border-slate-300 disabled:opacity-50`}
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h3 className="font-semibold text-sm text-slate-800 dark:text-slate-200">
+                          {jp.tipe === 'piket' ? `Piket - ${jp.uraianKegiatan}` : jp.tipe === 'shift' ? (jp.namaShift || jp.uraianKegiatan) : jp.uraianKegiatan}
+                        </h3>
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${tipeStyle.badge}`}>{tipeStyle.label}</span>
+                        {isSaved && <span className="bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Tersimpan</span>}
+                      </div>
+                      <p className="text-xs text-slate-500">{jp.jamMulai} - {jp.jamSelesai}{jp.unitKerja ? ` • ${jp.unitKerja}` : ''}</p>
+                    </div>
+                  </label>
+                )})}
+
 
                 {/* Tugas Tambahan */}
                 {tugasTemplates?.map((t) => {

@@ -69,6 +69,21 @@ export interface KalenderAkademik {
   isDeleted?: boolean; // Soft delete for sync
 }
 
+export interface JadwalPegawai {
+  id?: number;
+  hari: 'Senin' | 'Selasa' | 'Rabu' | 'Kamis' | 'Jumat' | 'Sabtu';
+  jamMulai: string;        // e.g., "07:00"
+  jamSelesai: string;      // e.g., "15:30"
+  uraianKegiatan: string;  // Deskripsi kegiatan
+  tipe: 'rutin' | 'piket' | 'shift'; // Jenis jadwal
+  unitKerja?: string;      // Dari dropdown managed list
+  lokasi?: string;         // Opsional
+  namaShift?: string;      // Khusus tipe shift: "Shift Pagi", "Shift Siang"
+  warna?: string;
+  updatedAt?: number;      // Epoch ms — for sync tracking
+  isDeleted?: boolean;     // Soft delete for sync
+}
+
 // --- Database Setup ---
 const db = new Dexie('LaporanKinerjaDigitalDB') as Dexie & {
   profil: EntityTable<Profil, 'id'>;
@@ -76,6 +91,7 @@ const db = new Dexie('LaporanKinerjaDigitalDB') as Dexie & {
   tugasTambahan: EntityTable<TugasTambahan, 'id'>;
   lkh: EntityTable<LaporanHarian, 'id'>;
   kalender: EntityTable<KalenderAkademik, 'id'>;
+  jadwalPegawai: EntityTable<JadwalPegawai, 'id'>;
 };
 
 // Schema declaration
@@ -122,6 +138,11 @@ db.version(3).stores({
 // Version 4: Add isGlobal index to kalender
 db.version(4).stores({
   kalender: '++id, tanggal, updatedAt, isGlobal',
+});
+
+// Version 5: Add jadwalPegawai table for non-teaching staff schedules
+db.version(5).stores({
+  jadwalPegawai: '++id, hari, tipe, updatedAt',
 });
 
 export { db };

@@ -21,6 +21,11 @@ interface AppState {
   kategoriTugas: string[];
   statusKalender: string[];
   
+  // Pegawai Lists
+  unitKerjaList: string[];
+  namaShiftList: string[];
+  jamKerjaTetap: { mulai: string; selesai: string };
+  
   // Actions
   login: () => void;
   logout: () => void;
@@ -33,6 +38,9 @@ interface AppState {
   setKegiatanManual: (list: string[]) => void;
   setKategoriTugas: (list: string[]) => void;
   setStatusKalender: (list: string[]) => void;
+  setUnitKerjaList: (list: string[]) => void;
+  setNamaShiftList: (list: string[]) => void;
+  setJamKerjaTetap: (jam: { mulai: string; selesai: string }) => void;
   pullReferensiData: () => Promise<{kegiatan: number, tugas: number, kalender: number, jadwalKalender: number} | undefined>;
 }
 
@@ -49,6 +57,10 @@ export const useAppStore = create<AppState>((set) => ({
   kegiatanManual: JSON.parse(localStorage.getItem('lkd_kegiatan_manual') || '["Rapat Sekolah", "Upacara Bendera", "Kegiatan IMTAQ", "Penyusunan Bahan Ajar", "Kegiatan Khusus", "Tugas Tambahan Lainnya..."]'),
   kategoriTugas: JSON.parse(localStorage.getItem('lkd_kategori_tugas') || '["Administrasi Kurikulum", "Wali Kelas", "Pembina Ekstrakurikuler", "Pengelola Perpustakaan", "Lainnya"]'),
   statusKalender: JSON.parse(localStorage.getItem('lkd_status_kalender') || '["Libur Nasional", "Kegiatan Khusus", "Cuti Bersama"]'),
+
+  unitKerjaList: JSON.parse(localStorage.getItem('lkd_unit_kerja') || '["Tata Usaha", "Perpustakaan", "Keamanan", "Kebersihan", "Operator", "Lainnya"]'),
+  namaShiftList: JSON.parse(localStorage.getItem('lkd_nama_shift') || '["Shift Pagi", "Shift Siang", "Piket Harian"]'),
+  jamKerjaTetap: JSON.parse(localStorage.getItem('lkd_jam_kerja_tetap') || '{"mulai":"07:00","selesai":"15:30"}'),
 
   login: () => {
     localStorage.setItem('lkd_logged_in', 'true');
@@ -154,6 +166,18 @@ export const useAppStore = create<AppState>((set) => ({
         }).catch(err => console.warn('Gagal sync opsi kalender ke server:', err));
       }
     }
+  },
+  setUnitKerjaList: (list) => {
+    localStorage.setItem('lkd_unit_kerja', JSON.stringify(list));
+    set({ unitKerjaList: list });
+  },
+  setNamaShiftList: (list) => {
+    localStorage.setItem('lkd_nama_shift', JSON.stringify(list));
+    set({ namaShiftList: list });
+  },
+  setJamKerjaTetap: (jam) => {
+    localStorage.setItem('lkd_jam_kerja_tetap', JSON.stringify(jam));
+    set({ jamKerjaTetap: jam });
   },
   // Sync dark mode class on store creation (belt-and-suspenders with index.html script)
   ...((() => {

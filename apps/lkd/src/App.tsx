@@ -5,7 +5,7 @@ import EditorAktivitas from './pages/EditorAktivitas';
 // Placeholder Pages
 import Dashboard from './pages/Dashboard';
 import InputLkh from './pages/InputLkh';
-import Jadwal from './pages/JadwalMengajar';
+import Jadwal from './pages/JadwalRouter';
 import Profil from './pages/Profil';
 import LaporanBulanan from './pages/LaporanBulanan';
 import RiwayatLkh from './pages/RiwayatLkh';
