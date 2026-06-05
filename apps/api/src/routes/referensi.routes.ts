@@ -4,13 +4,17 @@ import {
   getAllReferensi, 
   addReferensi, 
   updateReferensi, 
-  deleteReferensi 
+  deleteReferensi,
+  suggestReferensi 
 } from '../controllers/referensi.controller.js';
 
 const router = Router();
 
 // Endpoint Publik/Semua User (tanpa perlu login)
 router.get('/', getAllReferensi);
+
+// Endpoint untuk semua user terautentikasi (suggest opsi baru)
+router.post('/suggest', authenticate, suggestReferensi);
 
 // Endpoint Khusus Admin
 router.post('/', authenticate, requireAdmin, addReferensi);

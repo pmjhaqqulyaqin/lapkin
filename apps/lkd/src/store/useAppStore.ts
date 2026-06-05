@@ -84,16 +84,76 @@ export const useAppStore = create<AppState>((set) => ({
   setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
   setBantuanOpen: (isOpen) => set({ isBantuanOpen: isOpen }),
   setKegiatanManual: (list) => {
+    // Detect new items that weren't in the previous list
+    const prevList: string[] = JSON.parse(localStorage.getItem('lkd_kegiatan_manual') || '[]');
+    const newItems = list.filter(item => !prevList.includes(item));
+
     localStorage.setItem('lkd_kegiatan_manual', JSON.stringify(list));
     set({ kegiatanManual: list });
+
+    // Push new items to server so other users can access them
+    if (newItems.length > 0) {
+      const token = localStorage.getItem('lkd_sync_token');
+      const API_BASE = import.meta.env.VITE_API_URL || '';
+      if (token && navigator.onLine) {
+        fetch(`${API_BASE}/api/referensi/suggest`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ items: newItems, jenis: 'kegiatan' }),
+        }).catch(err => console.warn('Gagal sync opsi kegiatan ke server:', err));
+      }
+    }
   },
   setKategoriTugas: (list) => {
+    // Detect new items that weren't in the previous list
+    const prevList: string[] = JSON.parse(localStorage.getItem('lkd_kategori_tugas') || '[]');
+    const newItems = list.filter(item => !prevList.includes(item));
+
     localStorage.setItem('lkd_kategori_tugas', JSON.stringify(list));
     set({ kategoriTugas: list });
+
+    // Push new items to server so other users can access them
+    if (newItems.length > 0) {
+      const token = localStorage.getItem('lkd_sync_token');
+      const API_BASE = import.meta.env.VITE_API_URL || '';
+      if (token && navigator.onLine) {
+        fetch(`${API_BASE}/api/referensi/suggest`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ items: newItems, jenis: 'tugas' }),
+        }).catch(err => console.warn('Gagal sync opsi tugas ke server:', err));
+      }
+    }
   },
   setStatusKalender: (list) => {
+    // Detect new items that weren't in the previous list
+    const prevList: string[] = JSON.parse(localStorage.getItem('lkd_status_kalender') || '[]');
+    const newItems = list.filter(item => !prevList.includes(item));
+
     localStorage.setItem('lkd_status_kalender', JSON.stringify(list));
     set({ statusKalender: list });
+
+    // Push new items to server so other users can access them
+    if (newItems.length > 0) {
+      const token = localStorage.getItem('lkd_sync_token');
+      const API_BASE = import.meta.env.VITE_API_URL || '';
+      if (token && navigator.onLine) {
+        fetch(`${API_BASE}/api/referensi/suggest`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ items: newItems, jenis: 'kalender' }),
+        }).catch(err => console.warn('Gagal sync opsi kalender ke server:', err));
+      }
+    }
   },
   // Sync dark mode class on store creation (belt-and-suspenders with index.html script)
   ...((() => {

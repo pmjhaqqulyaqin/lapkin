@@ -101,6 +101,49 @@ export const updateReferensi = async (req: Request, res: Response) => {
   }
 };
 
+// POST /api/referensi/suggest
+// Menambahkan opsi kegiatan baru oleh user biasa (semua user terautentikasi)
+// Item baru akan tersedia untuk semua user saat mereka pull referensi
+export const suggestReferensi = async (req: Request, res: Response) => {
+  try {
+    const { items, jenis } = req.body;
+    
+    if (!jenis || !['kegiatan', 'tugas', 'kalender'].includes(jenis)) {
+      return res.status(400).json({ success: false, message: 'Jenis referensi tidak valid' });
+    }
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ success: false, message: 'Items harus berupa array dan tidak boleh kosong' });
+    }
+
+    let addedCount = 0;
+    for (const nilai of items) {
+      if (typeof nilai !== 'string' || !nilai.trim()) continue;
+      try {
+        await query(
+          'INSERT INTO master_referensi (nilai, jenis) VALUES ($1, $2) ON CONFLICT ON CONSTRAINT uq_referensi_nilai_jenis DO NOTHING',
+          [nilai.trim(), jenis]
+        );
+        addedCount++;
+      } catch (err: any) {
+        // Skip duplicates silently
+        if (err.code !== '23505') {
+          console.error('Error inserting referensi item:', err);
+        }
+      }
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `${addedCount} opsi berhasil disinkronkan`,
+      addedCount
+    });
+  } catch (error) {
+    console.error('Error suggesting referensi:', error);
+    res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
+  }
+};
+
 // DELETE /api/referensi/:id
 // Menghapus referensi (Hanya Admin)
 export const deleteReferensi = async (req: Request, res: Response) => {
