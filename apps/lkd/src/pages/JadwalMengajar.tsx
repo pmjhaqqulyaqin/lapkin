@@ -9,9 +9,15 @@ import BottomSheetSelect from '../components/BottomSheetSelect';
 const HARI_LIST = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] as const;
 type Hari = typeof HARI_LIST[number];
 
+const getHariIni = (): Hari => {
+  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const today = days[new Date().getDay()];
+  return HARI_LIST.includes(today as any) ? (today as Hari) : 'Senin';
+};
+
 export default function JadwalMengajar() {
   const showToast = useAppStore(state => state.showToast);
-  const [activeHari, setActiveHari] = useState<Hari>('Senin');
+  const [activeHari, setActiveHari] = useState<Hari>(getHariIni());
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -118,6 +124,33 @@ export default function JadwalMengajar() {
 
       <main className="pt-16 px-4 md:px-6 max-w-3xl mx-auto space-y-4">
         
+        {/* Summary Card */}
+        <div className="bg-gradient-to-br from-teal-900 to-teal-950 rounded-2xl p-4 text-white shadow-xl shadow-teal-950/20 relative overflow-hidden">
+          <div className="relative z-10">
+            <div className="flex items-center gap-1.5 text-teal-200/80 mb-2.5">
+              <span className="material-symbols-outlined text-[16px]">bar_chart</span>
+              <span className="font-semibold text-[10px] uppercase tracking-widest">Beban Mengajar</span>
+            </div>
+            <div className="mb-0.5">
+              <span className="text-2xl font-manrope font-black">
+                {jadwalHariIni ? jadwalHariIni.length * 2 : 0} 
+              </span>
+              <span className="text-[11px] text-teal-200 font-medium ml-1.5 uppercase tracking-widest">Jam ({activeHari === getHariIni() ? 'Hari Ini' : activeHari})</span>
+            </div>
+            <p className="text-[11px] text-teal-100/80 mb-4">Mengajar di hari {activeHari}.</p>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 flex justify-between items-center">
+              <span className="text-[11px] font-semibold">Tugas Tambahan</span>
+              <span className="bg-teal-400 text-teal-950 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">Wakakur</span>
+            </div>
+          </div>
+          
+          {/* Decoration */}
+          <div className="absolute -bottom-10 -right-10 text-white/5">
+            <span className="material-symbols-outlined text-[150px]">calendar_month</span>
+          </div>
+        </div>
+
         {/* Left Section: Timeline & Schedule Grid */}
         <section className="flex-1">
           {/* Day Filter Chips */}
@@ -203,32 +236,6 @@ export default function JadwalMengajar() {
 
         {/* Right Section: Summary & Agenda */}
         <aside className="w-full md:w-80 space-y-6">
-          {/* Summary Card */}
-          <div className="bg-gradient-to-br from-teal-900 to-teal-950 rounded-2xl p-4 text-white shadow-xl shadow-teal-950/20 relative overflow-hidden">
-            <div className="relative z-10">
-              <div className="flex items-center gap-1.5 text-teal-200/80 mb-2.5">
-                <span className="material-symbols-outlined text-[16px]">bar_chart</span>
-                <span className="font-semibold text-[10px] uppercase tracking-widest">Beban Mengajar</span>
-              </div>
-              <div className="mb-0.5">
-                <span className="text-2xl font-manrope font-black">
-                  {jadwalHariIni ? jadwalHariIni.length * 2 : 0} 
-                </span>
-                <span className="text-[11px] text-teal-200 font-medium ml-1.5 uppercase tracking-widest">Jam (Hari Ini)</span>
-              </div>
-              <p className="text-[11px] text-teal-100/80 mb-4">Mengajar di hari {activeHari}.</p>
-              
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 flex justify-between items-center">
-                <span className="text-[11px] font-semibold">Tugas Tambahan</span>
-                <span className="bg-teal-400 text-teal-950 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">Wakakur</span>
-              </div>
-            </div>
-            
-            {/* Decoration */}
-            <div className="absolute -bottom-10 -right-10 text-white/5">
-              <span className="material-symbols-outlined text-[150px]">calendar_month</span>
-            </div>
-          </div>
 
           {/* Mini Calendar / Agenda */}
           <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-4">
