@@ -5,15 +5,15 @@ export default function BottomNav({ isEditorPage }: { isEditorPage?: boolean }) 
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
     isActive
-      ? 'flex flex-col items-center justify-center text-teal-600 dark:text-teal-400 px-2 py-1 duration-300 ease-out no-print scale-105'
-      : 'flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-2 py-1 duration-300 ease-out hover:text-teal-600 dark:hover:text-teal-400 no-print hover:scale-105';
+      ? 'flex flex-col items-center justify-center text-accent-600 dark:text-accent-400 px-2 py-1 duration-300 ease-out no-print scale-105'
+      : 'flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-2 py-1 duration-300 ease-out hover:text-accent-600 dark:hover:text-accent-400 no-print hover:scale-105';
 
   return (
     <nav className={containerClass}>
       <NavLink to="/dashboard" className={navItemClass}>
         {({ isActive }) => (
           <>
-            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-teal-100 dark:bg-teal-900/40' : ''}`}>
+            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-accent-100 dark:bg-accent-900/40' : ''}`}>
               <span className="material-symbols-outlined text-[22px]" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>
                 home
               </span>
@@ -25,7 +25,7 @@ export default function BottomNav({ isEditorPage }: { isEditorPage?: boolean }) 
       <NavLink to="/jadwal" className={navItemClass}>
         {({ isActive }) => (
           <>
-            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-teal-100 dark:bg-teal-900/40' : ''}`}>
+            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-accent-100 dark:bg-accent-900/40' : ''}`}>
               <span className="material-symbols-outlined text-[22px]" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>
                 calendar_month
               </span>
@@ -37,7 +37,7 @@ export default function BottomNav({ isEditorPage }: { isEditorPage?: boolean }) 
       
       {/* Center FAB Style Button */}
       <div className="relative -top-5">
-        <NavLink to="/lkh/input" className={({ isActive }) => `flex flex-col items-center justify-center w-14 h-14 rounded-full shadow-lg shadow-teal-500/30 transition-transform active:scale-95 text-white ${isActive ? 'bg-teal-700' : 'bg-teal-500 hover:bg-teal-600'}`}>
+        <NavLink to="/lkh/input" className={({ isActive }) => `flex flex-col items-center justify-center w-14 h-14 rounded-full shadow-lg shadow-accent-500/30 transition-transform active:scale-95 text-white ${isActive ? 'bg-accent-700' : 'bg-accent-fab hover:bg-accent-fab-hover'}`}>
           <span className="material-symbols-outlined text-[28px]">
             add
           </span>
@@ -47,7 +47,7 @@ export default function BottomNav({ isEditorPage }: { isEditorPage?: boolean }) 
       <NavLink to="/lkh/riwayat" className={navItemClass}>
         {({ isActive }) => (
           <>
-            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-teal-100 dark:bg-teal-900/40' : ''}`}>
+            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-accent-100 dark:bg-accent-900/40' : ''}`}>
               <span className="material-symbols-outlined text-[22px]" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>
                 history
               </span>
@@ -59,7 +59,7 @@ export default function BottomNav({ isEditorPage }: { isEditorPage?: boolean }) 
       <NavLink to="/profil" className={navItemClass}>
         {({ isActive }) => (
           <>
-            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-teal-100 dark:bg-teal-900/40' : ''}`}>
+            <div className={`w-12 h-8 rounded-full flex items-center justify-center mb-0.5 transition-colors ${isActive ? 'bg-accent-100 dark:bg-accent-900/40' : ''}`}>
               <span className="material-symbols-outlined text-[22px]" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>
                 person
               </span>

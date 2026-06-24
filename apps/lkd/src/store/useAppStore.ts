@@ -7,9 +7,12 @@ interface Toast {
   visible: boolean;
 }
 
+export type ColorTheme = 'teal' | 'indigo' | 'rose';
+
 interface AppState {
   isLoggedIn: boolean;
   isDarkMode: boolean;
+  colorTheme: ColorTheme;
   activeMonthIndex: number; // 0-11
   activeYear: number;
   isSidebarOpen: boolean;
@@ -30,6 +33,7 @@ interface AppState {
   login: () => void;
   logout: () => void;
   toggleDarkMode: () => void;
+  setColorTheme: (theme: ColorTheme) => void;
   setActiveMonthYear: (month: number, year: number) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
@@ -48,6 +52,7 @@ export const useAppStore = create<AppState>((set) => ({
   // Initialize from localStorage if available
   isLoggedIn: localStorage.getItem('lkd_logged_in') === 'true',
   isDarkMode: localStorage.getItem('lkd_dark_mode') === 'true',
+  colorTheme: (localStorage.getItem('lkd_color_theme') as ColorTheme) || 'teal',
   activeMonthIndex: new Date().getMonth(),
   activeYear: new Date().getFullYear(),
   isSidebarOpen: false,
@@ -82,6 +87,16 @@ export const useAppStore = create<AppState>((set) => ({
     }
     return { isDarkMode: newVal };
   }),
+
+  setColorTheme: (theme: ColorTheme) => {
+    localStorage.setItem('lkd_color_theme', theme);
+    document.documentElement.dataset.theme = theme;
+    // Update meta theme-color for mobile browser chrome
+    const meta = document.querySelector('meta[name="theme-color"]');
+    const metaColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-meta').trim();
+    if (meta && metaColor) meta.setAttribute('content', metaColor);
+    set({ colorTheme: theme });
+  },
 
   setActiveMonthYear: (month, year) => set({ activeMonthIndex: month, activeYear: year }),
 
@@ -179,7 +194,7 @@ export const useAppStore = create<AppState>((set) => ({
     localStorage.setItem('lkd_jam_kerja_tetap', JSON.stringify(jam));
     set({ jamKerjaTetap: jam });
   },
-  // Sync dark mode class on store creation (belt-and-suspenders with index.html script)
+  // Sync dark mode class + color theme on store creation
   ...((() => {
     const isDark = localStorage.getItem('lkd_dark_mode') === 'true';
     if (isDark) {
@@ -187,6 +202,9 @@ export const useAppStore = create<AppState>((set) => ({
     } else {
       document.documentElement.classList.remove('dark');
     }
+    // Apply color theme
+    const savedTheme = (localStorage.getItem('lkd_color_theme') as ColorTheme) || 'teal';
+    document.documentElement.dataset.theme = savedTheme;
     return {};
   })()),
 

@@ -2,7 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo-man2.svg" />
+    <link rel="icon" type="image/png" href="/logo-man2.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#0f766e" />
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -87,6 +87,13 @@
         if (localStorage.getItem('lkd_dark_mode') === 'true') {
           document.documentElement.classList.add('dark');
         }
+        // Apply color theme sebelum first paint
+        var theme = localStorage.getItem('lkd_color_theme') || 'teal';
+        document.documentElement.dataset.theme = theme;
+        // Update meta theme-color berdasarkan tema
+        var themeColors = { teal: '#0f766e', indigo: '#4f46e5', rose: '#be185d' };
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta && themeColors[theme]) meta.setAttribute('content', themeColors[theme]);
       })();
     </script>
 

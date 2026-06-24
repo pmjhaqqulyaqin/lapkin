@@ -13,7 +13,7 @@ import { normalizeGelar } from '../lib/normalizeGelar';
 export default function Profil() {
   const navigate = useNavigate();
   const logout = useAppStore((state) => state.logout);
-  const { isDarkMode, toggleDarkMode, showToast } = useAppStore();
+  const { isDarkMode, toggleDarkMode, colorTheme, setColorTheme, showToast } = useAppStore();
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -301,7 +301,7 @@ export default function Profil() {
   return (
     <>
       {/* TopAppBar */}
-      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md text-cyan-950 dark:text-cyan-50 font-manrope text-[17px] font-bold tracking-tight docked full-width top-0 sticky z-50 no-border shadow-sm shadow-cyan-900/5">
+      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md text-accent-950 dark:text-accent-200 font-manrope text-[17px] font-bold tracking-tight docked full-width top-0 sticky z-50 no-border shadow-sm shadow-accent-900/20">
         <div className="flex justify-start items-center w-full px-4 py-3 mx-auto max-w-3xl">
           <h1>Profil & Pengaturan</h1>
         </div>
@@ -312,7 +312,7 @@ export default function Profil() {
         
         {/* Profile Card Header (Bento Style) */}
         {profil && (
-          <section className="bg-cyan-950 dark:bg-slate-900 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left shadow-lg shadow-cyan-950/20 relative overflow-hidden mb-4">
+          <section className="bg-primary-gradient rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left shadow-lg shadow-accent-900/20 relative overflow-hidden mb-4">
             <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-3 border-white/20 relative z-10 shrink-0">
               <img 
                 src={profil.avatarUrl || `https://ui-avatars.com/api/?name=${normalizeGelar(profil?.nama || 'Guru')}&background=0D9488&color=fff`} 
@@ -326,7 +326,7 @@ export default function Profil() {
                   <h2 className="font-manrope font-extrabold text-xl md:text-2xl tracking-tight mb-0.5">
                     {normalizeGelar(profil.nama)}
                   </h2>
-                  <p className="text-cyan-100 font-medium text-[13px]">NIP. {profil.nip}</p>
+                  <p className="text-accent-200 font-medium text-[13px]">NIP. {profil.nip}</p>
                 </div>
                 <div className="flex flex-row gap-2 w-full md:w-auto">
                   <button onClick={() => handleOpenEdit('profil')} className="bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm px-3 py-1.5 rounded-lg text-[12px] font-bold flex items-center justify-center gap-1.5 flex-1">
@@ -342,11 +342,11 @@ export default function Profil() {
               </div>
               
               <div className="mt-3 flex flex-wrap gap-1.5 justify-center md:justify-start">
-                <span className="bg-cyan-900/50 border border-cyan-800 px-2 py-1 rounded text-[10px] font-semibold tracking-wide flex items-center gap-1">
+                <span className="bg-white/10 border border-white/20 px-2 py-1 rounded text-[10px] font-semibold tracking-wide flex items-center gap-1">
                   <span className="material-symbols-outlined text-[12px]">school</span>
                   {profil.jabatan.split('/')[0] || profil.jabatan}
                 </span>
-                <span className="bg-cyan-900/50 border border-cyan-800 px-2 py-1 rounded text-[10px] font-semibold tracking-wide flex items-center gap-1">
+                <span className="bg-white/10 border border-white/20 px-2 py-1 rounded text-[10px] font-semibold tracking-wide flex items-center gap-1">
                   <span className="material-symbols-outlined text-[12px]">badge</span>
                   {profil.pangkat} / {profil.golongan}
                 </span>
@@ -357,12 +357,12 @@ export default function Profil() {
               </div>
             </div>
             {/* Decorative Blur */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-800/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
           </section>
         )}
 
         {/* Install PWA Prompt Banner */}
-        <div className="mb-4 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl p-4 text-white shadow-lg shadow-teal-900/20 flex items-center justify-between gap-3">
+        <div className="mb-4 bg-primary-gradient rounded-2xl p-4 text-white shadow-lg shadow-accent-900/20 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
               <span className="material-symbols-outlined text-[20px]">install_mobile</span>
@@ -374,7 +374,7 @@ export default function Profil() {
           </div>
           <button 
             onClick={handleInstallClick}
-            className="whitespace-nowrap bg-white text-teal-700 hover:bg-teal-50 font-bold text-[12px] px-4 py-2 rounded-lg transition-colors shadow-sm shrink-0"
+            className="whitespace-nowrap bg-white text-accent-700 hover:bg-accent-50 font-bold text-[12px] px-4 py-2 rounded-lg transition-colors shadow-sm shrink-0"
           >
             {deferredPrompt ? 'Install' : 'Cara Install'}
           </button>
@@ -431,6 +431,32 @@ export default function Profil() {
                     <label htmlFor="toggle2" className="toggle-label block overflow-hidden h-5 rounded-full bg-cyan-500 cursor-pointer"></label>
                   </div>
                 </label>
+
+                {/* Color Theme Picker */}
+                <div className="pt-1">
+                  <span className="text-[13px] font-medium text-slate-700 dark:text-slate-300 block mb-2">Tema Warna</span>
+                  <div className="flex items-center gap-3">
+                    {([
+                      { id: 'teal' as const, label: 'Teal', color: 'bg-teal-500', ring: 'ring-teal-500' },
+                      { id: 'indigo' as const, label: 'Indigo', color: 'bg-indigo-500', ring: 'ring-indigo-500' },
+                      { id: 'rose' as const, label: 'Rose', color: 'bg-rose-500', ring: 'ring-rose-500' },
+                    ]).map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => { setColorTheme(t.id); showToast(`Tema ${t.label} diterapkan!`, 'success'); }}
+                        className={`flex flex-col items-center gap-1.5 group`}
+                        title={t.label}
+                      >
+                        <div className={`w-9 h-9 rounded-full ${t.color} flex items-center justify-center transition-all shadow-md ${colorTheme === t.id ? `ring-2 ${t.ring} ring-offset-2 ring-offset-white dark:ring-offset-slate-900 scale-110` : 'opacity-60 hover:opacity-100 hover:scale-105'}`}>
+                          {colorTheme === t.id && (
+                            <span className="material-symbols-outlined text-white text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
+                          )}
+                        </div>
+                        <span className={`text-[10px] font-bold ${colorTheme === t.id ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400'}`}>{t.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -807,10 +833,10 @@ export default function Profil() {
       <style>{`
         .toggle-checkbox:checked {
           right: 0;
-          border-color: #06b6d4; /* Tailwind cyan-500 */
+          border-color: rgb(var(--accent-500));
         }
         .toggle-checkbox:checked + .toggle-label {
-          background-color: #06b6d4;
+          background-color: rgb(var(--accent-500));
         }
         .toggle-checkbox {
           right: 0;

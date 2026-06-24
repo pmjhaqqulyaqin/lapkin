@@ -152,7 +152,7 @@ export default function Dashboard() {
   return (
     <>
       {/* TopAppBar */}
-      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-sm shadow-teal-900/5">
+      <header className="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl docked full-width top-0 sticky z-50 shadow-sm shadow-accent-900/20">
         <div className="flex justify-between items-center w-full px-4 py-3">
           <div className="flex items-center gap-3">
             <button onClick={() => useAppStore.getState().setSidebarOpen(true)} className="hidden md:block text-teal-950 dark:text-teal-50 active:opacity-80 transition-all p-1">
@@ -162,12 +162,12 @@ export default function Dashboard() {
               {profil ? (
                 <>
                   <span className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">{getGreeting()}</span>
-                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight truncate max-w-[200px]">{normalizeGelar(profil.nama).split(' ')[0]}</h1>
+                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-accent-950 dark:text-accent-200 leading-tight truncate max-w-[200px]">{normalizeGelar(profil.nama).split(' ')[0]}</h1>
                 </>
               ) : (
                 <>
                   <span className="text-[11px] text-on-surface-variant font-bold uppercase tracking-wider">{getGreeting()}</span>
-                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-teal-950 dark:text-teal-50 leading-tight">Laporan Kinerja</h1>
+                  <h1 className="font-headline font-bold text-[16px] tracking-tight text-accent-950 dark:text-accent-200 leading-tight">Laporan Kinerja</h1>
                 </>
               )}
             </div>
@@ -207,7 +207,7 @@ export default function Dashboard() {
                 <span className="text-2xl font-headline font-black block">{lkhBulanIni?.length || 0}</span>
                 <span className="text-[10px] uppercase tracking-widest opacity-80">Total Kegiatan</span>
               </div>
-              <NavLink to="/lkh/input" className="w-10 h-10 bg-white text-primary rounded-full flex items-center justify-center hover:scale-105 transition-transform shadow-lg">
+              <NavLink to="/lkh/input" className="w-10 h-10 bg-white text-accent-700 rounded-full flex items-center justify-center hover:scale-105 transition-transform shadow-lg">
                 <span className="material-symbols-outlined text-[20px]">add</span>
               </NavLink>
             </div>
@@ -279,11 +279,11 @@ export default function Dashboard() {
               let boxClasses = "aspect-square rounded-lg flex items-center justify-center text-[12px] font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer ";
               
               if (hasLkh) {
-                boxClasses += "bg-teal-500 text-white shadow-sm shadow-teal-500/30";
+                boxClasses += "bg-accent-500 text-white shadow-sm shadow-accent-500/30";
               } else if (isHoliday) {
                 boxClasses += "bg-red-50 text-red-500 border border-red-100";
               } else if (isToday) {
-                boxClasses += "bg-white text-teal-600 border-2 border-teal-500 shadow-sm";
+                boxClasses += "bg-white text-accent-600 border-2 border-accent-500 shadow-sm";
               } else {
                 // Past dates that are empty -> light red border? No, just gray for now as requested
                 const isPast = new Date(activeYear, activeMonthIndex, dayNum) < new Date(new Date().setHours(0,0,0,0));
@@ -295,7 +295,7 @@ export default function Dashboard() {
               }
 
               if (isToday && !hasLkh && !isHoliday) {
-                boxClasses += " ring-2 ring-teal-500 ring-offset-1";
+                boxClasses += " ring-2 ring-accent-500 ring-offset-1";
               }
 
               return (
@@ -324,7 +324,7 @@ export default function Dashboard() {
         <section className="mb-5 opacity-0 animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <div className="flex justify-between items-end mb-3 px-0.5">
             <h3 className="font-headline font-bold text-[15px] text-primary">Aktivitas Terakhir</h3>
-            <NavLink to="/lkh/riwayat" className="text-[12px] font-bold text-secondary hover:underline">Lihat Semua</NavLink>
+            <NavLink to="/lkh/riwayat" className="text-[12px] font-bold text-accent-600 dark:text-accent-400 hover:underline">Lihat Semua</NavLink>
           </div>
           <div className="space-y-2">
             {lkhBulanIni === undefined ? (
@@ -410,7 +410,7 @@ export default function Dashboard() {
                 ></textarea>
               </div>
               <div className="pt-2">
-                <button type="submit" className="w-full bg-teal-700 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-teal-800 active:scale-95 transition-all shadow-lg shadow-teal-900/20">
+                <button type="submit" className="w-full bg-accent-700 text-white font-bold text-[13px] py-2.5 rounded-lg hover:bg-accent-800 active:scale-95 transition-all shadow-lg shadow-accent-900/20">
                   Simpan Perubahan
                 </button>
               </div>
@@ -424,7 +424,7 @@ export default function Dashboard() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsProfileOpen(false)}>
           <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-scale-up" onClick={e => e.stopPropagation()}>
             {/* Header with photo */}
-            <div className="bg-gradient-to-br from-teal-700 to-cyan-900 p-5 flex flex-col items-center relative">
+            <div className="bg-primary-gradient p-5 flex flex-col items-center relative">
               <button onClick={() => setIsProfileOpen(false)} className="absolute top-3 right-3 text-white/60 hover:text-white bg-white/10 rounded-full p-1 transition-colors">
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
@@ -551,7 +551,7 @@ export default function Dashboard() {
                         setViewDateDetails(null);
                         navigate('/lkh/input', { state: { date } });
                       }}
-                      className="text-[12px] font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20 hover:bg-teal-100 dark:hover:bg-teal-900/40 px-4 py-2 rounded-full transition-colors inline-flex items-center gap-1"
+                      className="text-[12px] font-bold text-accent-600 dark:text-accent-400 bg-accent-50 dark:bg-accent-900/20 hover:bg-accent-100 dark:hover:bg-accent-900/40 px-4 py-2 rounded-full transition-colors inline-flex items-center gap-1"
                     >
                       <span className="material-symbols-outlined text-[16px]">add</span>
                       Tambah Aktivitas Lain
@@ -568,7 +568,7 @@ export default function Dashboard() {
       {showOnboarding && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden animate-scale-up text-center p-6 border border-slate-100 dark:border-slate-800">
-            <div className="w-16 h-16 bg-teal-100 dark:bg-teal-900/40 rounded-full flex items-center justify-center mx-auto mb-4 text-teal-600 dark:text-teal-400">
+            <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/40 rounded-full flex items-center justify-center mx-auto mb-4 text-accent-600 dark:text-accent-400">
               <span className="material-symbols-outlined text-[32px]">manage_accounts</span>
             </div>
             <h2 className="font-headline font-bold text-[18px] text-slate-800 dark:text-slate-100 mb-2">Selamat Datang di LKD!</h2>
@@ -580,7 +580,7 @@ export default function Dashboard() {
                 setShowOnboarding(false);
                 navigate('/profil', { state: { openEdit: 'profil', onboarding: true } });
               }}
-              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-[14px] py-3.5 rounded-xl shadow-lg shadow-teal-600/30 transition-all active:scale-95"
+              className="w-full bg-accent-600 hover:bg-accent-700 text-white font-bold text-[14px] py-3.5 rounded-xl shadow-lg shadow-accent-500/30 transition-all active:scale-95"
             >
               Lengkapi Profil Sekarang
             </button>
