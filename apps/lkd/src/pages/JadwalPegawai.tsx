@@ -31,8 +31,8 @@ const TIPE_REVERSE: Record<TipeJadwal, string> = {
 
 const TIPE_STYLE: Record<TipeJadwal, { badge: string; dot: string; label: string; icon: string }> = {
   rutin: {
-    badge: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300',
-    dot: 'bg-teal-500',
+    badge: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-300',
+    dot: 'bg-accent-500',
     label: 'Rutin',
     icon: 'work',
   },
@@ -172,14 +172,14 @@ export default function JadwalPegawai() {
   return (
     <>
       {/* TopAppBar */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shadow-indigo-950/5">
+      <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shadow-accent-900/20">
         <div className="flex justify-between items-center w-full px-4 py-3 max-w-5xl mx-auto">
-          <h1 className="font-manrope font-extrabold text-[17px] tracking-tight text-slate-900 dark:text-slate-50">
+          <h1 className="font-manrope font-extrabold text-[17px] tracking-tight text-accent-950 dark:text-accent-200">
             Jadwal Kegiatan
           </h1>
           <button
             onClick={handleOpenModal}
-            className="w-9 h-9 rounded-full bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 transition-colors flex items-center justify-center text-indigo-800 dark:text-indigo-200 shadow-sm"
+            className="w-9 h-9 rounded-full bg-accent-50 dark:bg-accent-900/20 hover:bg-accent-100 transition-colors flex items-center justify-center text-accent-800 dark:text-accent-200 shadow-sm"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
           </button>
@@ -189,9 +189,9 @@ export default function JadwalPegawai() {
       <main className="pt-16 px-4 md:px-6 max-w-3xl mx-auto space-y-4">
 
         {/* Summary Card */}
-        <div className="bg-gradient-to-br from-indigo-900 to-slate-950 rounded-2xl p-4 text-white shadow-xl shadow-indigo-950/20 relative overflow-hidden">
+        <div className="bg-primary-gradient rounded-2xl p-4 text-white shadow-xl shadow-accent-900/20 relative overflow-hidden">
           <div className="relative z-10">
-            <div className="flex items-center gap-1.5 text-indigo-200/80 mb-2.5">
+            <div className="flex items-center gap-1.5 text-accent-200 opacity-80 mb-2.5">
               <span className="material-symbols-outlined text-[16px]">work</span>
               <span className="font-semibold text-[10px] uppercase tracking-widest">Beban Kerja</span>
             </div>
@@ -199,15 +199,15 @@ export default function JadwalPegawai() {
               <span className="text-2xl font-manrope font-black">
                 {jadwalHariIni ? jadwalHariIni.length : 0}
               </span>
-              <span className="text-[11px] text-indigo-200 font-medium ml-1.5 uppercase tracking-widest">Kegiatan ({activeHari === getHariIni() ? 'Hari Ini' : activeHari})</span>
+              <span className="text-[11px] text-accent-200 font-medium ml-1.5 uppercase tracking-widest">Kegiatan ({activeHari === getHariIni() ? 'Hari Ini' : activeHari})</span>
             </div>
 
             {/* Jam Kerja Tetap */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-2.5 flex justify-between items-center mt-3">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-indigo-300">schedule</span>
+                <span className="material-symbols-outlined text-[16px] text-accent-300">schedule</span>
                 <div>
-                  <span className="text-[10px] font-semibold text-indigo-200 block">Jam Kerja Tetap</span>
+                  <span className="text-[10px] font-semibold text-accent-200 block">Jam Kerja Tetap</span>
                   <span className="text-[13px] font-bold">{jamKerjaTetap.mulai} – {jamKerjaTetap.selesai}</span>
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function JadwalPegawai() {
                 onClick={() => setActiveHari(hari)}
                 className={`flex-shrink-0 px-4 py-2 rounded-full font-inter font-bold text-[13px] transition-all ${
                   activeHari === hari
-                    ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-md shadow-slate-900/20'
+                    ? 'bg-accent-900 text-white shadow-md shadow-accent-900/20'
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
                 }`}
               >
@@ -282,7 +282,7 @@ export default function JadwalPegawai() {
                           )}
                         </div>
                         <div className="flex gap-1.5">
-                          <button onClick={() => handleEdit(item)} className="text-slate-400 hover:text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => handleEdit(item)} className="text-slate-400 hover:text-accent-600 opacity-0 group-hover:opacity-100 transition-opacity">
                             <span className="material-symbols-outlined text-[16px]">edit</span>
                           </button>
                           <button onClick={() => item.id && setDeleteTarget({ id: item.id, name: item.uraianKegiatan })} className="text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -312,12 +312,12 @@ export default function JadwalPegawai() {
               <div className="absolute -left-[9px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-slate-100 dark:bg-slate-800 border-4 border-white dark:border-slate-950"></div>
               <button
                 onClick={handleOpenModal}
-                className="w-full border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 transition-all group"
+                className="w-full border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-accent-500 dark:hover:border-accent-500 bg-slate-50/50 dark:bg-slate-800/30 hover:bg-accent-50 dark:hover:bg-accent-900/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 transition-all group"
               >
-                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 flex items-center justify-center text-slate-500 group-hover:text-indigo-600 transition-colors">
+                <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 group-hover:bg-accent-100 dark:group-hover:bg-accent-900/40 flex items-center justify-center text-slate-500 group-hover:text-accent-600 transition-colors">
                   <span className="material-symbols-outlined text-[16px]">add</span>
                 </div>
-                <span className="font-semibold text-[11px] text-slate-500 group-hover:text-indigo-700">Tambah Jadwal Baru</span>
+                <span className="font-semibold text-[11px] text-slate-500 group-hover:text-accent-700">Tambah Jadwal Baru</span>
               </button>
             </div>
 
@@ -333,9 +333,9 @@ export default function JadwalPegawai() {
             <div className="space-y-2">
               <button
                 onClick={() => setManageListType('unitKerja')}
-                className="w-full flex items-center gap-2.5 p-2.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors text-left"
+                className="w-full flex items-center gap-2.5 p-2.5 bg-accent-50 dark:bg-accent-900/20 rounded-xl hover:bg-accent-100 dark:hover:bg-accent-900/30 transition-colors text-left"
               >
-                <span className="material-symbols-outlined text-[20px] text-indigo-600 dark:text-indigo-400">domain</span>
+                <span className="material-symbols-outlined text-[20px] text-accent-600 dark:text-accent-400">domain</span>
                 <div>
                   <h4 className="text-[12px] font-bold text-slate-800 dark:text-slate-200">Unit Kerja</h4>
                   <p className="text-[10px] text-slate-500 mt-0.5">{unitKerjaList.length} opsi tersedia</p>
@@ -352,7 +352,7 @@ export default function JadwalPegawai() {
                 </div>
               </button>
             </div>
-            <NavLink to="/kalender" className="w-full mt-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-400 font-semibold text-[11px] rounded-xl transition-colors block text-center">
+            <NavLink to="/kalender" className="w-full mt-4 py-2 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-accent-700 dark:text-accent-400 font-semibold text-[11px] rounded-xl transition-colors block text-center">
               Lihat Kalender Akademik
             </NavLink>
           </div>
@@ -474,7 +474,7 @@ export default function JadwalPegawai() {
               </div>
 
               <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                <button type="submit" className="w-full bg-indigo-700 text-white text-[12px] font-bold py-2 rounded-lg hover:bg-indigo-800 active:scale-95 transition-all shadow-lg shadow-indigo-900/20">
+                <button type="submit" className="w-full bg-accent-700 text-white text-[12px] font-bold py-2 rounded-lg hover:bg-accent-800 active:scale-95 transition-all shadow-lg shadow-accent-900/20">
                   Simpan Jadwal
                 </button>
               </div>
@@ -489,7 +489,7 @@ export default function JadwalPegawai() {
           <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-xs shadow-2xl overflow-hidden">
             <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
               <h2 className="font-manrope font-bold text-[13px] text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-[16px] text-indigo-600">schedule</span>
+                <span className="material-symbols-outlined text-[16px] text-accent-600">schedule</span>
                 Atur Jam Kerja Tetap
               </h2>
               <button onClick={() => setIsJamKerjaModalOpen(false)} className="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full p-1.5 transition-colors flex items-center justify-center w-6 h-6">
@@ -517,7 +517,7 @@ export default function JadwalPegawai() {
                   />
                 </div>
               </div>
-              <button onClick={handleSaveJamKerja} className="w-full bg-indigo-700 text-white text-[12px] font-bold py-2 rounded-lg hover:bg-indigo-800 active:scale-95 transition-all shadow-lg shadow-indigo-900/20">
+              <button onClick={handleSaveJamKerja} className="w-full bg-accent-700 text-white text-[12px] font-bold py-2 rounded-lg hover:bg-accent-800 active:scale-95 transition-all shadow-lg shadow-accent-900/20">
                 Simpan Jam Kerja
               </button>
             </div>
