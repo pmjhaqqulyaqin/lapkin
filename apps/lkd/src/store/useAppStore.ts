@@ -216,7 +216,7 @@ export const useAppStore = create<AppState>((set) => ({
       const data = await res.json();
       if (data.success) {
         // 1. Merge opsi referensi (kegiatan, tugas, status kalender)
-        set((state) => {
+        set(() => {
           // Server data = sumber kebenaran utama
           // Data lokal yang ada di server akan mengikuti server
           const mergedKegiatan = [...data.data.kegiatan];
