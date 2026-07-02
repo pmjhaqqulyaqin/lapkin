@@ -74,6 +74,13 @@ export default function Dashboard() {
   // Onboarding State
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // Auto-pull referensi data (kegiatan, tugas, kalender) dari server saat buka Dashboard
+  useEffect(() => {
+    if (navigator.onLine) {
+      useAppStore.getState().pullReferensiData();
+    }
+  }, []);
+
   useEffect(() => {
     if (profil !== undefined) {
       // Tampilkan onboarding jika profil belum lengkap (meskipun sudah punya nama/nip dari sync)

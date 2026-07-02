@@ -122,9 +122,9 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Tab Content */}
-        {tab === 'referensi' && <AdminReferensiTab />}
-        {tab === 'kalender' && <AdminKalenderTab />}
+        {/* Tab Content — key forces re-mount & fresh data fetch on tab switch */}
+        {tab === 'referensi' && <AdminReferensiTab key="referensi" />}
+        {tab === 'kalender' && <AdminKalenderTab key="kalender" />}
 
         {/* Overview */}
         {tab === 'overview' && stats && (<>

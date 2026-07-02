@@ -211,15 +211,17 @@ export const useAppStore = create<AppState>((set) => ({
   pullReferensiData: async () => {
     try {
       const API_BASE = import.meta.env.VITE_API_URL || '';
-      const res = await fetch(`${API_BASE}/api/referensi`);
+      const res = await fetch(`${API_BASE}/api/referensi?_t=${Date.now()}`);
       if (!res.ok) throw new Error('Gagal menarik data');
       const data = await res.json();
       if (data.success) {
         // 1. Merge opsi referensi (kegiatan, tugas, status kalender)
         set((state) => {
-          const mergedKegiatan = Array.from(new Set([...data.data.kegiatan, ...state.kegiatanManual]));
-          const mergedTugas = Array.from(new Set([...data.data.tugas, ...state.kategoriTugas]));
-          const mergedKalender = Array.from(new Set([...data.data.kalender, ...state.statusKalender]));
+          // Server data = sumber kebenaran utama
+          // Data lokal yang ada di server akan mengikuti server
+          const mergedKegiatan = [...data.data.kegiatan];
+          const mergedTugas = [...data.data.tugas];
+          const mergedKalender = [...data.data.kalender];
           
           localStorage.setItem('lkd_kegiatan_manual', JSON.stringify(mergedKegiatan));
           localStorage.setItem('lkd_kategori_tugas', JSON.stringify(mergedTugas));

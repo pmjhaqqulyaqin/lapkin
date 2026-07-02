@@ -50,7 +50,7 @@ export default function AdminKalenderTab() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await adminFetch('/api/referensi');
+      const res = await adminFetch(`/api/referensi?_t=${Date.now()}`);
       const data = res.data;
       setStatusOptions(data.kalender || []);
       setEvents(data.jadwal_kalender || []);

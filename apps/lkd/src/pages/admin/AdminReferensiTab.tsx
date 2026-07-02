@@ -35,7 +35,7 @@ export default function AdminReferensiTab() {
   const fetchReferensi = async () => {
     setLoading(true);
     try {
-      const res = await adminFetch('/api/referensi');
+      const res = await adminFetch(`/api/referensi?_t=${Date.now()}`);
       const raw: ReferensiItem[] = res.raw;
       
       const grouped = {
